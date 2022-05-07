@@ -3,16 +3,16 @@ import { login , register} from "..//src/features/userSlice";
 import { store } from '../src/store';
 
 /* "http://192.168.188.52:8200"  "https://api.theone-web.com" */
-const BASE_URL = "https://api.theone-web.com";
+const BASE_URL = "http://192.168.188.52:8200";
 const instance = axios.create({
   baseURL: BASE_URL,
+  withCredentials:true
   
 });
 
 
 instance.interceptors.request.use(
   (config)=> {
-    config.withCredentials = true;
     config.headers = {'Content-Type':'application/json'} 
     return config
   }

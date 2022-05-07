@@ -72,10 +72,10 @@ function Register() {
         e.preventDefault();
 
         const isEmail = memorizedEMAIL_REGES.test(emailusername);
-        
         /* "/auth/login" */
         const response = await clientAxios.post("auth/login" , 
-        {password, emailusername , isEmail});
+        {emailusername, password , isEmail});
+        console.log(response)
         if(response){
             
         

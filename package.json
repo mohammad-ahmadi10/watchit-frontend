@@ -9,13 +9,14 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@mui/icons-material": "^5.6.1",
-    "@mui/material": "^5.6.1",
     "@reduxjs/toolkit": "^1.8.1",
+    "@types/antd": "^1.0.0",
+    "antd": "^4.20.2",
     "axios": "^0.26.1",
     "csstype": "^3.0.11",
     "framer-motion": "^6.2.9",
     "next": "12.1.4",
+    "next-themes": "^0.2.0",
     "react": "18.0.0",
     "react-dom": "18.0.0",
     "react-dropzone": "^12.0.4",

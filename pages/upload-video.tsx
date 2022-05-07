@@ -11,13 +11,14 @@ const  uploadVideo = () => {
     
     const formData = new FormData();
     formData.append("file" , files[0]);
+    /* upload/video */
       const res = await clientAxios.post("/upload/video", formData, {
         onUploadProgress:(data)=>{
           const loadingData =  Math.round(data.loaded / data.total * 100);
           setUploaded(loadingData);
         }
       });
-   
+      console.log(res.data)
 
   }, [])
 

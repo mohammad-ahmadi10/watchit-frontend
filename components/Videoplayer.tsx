@@ -134,7 +134,12 @@ const VideoPlayer = ({ videoPath , duration }:VideoPlayerProps) =>{
       }, [shouldFullScreen])
 
 
-      
+      const onVideoProgress = (e:React.MouseEvent<HTMLVideoElement>) =>{
+            console.log(e)
+      }
+      const onVideoLoaded = (e:React.MouseEvent<HTMLVideoElement>) =>{
+        //console.log(e)
+      }
 
     return(
 
@@ -151,15 +156,15 @@ const VideoPlayer = ({ videoPath , duration }:VideoPlayerProps) =>{
                                     ref={videoPlayerRef}
                                     onEnded={onVideoEnded}
                                     onTimeUpdate={onVideoTimeUpdate} 
-
-                            
+                                    onProgress={onVideoProgress}
+                                    onLoadedData={onVideoLoaded}
                             >
                                     <source src={`${process.env.NEXT_PUBLIC_REMOTE}/watch/${videoPath}`} />
                             </video>
                             <div onClick={onControllClick} ref={VideoControllerRef}  className={styles.video_controller}>
                                     <div id={"videoController"} className={styles.video_controller_wrapper}>
                                         <div className={styles.video_bottom_controll}>
-                                                <Slider onChange={onVideoRangeChange}   value={videoRange} height={2} />
+                                                <Slider onChange={onVideoRangeChange}   value={videoRange} height={5} />
                                                 <div className={styles.video_bottom_controll_player}>
                                                     <div>   
                                                         {shouldPlay? "pause":"play"}
@@ -176,7 +181,11 @@ const VideoPlayer = ({ videoPath , duration }:VideoPlayerProps) =>{
                                                         <div /* onMouseEnter={onVolumeIconEnter} onMouseLeave={onVolumeIconLeave} */>
                                                         volume
                                                         </div>
-                                                        <Slider onChange={onVolumeChange}  value={volumeValue} fillColor={"white"} height={5} />
+                                                        <Slider onChange={onVolumeChange}  
+                                                                value={volumeValue} 
+                                                                fillColor={"white"} 
+                                                                height={5} 
+                                                        />
 
                                                     </div>
                                                     </motion.div>

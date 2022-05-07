@@ -18,8 +18,8 @@ function Forgotpassword() {
      
      if(typeof res === "undefined"){
       console.log(errorMessage)
-      const {mssg} = errorMessage!;
-      setMessage(mssg)
+      //const {mssg} = errorMessage!;
+      //setMessage(mssg)
     }else{
       if(res.status === 200){
         setMessage(res.data?.mssg)

@@ -24,20 +24,10 @@ const  Video = (props:videoProps) => {
     const router = useRouter();
     const videoId = router.query.videoId;
     const metadata = props.data;
-    /* 
-      <video controls poster={`http://192.168.188.52:8200/watch/image/${videoId}`}>
-                  <source src={`http://192.168.188.52:8200/watch/${videoId}`} />
-              </video>
-    */
   
   return (
     <div className={styles.video_container}>     
       
-              {/* <ReactPlayer 
-                controls={true}
-                url={`http://192.168.188.52:8200/watch/${videoId}`}
-              /> */}
-
       <Videoplayer duration={metadata.duration}  videoPath={videoId}/>
   </div>
   )
@@ -47,7 +37,7 @@ const  Video = (props:videoProps) => {
 Video.getInitialProps = async (ctx:NextPageContext) =>{
   const {videoId} = ctx.query;
 
-  const res = await clientAxios.get(`/${videoId}`);
+  const res = await clientAxios.get(`watch/metadata/${videoId}`);
   const result = res.data;
   return{data:result}
 }

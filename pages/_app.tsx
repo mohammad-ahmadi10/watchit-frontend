@@ -5,10 +5,28 @@ import { store } from './../src/store';
 import Router from "next/router";
 import { SpinnerDotted } from 'spinners-react';
 import { useState } from 'react';
+import { ThemeProvider } from 'next-themes'
+import type { Page } from '../types/page'
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 
 
-function MyApp({ Component, pageProps }: AppProps) {
+// this should give a better typing
+type Props = AppProps & {
+  Component: Page
+}
 
+function MyApp({ Component, pageProps }: Props) {
+  const getLayout = Component.getLayout ?? (page => page)
+  const Layout = Component.layout ?? (({children}) => 
+  <>
+    <Navbar/>
+    {children}
+    <Footer/>
+  </>
+  ) 
+  
+  
   const [load , setLoading] = useState(false);
  
 
@@ -25,8 +43,9 @@ function MyApp({ Component, pageProps }: AppProps) {
   })
 
   return (
+   <ThemeProvider>
+
     <Provider store={store}>
-      
         {
           load ? 
           <>
@@ -35,11 +54,15 @@ function MyApp({ Component, pageProps }: AppProps) {
           </> 
           :
           <>
-          <Component {...pageProps} />
+          <Layout>
+            {getLayout(<Component {...pageProps} />)}
+          </Layout>
           </>
         }
+
         
     </Provider>
+   </ThemeProvider> 
   ) 
 
 }
