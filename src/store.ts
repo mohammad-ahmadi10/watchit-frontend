@@ -1,9 +1,14 @@
 import { configureStore } from "@reduxjs/toolkit";
-import reducer from "./features/userSlice";
+import userReducer from "./features/userSlice";
+import videoReducer from "./features/VideoSlice";
 
+const rootReducer =  {
+    user:userReducer,
+    video:videoReducer,
+}
 
 export const store = configureStore({
-    reducer:{user:reducer}
+    reducer:rootReducer
 })
 
 
@@ -11,3 +16,4 @@ export const store = configureStore({
 export type RootState = ReturnType<typeof store.getState>;
 
 export const selectUser = (state:RootState) => state.user;
+export const selectVideo = (state:RootState) => state.video

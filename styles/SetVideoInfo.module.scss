@@ -1,0 +1,181 @@
+@use  "styles/breakpoints" as bp;
+
+
+.videoInfoContainer{
+    position:relative;
+    width:100%;
+    height:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+
+    @include bp.sm{
+        padding-top:20px;
+    } 
+}
+
+.videoInfoWrapper{
+    position:relative;
+    background:rgb(0,0,256, 0.6);
+    border-radius:10px;
+    width:70%;
+    height:auto;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    border-bottom-left-radius:0px;
+    border-bottom-right-radius:0px;
+
+
+    @include bp.md{
+        padding:10px;
+        width:90%;
+        height:auto;
+    } 
+    @include bp.sm{
+        padding:10px;
+        width:95%;
+        height:auto;
+    } 
+
+    @include bp.xs{
+        padding:10px;
+        width:100%;
+        height:auto;
+    } 
+    
+
+}
+
+
+
+.upperContainer{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    
+    width:100%;
+
+    @include bp.sm{
+        flex-direction:column;
+        justify-content:center;
+    }
+
+    @include bp.xs{
+        flex-direction:column;
+        justify-content:center;
+    }
+
+
+}
+
+.formWrapper{
+    flex:0.8;
+    display:flex;
+    justify-content:flex-end;
+    align-items:center;
+    padding-top: 20px;
+    width:100%;
+    
+    form{
+        width:90%;
+        @include bp.md{
+          padding-top: 40px;
+          
+        }
+
+        @include bp.sm{
+            padding-top: 40px;
+            & > *{
+                width:300px;
+                
+              }
+        }
+
+        @include bp.xs{
+            padding-top: 40px;
+            & > *{
+                width:250px;
+               
+              }
+        }
+    }
+
+   
+
+    @include bp.sm{
+        padding-left:20px;
+    }
+
+
+
+}
+
+.loadingWrapper{
+    width: 100vw;
+    height: 100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+}
+
+
+.infinity{
+  width:100%;
+  height:100%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+
+.videoInfoPlayerWrapper{
+    flex:0.6;
+    padding:10px;
+    @include bp.md{
+        padding-top: 40px;
+
+        }
+
+        @include bp.sm{
+            width:400px;
+        }
+        @include bp.xs{
+            width:300px;
+        }
+}
+
+
+.videoCancelContainer{
+    position:absolute;
+    left:0px;
+    top:0px;
+}
+
+.popContentContainer{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    & > span{
+        
+    }
+}
+.cancelContainer{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+   
+}
+
+.closeButton{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    width:50px;
+    height:50px;
+
+   
+}

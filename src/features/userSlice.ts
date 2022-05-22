@@ -17,6 +17,7 @@ export interface User{
     
 }
 
+
 export type UserState = {
     user: User|null,
     errorMSG:String,
@@ -29,6 +30,9 @@ const initialState:UserState = {
     logIn:false
 
 }
+
+
+
 
 
 export const userSlice = createSlice({
@@ -47,13 +51,15 @@ export const userSlice = createSlice({
         },
 
         logout:(state) =>{
-            state.user = null
+            state.user = null,
+            state.errorMSG = ""
         }
 
     }
 })
 
 export const {login , logout , register} = userSlice.actions;
+
 export default  userSlice.reducer;
 
 

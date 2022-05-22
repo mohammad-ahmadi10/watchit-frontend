@@ -3,12 +3,14 @@ import Head from 'next/head'
 import styles from '../styles/Home.module.scss'
 import Link from 'next/link'
 import Image from 'next/image';
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import { selectUser } from './../src/store';
 import costumAxios from "../utils/axios";
 import useSWR from "swr";
 import { SpinnerDotted } from 'spinners-react';
-
+import useLayoutEffect from "../utils/IsOrmorphicLayoutEffect";
+import Router from 'next/router'
+import { login, logout } from '../src/features/userSlice';
 
 
 const fetcher = async() => {
@@ -19,7 +21,7 @@ const fetcher = async() => {
 
 
 // types
-interface VideoPrewData{
+export interface VideoPrewData{
   id:string,
   title:string,
   folder:string,
@@ -34,11 +36,18 @@ interface HomeProps{
   videPrewData:[VideoPrewData]
 }
 
-const myLoader=({src}:any)=>{
+
+
+export const myLoader=({src}:any)=>{
   return `${process.env.NEXT_PUBLIC_REMOTE}/watch/thumb/${src}`;
 }
-const displayImage = (file:VideoPrewData) =>{
-  console.log(file)
+
+/* 
+ displays every video thumb which is got back from API
+ @file: VideoPrewData 
+        is an object von type VideoPrewData 
+*/
+export const displayImage = (file:VideoPrewData) =>{
   let date = new Intl.DateTimeFormat('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }).format(+file.date)
    return <div key={file.id}  id={file.id}>
              <Link href={`watch/${file.id}`}>
@@ -54,12 +63,10 @@ const displayImage = (file:VideoPrewData) =>{
            </div>
 }
 
-const onClickLogout =  async (e:React.MouseEvent<HTMLParagraphElement>) =>{
-  
-}
-
-
-const getVideos = () =>{
+/*
+ calling the api and getting videos back
+*/
+export const getVideos = () =>{
   const {data , error} = useSWR('/' , fetcher)
   return {
     videos:data,
@@ -69,15 +76,20 @@ const getVideos = () =>{
 }
 
 const Home: NextPage<HomeProps> = () => {
+  const dispatch = useDispatch();
   
   const user = useSelector(selectUser).user
+  const message = useSelector(selectUser).errorMSG;
 
   const {videos,isLoading,isError} = getVideos();
 
- 
-
-
-
+  useLayoutEffect(() =>{
+      if(message.includes("Invalid refresh")){
+        Router.push("/login")
+        dispatch(logout())
+        }
+      })
+  
   return (
     <div className={styles.container}>
       <Head>
@@ -94,7 +106,7 @@ const Home: NextPage<HomeProps> = () => {
                 return displayImage(d);
               }) 
             }
-            
+             
             
       </main>
 

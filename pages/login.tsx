@@ -10,7 +10,7 @@ import clientAxios from "../utils/axios";
 import { useDispatch, useSelector } from 'react-redux';
 import { login , User } from '../src/features/userSlice';
 import { selectUser } from '../src/store';
-
+import Router from 'next/router'
 
 function Register() {
     const userState = useSelector(selectUser)
@@ -75,10 +75,10 @@ function Register() {
         /* "/auth/login" */
         const response = await clientAxios.post("auth/login" , 
         {emailusername, password , isEmail});
-        console.log(response)
-        if(response){
-            
-        
+        if(response && response.data){
+        const tokens = response.data.tokens;
+        localStorage.setItem("ACTKEN", tokens.ACTKEN)
+        localStorage.setItem("SSRFSH", tokens.SSRFSH)
         const {id, username, email} = response.data!.user; 
         setPassword(id);
         const newUser:User = {
@@ -96,6 +96,8 @@ function Register() {
 
         setPassword("")
         setEmailUsername("") 
+        
+        Router.push("/")
         }else{
             errRef.current!.focus();
             setErrMSG("no Response");

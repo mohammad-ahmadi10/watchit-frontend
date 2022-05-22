@@ -5,28 +5,31 @@ import styles from "../styles/dropzone.module.scss";
 /* {onDrop  ,  children , isImg=false , loading , fontSize=100} */
 interface DropzoneProps {
   onDrop: <T extends File>(acceptedFiles: T[], fileRejections: FileRejection[], event: DropEvent) => void,
-  dropText:string 
+  dropText:string,
+  accept:string,
+  children?:React.ReactNode
 }
 
-const accept = "image/*,video/*"
-const Dropzone:React.FC<DropzoneProps> = ({onDrop , dropText}) => {
+
+const Dropzone:React.FC<DropzoneProps> = ({onDrop , dropText, accept  , children}) => {
   
   
   const {getRootProps , getInputProps , 
         isDragActive
         }
-  = useDropzone({onDrop, accept , });
+  = useDropzone({onDrop, accept });
 
 
   return (
     <div className={styles.dropZone_container} {...getRootProps()}>
         <input {...getInputProps()} />
         {
-          isDragActive?
+          /* isDragActive?
                 <p>Drop the file here ....</p>
             :   <div> 
                     <p>{dropText}</p>
-                </div>
+                </div> */
+                children ? children : "drop or Drag a file"
         }
     </div>
   )

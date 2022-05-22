@@ -1,35 +1,52 @@
+.uploadVideoWrapper{
+  width:100vw;
+  height:100vh;
+  position:relative;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
 .uploadVideo_container{
-    height: 100vh;
-    width: 100vw;
+    height: 100%;
+    width: 100%;
     display: flex;
     justify-content: center;
-    align-items: center;
+    flex-direction:column;
+    align-items:center;
 }
 
 
 .upload_wrapper{
     width: 40%;
-    height: 40%;
-    border-radius: 10px;
-    border: 0.5px darkblue dashed;
-}
-
-.progress_cotainer{
-    background-color: rgba(2, 2, 255, 0.149);
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    width:100%;
-    height:100%;
-}
-
-.progress_bar{
-    background-color: rgb(2, 2, 255);
-    width: 100%;
-    height: 100%;
+    height: 60%;
     display:flex;
-    justify-content: center;
-    align-items: center;
+    flex-direction:column;
+    align-items:center;
+}
 
+
+.infinity{
+  width:100%;
+  height:100%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.progressBar{
+  width:100%;
+}
+
+.setVideoInfoWrapper{
+  position:absolute;
+  top:0;
+  left:0;
+  bottom:0;
+  right:0;
+  height:100%;
+  width:100%;
+  z-index:100;
+  background:rgb(0,0,0,1);
 
 }

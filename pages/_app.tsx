@@ -20,6 +20,7 @@ function MyApp({ Component, pageProps }: Props) {
   const getLayout = Component.getLayout ?? (page => page)
   const Layout = Component.layout ?? (({children}) => 
   <>
+
     <Navbar/>
     {children}
     <Footer/>

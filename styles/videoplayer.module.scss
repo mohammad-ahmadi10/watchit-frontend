@@ -1,29 +1,38 @@
+@use "styles/utilsMixin" as ux;
 
 
 
 .video_container_wrapper{
     position: relative;
     background-color: transparent;
-    height: 100%;
     width: 100%;
-    display:flex;
-    justify-content: center;
-    align-items: center;
+    height:100%;
+    overflow:hidden;
 
 }
 
 .video_container{
-    width: 800px;
+    width:100%;
     height: auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    background:black;
     position: relative;
-
     video{
-        height: 100%;
-        width: 100%;
+        /* height: 100%; */
+        width:100%;
+        height:600px;
+        /* object-fit: initial; */
+        z-index:1;
     }
+    & > div[data-fullscreen="true"]{
+           video{
+               height:inherit; 
+           }
+    }
+    video::-webkit-media-controls { display:none !important; }
+    video::-webkit-media-controls-enclosure {
+        display:none !important;
+      }
+      
 
     .video_controller{
         top: 0;
@@ -34,7 +43,11 @@
         display:flex;
         align-items: center;
         justify-content: center;
+        background: transparent;
+        background: linear-gradient(180deg, rgba(0,0,0,0.2063958347010679) 0%, rgba(248,251,255,0) 94%);
+        z-index: 2;
     }
+    
 }
 
 
@@ -48,6 +61,7 @@
     width:98%;
 }
 
+
 .video_bottom_controll{
     position: absolute;
     bottom: 0;
@@ -57,6 +71,14 @@
 
     /* background: rgb(250,255,253);
     background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.5915499989058124) 100%); */
+}
+
+.video_bottom_controll_fullscreen{
+    position: absolute;
+    bottom: 0;
+    height: 8%;
+    width: 100%;
+    align-self: flex-end;
 }
 
 .video_bottom_controll_player{
@@ -72,13 +94,18 @@
 
 .volume_container{
     width: 100%;
+    @include ux.center(row);
+    margin-left:2em;
 }
 
 .video_bottom_right_container{
     position: absolute;
     right: 5px;
-
+    @include ux.center(row);
+    justify-content:flex-end;
+    width: 200px;
 }
+
 
 
 .fadeIn{
@@ -115,5 +142,163 @@
 
 .video_full_btn_container
 {
-    background-color: chartreuse;
+    cursor:pointer;
+    @include ux.center(row);
+
+}
+
+.video_theater_container{
+    cursor:pointer;
+    @include ux.center(row);
+    margin-right:20%;
+    position:relative;
+}
+
+.time{
+    @include ux.center(row);
+    position:absolute;
+    right:10px;
+    top: -22px;
+    font-size: 16px;
+    .currentTime_container{
+        margin-right:5px;
+    }
+    .duration_container{
+        margin-left:5px;
+    }
+}
+
+.top_layer{
+    width:100%;
+    height:35%;
+    position:absolute;
+    top:0;
+    left:0;
+    pointer-events:none;
+    @include ux.center(row);
+    justify-content:space-between;
+     
+    .leftside{
+        width:400px;
+        height:0;
+        position:absolute;
+        top:10px;
+        left:0;
+        pointer-events:all;
+        text-align:center;
+        @include ux.center(row);
+        justify-content:flex-start;
+        align-items:flex-start;
+        font-size:18px;
+        padding-left:10px;
+        text-transform: capitalize;
+        
+
+    }
+
+    .rightside{
+        width:0;
+        height:0;
+        position:absolute;
+        top:10px;
+        right:0;
+        pointer-events:all;
+        @include ux.center(row);
+        justify-content:flex-end;
+        align-items:flex-start;
+        pointer-events:pointer;
+        opacity:0.5;
+        & a {
+            @include ux.center(column);
+            color:white;
+        }
+        
+    }
+}
+.nextVideoIcon{
+    background:white;
+    border-radius:50%;
+    margin-top:5px;
+    cursor:pointer;
+}
+
+.onStyle{display:none;}
+
+.thumbBackground{
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    position:absolute;
+    z-index:2;
+}
+
+.thumbPlayButton{
+    position: absolute;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    text-align: center;
+    background:rgba(0,0,256, 0.4);
+    @include ux.center(row);
+    border-radius:10px;
+    width:150px;
+    padding-left:5px;
+    cursor:pointer;
+    pointer-events:all;
+
+}
+
+.thumbPlayBt_Wrapper{
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    
+    height:100%;
+    width:100%;
+    @include ux.center(row);
+}
+
+.downloadOps{
+    position:absolute;
+    top:-220px;
+    left:-85px;
+    width:200px;
+    height:150px;
+    z-index:10;
+    
+    & .pointer{
+        background:black;
+        height:100px;
+        width:100px;
+        transform:rotate(45deg);
+        position:absolute;
+        bottom:0;
+        margin-left: auto;
+        margin-right: auto;
+        left: 0;
+        right: 0;
+        text-align: center;
+        z-index:8;
+    }
+}
+
+.downloadList_container{
+    font-size:20px;
+    width:100%;
+    height:100%;
+    background:black;
+    z-index:9;
+    position:relative;
+    overflow:auto;
+    @include ux.center(row);
+    & ul li{
+        list-style:none;
+        border-top:1px solid #ccc;
+        padding:10px 20px;
+    }
+    & ul li:hover{
+       color:green;
+    }
 }
