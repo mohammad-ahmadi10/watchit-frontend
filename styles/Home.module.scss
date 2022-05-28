@@ -1,3 +1,8 @@
+@use  "styles/breakpoints" as bp;
+@use "styles/utilsMixin" as ux;
+
+
+
 .container {
   padding: 0 2rem;
 }
@@ -10,6 +15,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  @include ux.moveY(40px);
 }
 
 .footer {

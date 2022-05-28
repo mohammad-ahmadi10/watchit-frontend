@@ -4,6 +4,15 @@
   --foreground: black;
 }
 
+@font-face {
+  font-family: 'Akshar';
+  src: url('../asset/Akshar/static/Akshar-Light.ttf');
+  font-weight: 300;
+  font-style: normal;
+}
+
+
+
 [data-theme='dark'] {
   --background: black;
   --foreground: white;
@@ -15,6 +24,14 @@ body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+}
+
+body{
+  position: relative;
+  margin: 0;
+  -webkit-text-size-adjust: none;
+  min-height: 416px;
+  -webkit-touch-callout: none;
 }
 
 a {
@@ -43,4 +60,8 @@ a {
 a{
   all: unset;
 color: white;
+}
+
+.global_icon_container{
+  
 }

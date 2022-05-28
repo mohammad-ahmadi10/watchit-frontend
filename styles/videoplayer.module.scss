@@ -1,5 +1,5 @@
 @use "styles/utilsMixin" as ux;
-
+@use  "styles/breakpoints" as bp;
 
 
 .video_container_wrapper{
@@ -22,6 +22,17 @@
         height:600px;
         /* object-fit: initial; */
         z-index:1;
+
+        @include bp.md{
+           height:600px;
+        }
+        @include bp.sm{
+            height:500px;
+        }
+        @include bp.xs{
+            height:350px;
+        }
+
     }
     & > div[data-fullscreen="true"]{
            video{
@@ -88,14 +99,25 @@
     width: 100%;
     height: 100%;
     font-size: 0.5em;
+    padding-bottom:15px;
+    @include bp.xs{
+        font-size: 25px;
+    }
 
 }
 
+.bottom__left{
+    @include ux.center(row);
+}
 
 .volume_container{
     width: 100%;
     @include ux.center(row);
     margin-left:2em;
+    
+    @include bp.xs{
+        margin-left:0.2em;
+    }
 }
 
 .video_bottom_right_container{
@@ -152,6 +174,13 @@
     @include ux.center(row);
     margin-right:20%;
     position:relative;
+    @include bp.xs{
+        margin-right:10%;
+        font-size: 25px;
+    }
+
+
+
 }
 
 .time{
@@ -192,13 +221,10 @@
         font-size:18px;
         padding-left:10px;
         text-transform: capitalize;
-        
-
+        padding-top:20px;
     }
 
     .rightside{
-        width:0;
-        height:0;
         position:absolute;
         top:10px;
         right:0;
@@ -208,18 +234,33 @@
         align-items:flex-start;
         pointer-events:pointer;
         opacity:0.5;
+        padding-top:20px;
+        
         & a {
             @include ux.center(column);
             color:white;
+            
         }
         
     }
 }
+
+.noPadding{
+    padding:0;
+}
+
+
 .nextVideoIcon{
     background:white;
     border-radius:50%;
     margin-top:5px;
     cursor:pointer;
+
+    @include bp.xs{
+        font-size: 25px;
+    }
+
+
 }
 
 .onStyle{display:none;}
@@ -267,7 +308,7 @@
     width:200px;
     height:150px;
     z-index:10;
-    
+    cursor: default;
     & .pointer{
         background:black;
         height:100px;
@@ -299,6 +340,57 @@
         padding:10px 20px;
     }
     & ul li:hover{
-       color:green;
+       color:blue;
     }
+}
+
+
+.download_icon_container{
+    @include ux.center(row);
+
+}
+
+
+.progressBar{
+    width:100%;
+    bottom:0;
+    position: absolute;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    text-align: center;
+    
+    
+}
+.center{
+    @include ux.center(column);
+
+}
+.noOpacity{
+    opacity:0;
+}
+.volume_icon{
+    @include ux.center(column);
+    cursor:pointer;
+}
+.notLogin_container{
+    @include ux.center(column);
+    padding:10px;
+    font-size: 18px;
+    &  a{
+        margin-bottom:10px;
+        font-size: 25px;
+    }
+    &  a:hover{
+        color:green;
+    }
+}
+
+
+.clicked{
+    color:green;
+}
+.event_lister{
+    @include ux.center(row);
 }

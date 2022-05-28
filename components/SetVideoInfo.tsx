@@ -287,10 +287,12 @@ const popupVariants = {
               metadata && 
               <div className={styles.videoInfoPlayerWrapper}>
              
-                   
+
                    <Videoplayer duration={metadata.duration!}  
                                 videoPath={uploadedPath} 
-                                fullScreen={false}
+                                title={metadata.title!}
+                                
+                                
                     /> 
             </div>
               

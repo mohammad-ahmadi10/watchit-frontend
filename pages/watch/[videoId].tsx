@@ -5,19 +5,23 @@ import styles from "../../styles/videoPage.module.scss";
 import clientAxios from "../../utils/axios";
 import axios from 'axios';
 import useLayoutEffect from "../../utils/IsOrmorphicLayoutEffect";
-import Link from "next/link";
-import {useRef , useState} from "react";
 import costumAxios from "../../utils/axios";
-import useSWR from "swr";
+import Link from "next/link";
+import {useRef , useState , useCallback } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { setNextVideo } from '../../src/features/VideoSlice';
 import Image from 'next/image';
-import {VideoPrewData }  from "../index";
+import {regularTime} from "../../utils/functions";
+import {BiCheckShield } from "react-icons/bi";
+import {BsBookmarkStar , BsBookmarkStarFill} from "react-icons/bs";
+
+import { motion } from "framer-motion"
+import UseAnimations from "react-useanimations";
+import bookmark from 'react-useanimations/lib/bookmark'
+import {VideoPrevData} from "../../types";
 
 
-
-interface videoProps{
-  data:{
+interface Video{
     id:string,
     title:string,
     folder:string,
@@ -25,21 +29,28 @@ interface videoProps{
     timestamp:number,
     views:number,
     comments:[string],
-    likes:number
-  }
+    likes:number,
+    resolutions:[string],
+    username:string,
+    date:Date,
+    userID:string
 }
-
+interface videoProps{
+  currentVideo:Video
+  videos:[Video]
+}
 
 
 const  Video = (props:videoProps) => {
   const [theaterMode , setTheaterMode] = useState(false);
-  
+  const [isbooked , setIsbooked] = useState(false);
+  const [videos, setVideos] = useState<VideoPrevData>(props.videos);
+
   const router = useRouter();
   const videoId:string = router.query.videoId!.toString();
-  const metadata = props.data;
+  const metadata = props.currentVideo;
   
   const standardRef = useRef<HTMLDivElement>(null);
-  const theaterRef = useRef<HTMLDivElement>(null);
   const otherVideosContainerRef = useRef<HTMLDivElement>(null);
   
   const dispatch = useDispatch();
@@ -47,73 +58,109 @@ const  Video = (props:videoProps) => {
   const onTheaterClick = (value:boolean) =>{
     setTheaterMode(value)
   }
-
-  const setVideoPlayer = (metadata:videoProps["data"], videoId:string) =>{
+  
+  const setVideoPlayer = (metadata:Video, videoId:string) =>{
     return <>
                 <Videoplayer duration={metadata.duration}  
                              videoPath={videoId} 
                              title={metadata.title}
                              resolutions={metadata.resolutions}
                              onTheatreRequest={onTheaterClick}
-                             />   
+                />   
     </>
   }
   
+  const onBookmarkClicked = (_) =>{
+        
+  }
+
+
+  const modifyAmountOfView = (view:number)=>{
+    let modifiedViews = ""
+    if(view === 1){
+      modifiedViews = `${view} view . `
+    }
+    else if(view <= 0)
+      modifiedViews = ""
+    else 
+    modifiedViews = `${view} views . `
+    return <span>{modifiedViews}</span>
+  }
+
+  const modifyUplodedDate = (d:Date) =>{
+    let now = new Date()
+
+    const year = now.getFullYear() - d.getFullYear();
+    const month = now.getMonth() - d.getMonth();
+    const day = now.getDate() - d.getDate();
     
+    if(year > 0){
+       return `since ${year} year${year > 1 ?  "s" : ""} ago`   
+    }
+    if(year === 0){
+      
+      if(month > 0 )
+       return `since ${month} month${month > 1 ? "s" : ""} ago`
+      
+      else if(month === 0){
+        if(day > 0)
+        return `since ${day} day${day > 1 ? "s" : ""} ago`
+        else return `since today`
+      }
+    }    
+  }
+
     const myLoader=({src}:any)=>{
       return `${process.env.NEXT_PUBLIC_REMOTE}/watch/thumb/${src}`;
     }
     
     /* 
      displays every video thumb which is got back from API
-     @file: VideoPrewData 
-            is an object von type VideoPrewData 
+     @file: Video 
+            is an object von type Video 
     */
-    const displayImage = (file:VideoPrewData) =>{
+    const displayImage = (file:Video) =>{
+      
       let date = new Intl.DateTimeFormat('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }).format(+file.date)
-       return <div key={file.id}  id={file.id}>
-                 <Link href={`${file.id}`}>
-                   <a href="#">
-                     <Image loader={myLoader} height={200} width={200}
-                          src={`${file.id}`} alt={file.id}
+      const [minute, second] = regularTime(file.duration);
+       return <Link href={`${file.id}`} key={file.id}  id={file.id} className={styles.otherVideoContainer}>
+                <a href="#" className={styles.thumbContainer}>
+                  <div className={styles.img_wrapper}>
+                     <Image loader={myLoader} height={160} width={200}
+                          src={`${file.id}`} alt={file.id} layout="fixed"
                       />
-                   </a>
-                 </Link>
-                 <span>{file.title}</span>
-                   <span>{date}</span>
-                   <span>{file.duration.minute}:{file.duration.second}</span>
-               </div>
-    }
-
-    
-    
-    
-    
-    
-    
-    const fetcher = async() => {
-      const res =  await costumAxios.get("/");
-      return res.data
-    }
-    
-    /*
-    calling the api and getting videos back
-    */
-   const getVideos = () =>{
-     const {data , error} =  useSWR('/' , fetcher)
-
-       return {
-        videos:data,
-        isLoading: !error && !data,
-        isError:error
-       }
-    }
-    
-
-    const {videos,isLoading,isError} = getVideos()
+                      <div className={styles.duration_container}>
+                       <span>{minute}</span>
+                       :
+                       <span>{second}</span>
+                    </div>
+                  </div>
+   
+                    
+                  <motion.div 
+                    whileHover={{ scale: 1.3 }}
+                    className={styles.bookmarkContainer}
+                  >
+                       <UseAnimations animation={bookmark}  strokeColor={"white"} fillColor={"white"} onClick={onBookmarkClicked}/>
+                  </motion.div>
+                
+                 <div className={styles.videoInfoContainer}>
+                   <span>{file.title}</span>
+                   <div className={styles.usernameContainer}>
+                     <span>{file.username}</span>
+                     <BiCheckShield size={18} style={{color:"green"}}/>
+                   </div>
+                   <div className={styles.view_dateContainer}>
+                        <span>{modifyAmountOfView(/* +file.view */ 20)}</span>
+                        <span>{modifyUplodedDate(new Date(file.date))} </span>
+                   </div>
+                  </div>
+                </a>
+              </Link>
+    }    
 
     useLayoutEffect(()=>{
-       if(typeof videos !== 'undefined')
+       if(videos.length > 0 )
        dispatch(setNextVideo({
          id:videos[0].id,
          title:videos[0].title,
@@ -142,12 +189,15 @@ const  Video = (props:videoProps) => {
                  {setVideoPlayer(metadata, videoId)}
               </div>      
               <div ref={otherVideosContainerRef} className={styles.other_videos_container}>
+                  <div className={styles.wrapper}>
                   {
-                    videos &&  videos.map((d:VideoPrewData) => {
+                    videos &&  videos.map((d:VideoPrevData) => {
                       if(d.id !== videoId)  
                       return displayImage(d);
                     }) 
                   }
+                  </div>
+                  
               </div>
                
          </div>
@@ -165,7 +215,8 @@ Video.getInitialProps = async (ctx:NextPageContext) =>{
   try {
   const res = await clientAxios.get(`watch/metadata/${videoId}`);
   const result = res.data;
-  return{data:result}
+  const {data} = await clientAxios.get("/");
+  return{currentVideo:result , videos:data}
     
   } catch (error) {
     if(axios.isAxiosError(error)){

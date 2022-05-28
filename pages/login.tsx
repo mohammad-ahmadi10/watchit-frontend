@@ -70,7 +70,7 @@ function Register() {
 
     const onLoginSubmit = async (e:React.MouseEvent<HTMLFormElement>) =>{
         e.preventDefault();
-
+        
         const isEmail = memorizedEMAIL_REGES.test(emailusername);
         /* "/auth/login" */
         const response = await clientAxios.post("auth/login" , 
@@ -118,13 +118,10 @@ function Register() {
         setEmailUsername(inputElement.value)
     }
 
-    const onLogout = async (e:React.MouseEvent<HTMLParagraphElement>) =>{
-        const response = await clientAxios.get("auth/logout");
-        console.log(response.data)
-    }
+
     return (
         <>
-            <p onClick={onLogout}>LOGOUT</p>
+          
         {
             success?
             (<section>

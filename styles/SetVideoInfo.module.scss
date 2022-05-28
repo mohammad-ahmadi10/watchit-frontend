@@ -60,6 +60,7 @@
     @include bp.sm{
         flex-direction:column;
         justify-content:center;
+        
     }
 
     @include bp.xs{
@@ -131,7 +132,7 @@
 
 
 .videoInfoPlayerWrapper{
-    flex:0.6;
+    flex:0.9;
     padding:10px;
     @include bp.md{
         padding-top: 40px;

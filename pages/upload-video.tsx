@@ -10,6 +10,7 @@ import useLayoutEffect from "../utils/IsOrmorphicLayoutEffect";
 import { IconType } from 'antd/lib/notification';
 import "antd/dist/antd.dark.css"
 import SetVideoInfo from '../components/SetVideoInfo';
+import {UploadStatus} from "../utils/enums";
 
 
 
@@ -25,15 +26,13 @@ const openNotificationWithIcon = (type:IconType) => {
 };
 
 
-enum UploadStatus{
-  ONSTART,UPLOADED
-}
+
 
 const  uploadVideo = () => {
   const [upStatus,  setUploadStatus] = useState(UploadStatus.ONSTART);
   const [uploadedPath, setUploadedPath] = useState("");
   const [progressPercent , setProgressPercent] = useState(0);
-  const [popup, setPopup] = useState(true);
+  const [popup, setPopup] = useState(false);
 
 
 
@@ -66,7 +65,6 @@ const  uploadVideo = () => {
 
   return (
     <div className={styles.uploadVideoWrapper}>
-              
            {
             upStatus === UploadStatus.UPLOADED ?
             <div className={styles.uploadVideo_container}>

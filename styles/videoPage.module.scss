@@ -1,3 +1,7 @@
+@use  "styles/breakpoints" as bp;
+@use "styles/utilsMixin" as ux;
+
+
 .video_container{
     display: flex;
     justify-content: center;
@@ -5,24 +9,32 @@
     flex-direction:column;
     width: 100%;
     height: 100vh;
-    background:yellow;
+    @include ux.moveY();
+    
 }
 
 
 .videoplayer_wrapper{
     width:100%;
     height:100%;
-    background:brown;
     
     display:grid;
     grid-template-columns:2fr  1fr;
 
+    @include bp.md{
+        grid-template-columns:3fr;
+    }
+    @include bp.sm{
+        grid-template-columns:3fr;
+    }
+    @include bp.xs{
+        grid-template-columns:3fr;
+    }
 }
 
 .videoplayer__theater_wrapper{
     width:100%;
     height:100%;
-    background:brown;
     padding-top:20px;
     
     display:grid;
@@ -33,7 +45,6 @@
 
 
 .standard_wrapper{
-    background:blue;
     padding:20px;
 /*     grid-column: span 3;
     grid-row: span 3; */
@@ -41,5 +52,104 @@
 }
 
 .other_videos_container{
-   padding-top:20px;
+    padding-top:42px;
+    overflow:hidden;
+    
 }   
+
+.wrapper{
+   overflow:auto;
+   width:100%;
+   height:100%;
+   cursor:pointer;
+}
+
+.thumbContainer{
+    position:relative;
+    width:fit-content;
+    height:fit-content;
+    position:relative;
+    @include ux.center(row);
+    align-items:flex-start;
+}
+
+.img_wrapper{
+    position:relative;
+}
+
+
+.otherVideoContainer{
+    position:relative;
+    margin-bottom:10px;
+    display:flex;
+    justify-content:flex-start;
+    font-family: Akshar, sans-serif;
+    
+    &::after{
+        content:"";
+        position:absolute;
+        background:transparent;
+        height:100%;
+        width:100%;
+        top:0;
+        left:0;
+        right:0;
+        bottom:0;
+    }
+
+    &:hover::after{
+        background:rgba(0,0,0,0.2);
+    }
+    
+}
+.duration_container{
+    position:absolute;
+    background:rgba(0,0,0,0.7);
+    z-index:10;
+    bottom:8px;
+    right:5px;
+    padding: 0px 5px;
+    font-size:12px;
+    border-radius:2px;
+    font-weight: 400;
+    letter-spacing:1px;
+    text-align:center;
+}
+
+.bookmarkContainer{
+    position:absolute;
+    bottom: 3px;
+    left: 0px;
+    z-index:10;
+    padding:2px;
+    @include ux.center(row);
+
+    
+}
+
+.videoInfoContainer{
+    flex:1;
+    @include ux.center(column);
+    align-items:flex-start;
+    justify-content:flex-start;
+    padding-left:10px;
+    
+    letter-spacing:1.2px;
+    text-transform:capitalize;
+}
+
+.usernameContainer{
+    @include ux.center(row);
+    
+    span {
+        margin-right:2px;
+    }
+}
+
+.view_dateContainer{
+    @include ux.center(row);
+
+    & span:first-child{
+      margin-right:2px;
+    }
+}

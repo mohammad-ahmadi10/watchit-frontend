@@ -6,3 +6,17 @@ export type Page<P = {}> = NextPage<P> & {
   getLayout?: (page: ReactElement) => ReactNode
   layout?: ComponentType
 }
+
+
+// types
+export interface VideoPrevData{
+  id:string,
+  title:string,
+  folder:string,
+  date:string,
+  duration:{minute:number , second:number},
+  view:number,
+  userID:Number,
+  username:string,
+  
+}

@@ -1,0 +1,165 @@
+@use "styles/utilsMixin" as ux;
+@use  "styles/breakpoints" as bp;
+
+.navbarContainer{
+    position:fixed;
+    z-index:1000;
+    background:linear-gradient(180deg, rgba(62, 66, 183, 0.5)  ,  rgba(62, 66 , 193,0.05) 94%);
+    height:80px;
+    width:100%;
+    @include ux.center(row);
+    justify-content:flex-start;
+    padding: 0px 20px;
+    
+    
+}
+
+.start{
+    @include ux.center(row);
+    height:100%;
+}
+
+.center, .end{
+    height:100%;
+    @include ux.center(row);
+    padding:10px;
+}
+
+.navbarWrapper{
+   @include ux.center(row);
+   align-items:flex-start;
+   justify-content:space-between;
+   width:100%;
+   overflow:hidden;
+
+}
+.nav_menu{
+    background:rgba(0,0,0,0.2);
+    position:absolute;
+    left:0;
+    top:0;
+    width:100vw;
+    height:100vh;
+    z-index:100;
+
+    & ul{
+      background:rgba(62, 66, 183, 1);
+      width:20%;
+      height:100%;
+      overflow:hidden;
+      position:relative;
+
+      li{
+          color:white;
+          width:100%;
+          height:80px;
+          border-bottom: 0.5px solid black;
+          a {
+              @include ux.center(row);
+              justify-content:flex-start;
+              color:white;
+              width:100%;
+              height:100%;
+              padding-left:10px;
+              & span:first-child{
+                margin-right:10px;
+            }
+            &:hover{
+                background:rgba(0,0,0,0.5);
+            }
+
+          }
+      }
+    }
+}
+
+.nav_menu_closed{
+    @include ux.center(row);
+    height:100%;
+    
+    & span:first-child{
+        margin-right:10px;
+
+    }
+
+
+}
+
+.start_nav_opened{
+    @include ux.center(row);
+    justify-content:flex-start;
+    padding-left:10px;
+    
+    & span:first-child{
+        margin-right:10px;
+    }
+}
+
+.logout{
+    @include ux.center(row);
+    border-bottom:none;
+    position:absolute;
+    bottom:0;
+    align-items:flex-end
+    
+}
+
+.avatarContainer{
+    @include ux.center(column);
+    position:relative;
+    border-radius:50%;
+    -webkit-box-shadow: inset -1px 3px 8px 5px #1F87FF, 2px 5px 16px 0px #0B325E, 5px 5px 15px 5px rgba(0,0,0,0); 
+    box-shadow: inset -1px 3px 8px 5px #1F87FF, 2px 5px 16px 0px #0B325E, 5px 5px 15px 5px rgba(0,0,0,0);
+}
+
+.avatar{
+    z-index:1;
+    pointer-events:none;
+}
+.avatar_impluse{
+    border: 0.5px solid blue;
+    position:absolute;
+    border-radius:50%;
+    
+    top:0;
+    bottom:0;
+    left:0;
+    right:0;
+    height:100%;
+    width:100%;
+    z-index:2;
+    cursor:pointer;
+    /* pointer-events:none; */
+
+    
+}
+
+.popup{
+    @include ux.center(column);
+    & div {
+        @include ux.center(column);
+
+    }
+}
+.progressBar{
+    width:100%;
+  }
+  
+
+.uploadAvatar{
+    width: 100px;
+    height: 100px;
+    
+    @include ux.center(column);
+    
+    & > section{
+    border-radius: 50%;
+
+    }
+}
+
+
+.popup_title{
+    @include ux.center(row);
+    justify-content:space-between;
+}

@@ -1,0 +1,22 @@
+@use  "styles/breakpoints" as bp;
+@use "styles/utilsMixin" as ux;
+
+
+.Costum404{
+    height:100vh;
+    width:100vw;
+    @include ux.center(column);
+    @include ux.moveY();
+}
+
+.back{
+    height:80px;
+    @include ux.center(column);
+    justify-content:space-between;
+    font-size:20px;
+}
+
+.message{
+    @include ux.center(row);
+
+}

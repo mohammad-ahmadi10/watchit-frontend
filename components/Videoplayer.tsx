@@ -8,68 +8,57 @@ import { BsFillVolumeUpFill , BsFillVolumeDownFill, BsFillVolumeMuteFill , BsFil
        } from 'react-icons/bs';
 import { BiRectangle , BiDownload  } from "react-icons/bi";
 import {MdCropSquare} from "react-icons/md";
-import {GoSettings} from "react-icons/go"
 
-import {useSelector} from "react-redux";
-import {selectVideo} from "../src/store";
 import Link from 'next/link'
 import Image from 'next/image';
 
-import { Popover , Progress } from 'antd';
+import { Popover , Progress , Menu } from 'antd';
 import "antd/dist/antd.dark.css"
 import { Spin } from 'antd';
-import {GrFormNextLink} from "react-icons/gr";
 import costumAxios from "../utils/axios";
 import fileDownload from 'js-file-download';
 
-
-// fullscreen Interfaces
-interface CostumDocument extends Document{
-    mozCancelFullScreen?: () => Promise<void>;
-    msExitFullscreen?: () => Promise<void>;
-    webkitExitFullscreen?: () => Promise<void>;
-    webkitCancelFullScreen?: () => Promise<void>;
-    mozFullScreenElement?: Element;
-    msFullscreenElement?: Element;
-    webkitFullscreenElement?: Element;
-    webkitCancelFullScreenElement?: Element;
-
-  }
-  interface CostumHTMLDivElement extends HTMLDivElement {
-    msRequestFullScreen?: () => Promise<void>;
-    mozRequestFullScreen?: () => Promise<void>;
-    webkitRequestFullScreen?: () => Promise<void>;
-  }
+import {useSelector, useDispatch} from "react-redux";
+import {selectVideo} from "../src/store";
+import { login , User } from '../src/features/userSlice';
+import { selectUser } from '../src/store';
+import {regularTime} from "../utils/functions";
+import settings2 from 'react-useanimations/lib/settings2'
+import arrowRightCircle from 'react-useanimations/lib/arrowRightCircle'
+import UseAnimations from "react-useanimations";
+import {VolumeState , DownloadStatus} from "../utils/enums";
+import {CostumDocument , CostumHTMLDivElement} from "../utils/fullscreen"
 
 
-
- 
+const displayIcon = (ICON:IconType , v?:number,  classN?:string) =>  { 
+    if (typeof classN !== 'undefined')
+        return <ICON  className={styles[classN]} style={{pointerEvents:"none"}}/>
+    if(typeof v !== 'undefined')
+       return  <ICON size={v} style={{pointerEvents:"none"}}/>
+    return  <ICON style={{pointerEvents:"none"}}/>  
+}
 
 
 
 
 
 
-  // player Props
+// player Props
 interface VideoPlayerProps {
     videoPath: string | string[] | undefined
     duration:number
     title:string
-    onTheatreRequest: (value:boolean) => {}
-    resolutions:[string]
-}
-
-
-// volume enumState
-enum VolumeState{
-    NORMAL,MUTED,UNMUTED,LOAD
+    onTheatreRequest?: (value:boolean) => void
+    resolutions?:[string]
 }
 
 
 
-const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resolutions }:VideoPlayerProps) =>{
+
+const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resolutions=[] }:VideoPlayerProps) =>{
     const VideoControllerRef = useRef<HTMLDivElement>(null)!;
- 
+    const [downloadstatus,  setDownloadstatus] = useState(DownloadStatus.ONPAUSE);
+
     const [shouldPlay , setShouldPlay] = useState(false);
     const [currentTime , setCurrentTime] = useState(0);
     const [modifiedduration , setModifiedDuration] = useState({minute:0 , second:0});
@@ -82,21 +71,50 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
     const [volumeState , setVolumeState] = useState(VolumeState.NORMAL)
     const [isVolumeHover , setIsVolumeHover ] = useState(false);
     const [isTheater, setIsTheater] = useState(false);
-    const [iconSize , setIconSize] = useState(35);
     const [shouldThumbShowing, setShouldThumbShowing] = useState(true);
     const [downloadPopup , setDownloadPopup] = useState(false);
     const [settingPopup , setSettingPopup] = useState(false);
     const [downloadSelected, setDownloadSelected] = useState(" ");
     const [progressPercent , setProgressPercent] = useState(0);
-    
+
     // useRef
     const videoPlayerRef = useRef<HTMLVideoElement>(null)!;
     const videoPlayerContainerRef =  useRef<CostumHTMLDivElement>(null)!;
     const fade = useRef<HTMLDivElement>(null);
-    const downloadListRef = useRef<HTMLElement>(null);
+    const downloadListRef = useRef<HTMLUListElement>(null);
     const nextVideo = useSelector(selectVideo)
     
 
+    const userState = useSelector(selectUser)
+    const dispatch = useDispatch();
+    
+    
+    const handleKeyDown = (event:React.mouesEvent) => {
+        if(event){
+            if(event.target.className.includes && !event.target.className.includes("event_lister")){
+                console.log('A key was pressed', event);
+                setDownloadPopup(false);
+                setSettingPopup(false);
+            }
+        }
+    }
+    
+    
+    useLayoutEffect(() => {
+        window.addEventListener('click', handleKeyDown);    
+        // cleanup this component
+        return () => {
+          window.removeEventListener('click', handleKeyDown);
+        };
+      }, []);
+
+      useLayoutEffect(() =>{
+        const v = localStorage.getItem("volume");
+        if(v){
+            setVolumeValue(v)
+            checkVolume(v);
+        }
+      }, [])
 
 
 
@@ -108,48 +126,44 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
               duration:0.5,
               delay:1
             }
-          },
+        },
         show: {
-          width:100,
-          transition: {
-            duration:0.5
+            width:100,
+            transition: {
+                duration:0.5
           }
         }
-      }
-
-
-      
-      
-      //// fullscreen 
-const handleFullscreen = function() {
-    const document : CostumDocument = window.document;
-
-    try{
-    if (isFullScreen()) {
-       if (document.mozCancelFullScreen) document.mozCancelFullScreen();
-       else if (document.webkitCancelFullScreen) document.webkitCancelFullScreen();
-       else if (document.msExitFullscreen) document.msExitFullscreen();
-       setFullscreenData(false);
-       setShouldFullScreen(false);
     }
-    else {
-        if(videoPlayerContainerRef && videoPlayerContainerRef.current){
-              if (videoPlayerContainerRef.current.mozRequestFullScreen) videoPlayerContainerRef.current.mozRequestFullScreen();
-              else if (videoPlayerContainerRef.current.webkitRequestFullScreen) videoPlayerContainerRef.current.webkitRequestFullScreen();
-              else if (videoPlayerContainerRef.current.msRequestFullScreen) videoPlayerContainerRef.current.msRequestFullScreen();
-              setFullscreenData(true);
-              setShouldFullScreen(true);
+    
+    
+    
+    
+    //// fullscreen 
+    const handleFullscreen = function() {
+        const document : CostumDocument = window.document;
+
+        if(!isFullScreen(document)){
+
+            if(videoPlayerContainerRef && videoPlayerContainerRef.current){
+                if (videoPlayerContainerRef.current.requestFullScreen) videoPlayerContainerRef.current.requestFullScreen();
+                else if (videoPlayerContainerRef.current.mozRequestFullScreen) videoPlayerContainerRef.current.mozRequestFullScreen();
+                else if (videoPlayerContainerRef.current.webkitRequestFullScreen) videoPlayerContainerRef.current.webkitRequestFullScreen();
+                else if (videoPlayerContainerRef.current.msRequestFullScreen) videoPlayerContainerRef.current.msRequestFullScreen();
+                
+                setFullscreenData(true);
+                setShouldFullScreen(true);
+            }
+        }else{
+             if (document.mozCancelFullScreen) document.mozCancelFullScreen();
+            else if (document.webkitCancelFullScreen) document.webkitCancelFullScreen();
+            else if (document.msExitFullscreen) document.msExitFullscreen();
+            setFullscreenData(false);
+            setShouldFullScreen(false);
         }
-    }
-
-    }catch(er){
-        console.log(er)
-    }
  }
  
- const isFullScreen = function() {
-    const document : CostumDocument = window.document;
-
+ const isFullScreen = function(document:CostumDocument) {
+     console.log(document)
     return !!( document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement || document.fullscreenElement);
  }
  const setFullscreenData = function(state:boolean) {
@@ -157,8 +171,6 @@ const handleFullscreen = function() {
     videoPlayerContainerRef.current.setAttribute('data-fullscreen', (!!state).toString());
  }
 //// fullscreen end
-
-
 
       const onImageEnter = (e: React.MouseEvent<HTMLDivElement>) => {
         e.preventDefault();
@@ -171,6 +183,7 @@ const handleFullscreen = function() {
       };
 
       useLayoutEffect(() =>{
+          if(onTheatreRequest)
         onTheatreRequest(isTheater)
       }, [isTheater])
 
@@ -178,19 +191,43 @@ const handleFullscreen = function() {
       
     useLayoutEffect(() =>{
             const t = localStorage.getItem("theater");
+            const acctoken = localStorage.getItem("ACTKEN");
+            const refreshtoken = localStorage.getItem("SSRFSH");
             if(t){
                 const val = t === 'true'
                 setIsTheater(val)
             }
+            if(acctoken && refreshtoken){
+               (
+                  async () =>{
+                    const rs = await costumAxios.get("/auth/me");
+                    const {id, email , username} = rs.data.modifiedUser;
+                    const newUser:User = {
+                        id,
+                        username,
+                        email,
+                        profileImage:"",
+                        }
+
+                    dispatch(login({
+                        user: newUser,
+                        logIn:true,
+                        errorMSG:""
+                    }))
+
+                   }
+               )()
+            }
+
     }, [])
 
 
     useLayoutEffect(() =>{
-        let [minute , second ] = regularTime(duration)
+        const [minute , second ] = regularTime(duration)
         setModifiedDuration({minute:+minute , second:+second})
     }, [])
     useLayoutEffect(() =>{
-        let [minute , second ] = regularTime(0)
+        const [minute , second ] = regularTime(0)
         setModifiedCurrentTime({minute:+minute , second:+second})
     },[])
 
@@ -203,15 +240,13 @@ const handleFullscreen = function() {
 
 
     const onControllClick = (e:React.MouseEvent<HTMLDivElement>) =>{
-        if(e.target.className &&  e.target.className.includes("thumbPlay")){
+        if(e.target.className && e.target.className.includes  &&   e.target.className.includes("thumbPlay")){
             if(shouldThumbShowing){
                 setShouldThumbShowing(false);
                 setShouldPlay(true);
             }
         }
         
-
-
         const contoller = e.target as HTMLDivElement;
         
         if(contoller.id === "videoController"){
@@ -233,13 +268,17 @@ const handleFullscreen = function() {
         setModifiedCurrentTime( {minute:+minute , second:+second} )
       }
 
-      const regularTime = (time:number )=>{
-        const minute = parseInt((time / 60).toString() , 10).toLocaleString('en-US' , {minimumIntegerDigits:2 , useGrouping:false})
-        const second = parseInt((time % 60).toString() , 10).toLocaleString('en-US' , {minimumIntegerDigits:2 , useGrouping:false})
-        return [minute , second]
+  
+
+      const onSettingListitemClick = async (e:React.MouseEvent<HTMLElement>) =>{
+         const l = e.target as HTMLListitem;
+         const resu = l.innerHTML;
+
       }
 
+
     const onDowloadListitemClick = async (e:React.MouseEvent<HTMLElement>) =>{
+        
         const l = e.target as HTMLListitem;
         const resu = l.innerHTML;
         if(resu !== ""){
@@ -248,20 +287,32 @@ const handleFullscreen = function() {
             url = `/watch/download/mp3/${videoPath}`
             else 
             url = `/watch/download/${videoPath}&${resu}`
-             
-            const rs =  await costumAxios.get(url, {responseType: 'blob'}, 
-            {onUploadProgress:(data)=>{
+            setDownloadstatus(DownloadStatus.ONDOWNLOADING)
+            setDownloadPopup(false);
+            setSettingPopup(false);
+            const rs =  await costumAxios.get(url, {responseType: 'blob',
+            onDownloadProgress:(data)=>{
                 const loadingData =  Math.round(data.loaded / data.total * 100);
                 setProgressPercent(loadingData);
                 if(loadingData === 100){
-                  /* setUploadStatus(UploadStatus.UPLOADED); */
+                    setDownloadstatus(DownloadStatus.DOWNLAODED)
+                    setTimeout(() =>{
+                        setProgressPercent(0);
+
+                    }, 1000)
                 } 
-            }}
-            );
+            }
+            });
 
             const end = rs.headers["content-type"].split("/")[1]
             const filename = title + "_" + resu + "." + end;
             fileDownload(rs.data, filename)
+            {
+                setTimeout(() =>{
+                    setDownloadstatus(DownloadStatus.ONPAUSE)
+
+                }, 500)
+            }
         }
 
         setDownloadSelected(l.innerHTML)
@@ -286,10 +337,19 @@ const handleFullscreen = function() {
 
     
     const onVolumeIconClick = (e:React.MouseEvent<HTMLDivElement>) =>{
-        setIsVolumeOff(!isVolumeOff);
+        if(volumeState !== VolumeState.MUTED){
+            setVolumeState(VolumeState.MUTED)
+            localStorage.setItem("volume" , volumeValue);
+            setVolumeValue(0);
+        }else{
+            const v = localStorage.getItem("volume");
+            checkVolume(v)
+            setVolumeValue(v);
+        }
+
     }
      
-    const onVolumeChange = (v:number) =>{
+    const checkVolume = (v:number) =>{
         if (v <= 0)
         setVolumeState(VolumeState.MUTED)
         else if(v > 1 && v < 10)
@@ -298,8 +358,11 @@ const handleFullscreen = function() {
             setVolumeState(VolumeState.NORMAL)
         }else if(v > 60) 
         setVolumeState(VolumeState.LOAD)
-        
+    }
+    const onVolumeChange = (v:number) =>{
+        checkVolume(v);
         setVolumeValue(v);
+        localStorage.setItem("volume" , v);
     }   
 
     const onVideoRangeChange =  (newValue:number) =>{
@@ -323,7 +386,11 @@ const handleFullscreen = function() {
        shouldPlay === true ? videoPlayerRef.current!.play() : videoPlayerRef.current!.pause();
      }, [shouldPlay])
     
-     
+      const onPlayClick = (e:React.MouseEvent<HTMLDivElement>)=>{
+            setShouldPlay(!shouldPlay);
+            setShouldThumbShowing(false);
+            
+      }
 
       const onVideoProgress = (e:React.MouseEvent<HTMLVideoElement>) =>{
             //console.log(e)
@@ -331,34 +398,71 @@ const handleFullscreen = function() {
       const onVideoLoaded = (e:React.MouseEvent<HTMLVideoElement>) =>{
         //console.log(e)
       }
+     const onSpeedClick = (e:React.MouseEvent<HTMLSpanElement>) =>{
+        const el = e.target as HTMLSpanElement;
+        const s = el.innerHTML.toLowerCase() === "standard" ? "1" : el.innerHTML;
+        
+        if(videoPlayerRef && videoPlayerRef.current)
+        videoPlayerRef.current.playbackRate = parseFloat(s);
 
+        setDownloadPopup(false);
+        setSettingPopup(false);
+     }
+     const onQualityClick = (e:React.MouseEvent<HTMLSpanElement>) =>{
+        const el = e.target as HTMLSpanElement;
+        if(videoPlayerRef && videoPlayerRef.current){
+
+            videoPlayerRef.current.pause()
+            const sr = videoPlayerRef.current.children[0];
+            const oldSRC = sr.src;
+            const newSRC = `${process.env.NEXT_PUBLIC_REMOTE}/watch/${videoPath}/${el.innerHTML}`;
+            sr.src = newSRC;
+            videoPlayerRef.current.load();
+            videoPlayerRef.current.play();
+        }
+        
+        setDownloadPopup(false);
+        setSettingPopup(false);
+     }
+
+
+      const getSpeedList = () =>{
+          const speeds = ["0.25" , "0.5" , "0.75", "1" , "1.25" , "1.5" , "1.75" , "2"]
+          const arr = speeds.map((s,ind) =>{
+              return {
+                  key:`1-${ind}`,
+                  label: (<span onClick={onSpeedClick} style={{display:"block"}}>
+                              {s === "1" ? "Standard" : s}
+                          </span>)
+              }
+          })
+          return arr
+      }
+      const getQualityChildren = ()=>{
+        const arr = typeof resolutions !== 'undefined' && resolutions.map((r, ind) =>{
+                 return {
+                    key: `2-${ind}`,
+                    label: (<span onClick={onQualityClick} style={{display:"block"}}>
+                        {r}
+                    </span>),
+                  }
+               })
+        return arr
+
+      }
 
       const myLoader=({src}:any)=>{
         return `${process.env.NEXT_PUBLIC_REMOTE}/watch/thumb/${src}`;
       }
-      type SvgInHtml = HTMLElement & SVGElement;
-      const displayIcon = (ICON:SvgInHtml, v:number, classN?:string) =>  {
-          
-        if (typeof classN !== 'undefined') {
-            return <ICON size={v} className={styles[classN]} style={{pointerEvents:"none"}}/>
-        }
-
-       return  <ICON size={v} style={{pointerEvents:"none"}}/>
-    }
+      
+      
 
 
     const onInput = (e: React.KeyboardEvent<FormControl>) =>{
         const document : CostumDocument = window.document;
         if(e.key === "Escape"){
-
-            if(window.fullscreen){
-                if (document.mozCancelFullScreen) document.mozCancelFullScreen();
-                else if (document.webkitCancelFullScreen) document.webkitCancelFullScreen();
-                else if (document.msExitFullscreen) document.msExitFullscreen();
-                setFullscreenData(false);
-                setShouldFullScreen(false);
-
-            }
+           
+           console.log(e)
         }
         
     }
@@ -368,8 +472,9 @@ const handleFullscreen = function() {
     return(
 
         <section className={`${styles.video_container_wrapper}`} onKeyPress={onInput} tabIndex={0}
-                 
         >
+                 {/* {test} */}
+                        
                         <div ref={fade} className={`${shouldFade? styles.fadeIn : styles.fadeOut }`}></div>  
 
                                                             
@@ -381,14 +486,14 @@ const handleFullscreen = function() {
                         >
 
                             
-                        <div className={`${shouldThumbShowing ? styles.thumbBackground : styles.onStyle}`}>
-                        <Image loader={myLoader} layout={"fill"}  src={`${videoPath}`} alt={videoPath.toString()}
+                          <div ref={videoPlayerContainerRef} onKeyDown={onInput} tabIndex={1}>
+
+                        { !isTheater &&<div className={`${shouldThumbShowing ? styles.thumbBackground : styles.onStyle}`}>
+                        <Image loader={myLoader} layout={"fill"}  src={`${videoPath}`} alt={videoPath ? videoPath!.toString() : "thumb"}
                          />
 
 
-                        </div>
-                          <div ref={videoPlayerContainerRef} onKeyDown={onInput} tabIndex={1}>
-
+                        </div>}
                             <video 
                                     ref={videoPlayerRef}
                                     onEnded={onVideoEnded}
@@ -396,77 +501,71 @@ const handleFullscreen = function() {
                                     onProgress={onVideoProgress}
                                     onLoadedData={onVideoLoaded}
                                     onKeyDown={onInput}
+
                                     >
-                                    <source src={`${process.env.NEXT_PUBLIC_REMOTE}/watch/${videoPath}`} />
+                                    {
+                                        resolutions.length === 0 ?
+                                        <source src={`${process.env.NEXT_PUBLIC_REMOTE}/watch/${videoPath}`} />
+                                        :
+                                        <source src={`${process.env.NEXT_PUBLIC_REMOTE}/watch/${videoPath}/${resolutions[resolutions.length -1]}`} />
+
+                                    }
+                                    {/* <p>Your browser cannot play the provided video file.</p> */}
                             </video>
                                
 
                             <motion.div 
-                                                        variants={volumeVariants}
-                                                        initial="hidden"
-                                                        animate={isVolumeHover ? "show" : "hidden"}
-                                                        >
-                            <div onClick={onControllClick} ref={VideoControllerRef}  className={styles.video_controller}>
-                                <div id={"videoController"} className={styles.video_controller_wrapper}>
-
-                            <div className={`${shouldThumbShowing ?  styles.thumbPlayBt_Wrapper : styles.onStyle}`}>
+                             variants={volumeVariants}
+                             initial="hidden"
+                             animate={isVolumeHover ? "show" : "hidden"}
+                            >
+                            <div onClick={onControllClick} ref={VideoControllerRef}  className={styles.video_controller} >
+                                <div id={"videoController"} className={styles.video_controller_wrapper} >
+                                <div className={`${shouldThumbShowing ?  styles.thumbPlayBt_Wrapper : styles.onStyle}`}>
                                <motion.div 
-                                  className={styles.thumbPlayButton}
-                                  whileHover={{ scale: 1.1 }}
-                                  whileTap={{ scale: 0.9 }}
-                                  >
-                                  {displayIcon( BsPlay , 100 )}
-                                </motion.div >
+                                       className={styles.thumbPlayButton}
+                                       whileHover={{ scale: 1.1 }}
+                                       whileTap={{ scale: 0.9 }}
+                                >
+                                       {displayIcon( BsPlay , 100 )}
+                                </motion.div>
                             </div>
 
-
+                                   { !shouldThumbShowing &&
                                         <div className={styles.top_layer}>
-                                         <div className={styles.leftside}>
+                                           <div className={styles.leftside}>
                                                <span>{title}</span>
-                                         </div>
-
-                                        
-                                         <div className={styles.rightside}>
+                                           </div>
+                                          <div className={`${styles.rightside}`}>
                                              {
                                                  nextVideo.id !== 0 && 
-                                                 
-
                                                  <Popover placement="rightTop" content={
                                                      <Link href={`${nextVideo.id}`}>
-                                                    <a href="#">
-                                                        <div>
+                                                       <a href="#">
+                                                         <div>
 
-                                                      <Image loader={myLoader} height={80} width={100}
-                                                           src={`${nextVideo.id}`} alt={nextVideo.id.toString()}
+                                                           <Image loader={myLoader} height={80} width={100}
+                                                              src={`${nextVideo.id}`} alt={nextVideo.id.toString()}
                                                            />
-                                                    <span>{nextVideo.title}</span>
-                                                    </div>
-                                                    </a>
-                                                   </Link>
-                                                 } title="Next video"  trigger="click" >
-                                                     {
-                                                         !shouldFullScreen ? 
-                                                         <motion.div 
-                                                         className={styles.volume_icon}
-                                                             whileHover={{ scale: 1.1 }}
-                                                             whileTap={{ scale: 0.9 }}
-                                                             >
-                                                                 {displayIcon( GrFormNextLink , iconSize, "nextVideoIcon"  )}
-                                                           </motion.div >
-                                                     : ""
-                                                    }
-                                                     
+                                                           <span>{nextVideo.title}</span>
+                                                         </div>
+                                                        </a>
+                                                      </Link>
+                                                     } title="Next video"  trigger="click" >
+                                                     {   !shouldFullScreen ? 
+                                                         <div className={styles.volume_icon}>
+                                                                 <UseAnimations animation={arrowRightCircle} size={40} strokeColor={"white"} fillColor={"white"} speed={8}  />
+                                                         </div >
+                                                         : ""
+                                                     }
                                                  </Popover>
-
-                                             }
-                                            
-                                         </div>
-                                        </div>
+                                            }
+                                          </div>
+                                        </div> 
+                                        } 
+                                        { !shouldThumbShowing &&
                                         <div className={`${!shouldFullScreen ?   styles.video_bottom_controll: styles.video_bottom_controll_fullscreen}`}>
-                                                 
                                                  <div className={styles.time}>
-                                                     
-
                                                      <div className={styles.currentTime_container}>
                                                      <span>
                                                      {modifiedCurrentTime.minute < 10 ? "0"+modifiedCurrentTime.minute : modifiedCurrentTime.minute}
@@ -494,38 +593,39 @@ const handleFullscreen = function() {
                                                 
                                                 <Slider onChange={onVideoRangeChange}   value={videoRange} height={5} />
                                                 <div className={styles.video_bottom_controll_player}>
-                                                    <div> 
+                                                    <div className={styles.bottom__left}>
+
+                                                    <div className={styles.center} onClick={onPlayClick}> 
                                                    
                                                                 {
                                                                    
-                                                                   shouldPlay ?  displayIcon( BsPauseFill , iconSize  )
+                                                                   shouldPlay ?  displayIcon( BsPauseFill)
                                                                    :
-                                                                                 displayIcon( BsPlayFill , iconSize  )                
+                                                                                 displayIcon( BsPlayFill)                
                                                                 }  
                                                     </div>
                                                     <div onMouseEnter={onImageEnter} onMouseLeave={onImageLeave}>
-                                                    
-                                                   
                                                     <div
                                                         className={styles.volume_container}
-                                                        onClick={onVolumeIconClick}
-                                                    >
+                                                        
+                                                        >
                                                         <motion.div 
                                                             className={styles.volume_icon}
                                                             whileHover={{ scale: 1.1 }}
                                                             whileTap={{ scale: 0.9 }}
+                                                            onClick={onVolumeIconClick}
                                                             >
                                                         {
-                                                            volumeState === VolumeState.NORMAL &&  displayIcon( BsFillVolumeDownFill , iconSize) 
+                                                            volumeState === VolumeState.NORMAL &&  displayIcon( BsFillVolumeDownFill ) 
                                                         }
                                                         {
-                                                             volumeState === VolumeState.MUTED && displayIcon( BsFillVolumeMuteFill , iconSize)
+                                                            volumeState === VolumeState.MUTED && displayIcon( BsFillVolumeMuteFill )
                                                         }
                                                         {
-                                                             volumeState === VolumeState.UNMUTED && displayIcon( BsFillVolumeOffFill , iconSize) 
+                                                            volumeState === VolumeState.UNMUTED && displayIcon( BsFillVolumeOffFill ) 
                                                         }
                                                         {
-                                                            volumeState === VolumeState.LOAD &&  displayIcon( BsFillVolumeUpFill , iconSize) 
+                                                            volumeState === VolumeState.LOAD &&  displayIcon( BsFillVolumeUpFill ) 
                                                         }
                                                         </motion.div>
                                                         <motion.div 
@@ -537,9 +637,10 @@ const handleFullscreen = function() {
                                                                 value={volumeValue} 
                                                                 fillColor={"white"} 
                                                                 height={5} 
-                                                           />
+                                                                />
                                                         </motion.div>
                                                     </div>
+                                                </div>
                                                     
                                                     
 
@@ -562,11 +663,20 @@ const handleFullscreen = function() {
                                                               <div className={styles.downloadList_container}>
                                                                   
                                                                    {
-                                                                       downloadSelected === "" ?   <Spin/>
+                                                                       !userState.user ?   
+                                                                       <div className={styles.notLogin_container}>
+                                                                         <span>you aren't logged in</span>  
+                                                                         <Link href={`/login`}>
+                                                                            <a href="#">
+                                                                              Login
+                                                                            </a>
+                                                                          </Link>
+                                                                         <Spin/>
+                                                                        </div>
                                                                        :
 
                                                                             <ul ref={downloadListRef}>
-                                                                                {resolutions.map(r => <li key={r} onClick={onDowloadListitemClick}>{r}</li>)}
+                                                                                {resolutions.map(r => <li key={r} onClick={onDowloadListitemClick} >{r}</li>)}
                                                                                 <li onClick={onDowloadListitemClick}>MP3</li>
                                                                             </ul> 
                                                                    }
@@ -575,15 +685,23 @@ const handleFullscreen = function() {
                                                            </div> 
                                                            : ""
                                                            }
-                                                       
-                                                         <motion.div 
-                                                         onClick={onDownload} 
-                                                         whileHover={{ scale: 1.1 }}
-                                                         whileTap={{ scale: 0.9 }}
-                                                         >
-                                                          {displayIcon( BiDownload , iconSize )}
-                                                         </motion.div> 
-                                                        </div>
+                                                         
+                                                         
+                                                         <div className={`${styles.download_icon_container}`} onClick={onDownload} >
+                                                             
+
+                                                            { <motion.div 
+                                                                   className={`${downloadstatus !== DownloadStatus.ONPAUSE ? styles.noOpacity : styles.event_lister}`}
+                                                                   whileHover={{ scale: 1.1 }}
+                                                                   whileTap={{ scale: 0.9 }}
+                                                            >
+                                                               {displayIcon( BiDownload  )}
+                                                               
+                                                            </motion.div>} 
+                                                         </div>
+
+
+                                                    </div>
 
                                                        
                                                         <div className={`${styles.video_theater_container}`} >
@@ -595,13 +713,26 @@ const handleFullscreen = function() {
                                                               <div className={styles.pointer}></div>
 
                                                               <div className={styles.downloadList_container}>
-                                                                 <ul>
-                                                                    
-                                                                    <li>playback speed</li>
-                                                                    <li>Quality</li>
 
-                                                                 </ul> 
+                                                                  {/* menu start */}
+                                                                  <Menu 
+                                                                  style={{overflow:"auto"}}
+                                                                  items={[
+                                                                    {
+                                                                      key: '1',
+                                                                      label: 'playback speed',
+                                                                      children: getSpeedList(),
+                                                                    },
+                                                                    {
+                                                                      key: '2',
+                                                                      label: 'Quality',
+                                                                      children: getQualityChildren()
+                                                                    },
 
+                                                                    ]}
+                                                                  />
+
+                                                                  {/* menu end */}
                                                               </div>
                                                            </div> 
                                                            : ""
@@ -613,12 +744,15 @@ const handleFullscreen = function() {
                                                             onClick={onSettingClick} 
                                                             whileHover={{ scale: 1.1 }}
                                                             whileTap={{ scale: 0.9 }}
+                                                            className={styles.event_lister}
                                                             >
 
-                                                       {
-                                                           displayIcon( GoSettings , iconSize  )   
-                                                       }
-
+                                                       {/* {
+                                                           displayIcon( GoSettings   )   
+                                                       } */}
+                                                       
+                                                       <UseAnimations animation={settings2} size={40} strokeColor={"white"} fillColor={"white"}
+                                                        />
                                                        </motion.div> 
                                                         
                                                         </div>
@@ -634,54 +768,46 @@ const handleFullscreen = function() {
                                                             whileTap={{ scale: 0.9 }}
                                                             >
                                                         {
-                                                            isTheater ?  displayIcon( MdCropSquare , iconSize  )    :  displayIcon( BiRectangle , iconSize  ) 
+                                                            isTheater ?  displayIcon( MdCropSquare   )    :  displayIcon( BiRectangle   ) 
                                                         } 
                                                          </motion.div> 
                                                           
                                                          : ""
                                                         }
                                                         
-
-
-                                                        <motion.div   className={`${styles.video_full_btn_container}`} 
+                                                        
+                                                        {/* at the moment Fullscreen is not supported  */}
+                                                        {/* <motion.div   className={`${styles.video_full_btn_container}`} 
                                                                whileHover={{ scale: 1.1 }}
                                                                transition={{duration:0.6}}
                                                                onClick={() => handleFullscreen()}
-
-                                                        >
-
+                                                            >
                                                             {
-                                                                shouldFullScreen ?  displayIcon( BsFullscreenExit , iconSize- 5  ) :  displayIcon( BsFullscreen , iconSize- 5  ) 
-                                                            }
-                                                            
-                                                            
-                                                                
-                                                                                
-                                                        </motion.div>
+                                                                shouldFullScreen ?  displayIcon( BsFullscreenExit  ) :  displayIcon( BsFullscreen ) 
+                                                            }                     
+                                                            </motion.div> */}
+                                                       
                                                     </div>
                                                      
                                                     }
+                                                           {downloadstatus !== DownloadStatus.ONPAUSE && <div className={styles.progressBar}>
+                                                              <Progress percent={progressPercent} status="active"   type="line"
+                                                                        strokeColor={{
+                                                                        '0%': '#108ee9',
+                                                                        '100%': '#87d068',
+                                                                        }}        
+                                                            trailColor={"white"}
+                                                            strokeLinecap={"round"} 
+                                                            showInfo={downloadstatus !== DownloadStatus.ONPAUSE}
+                                                            strokeWidth={3}
+                                                            style={{pointerEvents:"none"}}     
+                                                            />
+                                                            </div>}
                                                 </div>
                                         </div>
+                                        }
                                     </div>
                             </div>
-
-
-                            <div className={styles.progressBar}>
-                  <Progress percent={progressPercent} status="active" 
-                            strokeColor={{
-                              '0%': '#108ee9',
-                              '100%': '#87d068',
-                            }}        
-                            trailColor={"white"}
-                            strokeLinecap={"square"} 
-                            type={"line"}
-                            size={"small"}        
-                  />
-              </div>
-
-
-
                             </motion.div>
                     </div>
                     </motion.div> 

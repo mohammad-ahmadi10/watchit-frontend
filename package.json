@@ -14,6 +14,7 @@
     "@types/antd": "^1.0.0",
     "antd": "^4.20.2",
     "axios": "^0.26.1",
+    "browser-image-compression": "^2.0.0",
     "csstype": "^3.0.11",
     "framer-motion": "^6.2.9",
     "js-file-download": "^0.4.12",
