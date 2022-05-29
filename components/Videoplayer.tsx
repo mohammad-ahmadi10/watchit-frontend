@@ -70,12 +70,14 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
     const [shouldFade , setShouldFade] = useState(false);
     const [volumeState , setVolumeState] = useState(VolumeState.NORMAL)
     const [isVolumeHover , setIsVolumeHover ] = useState(false);
-    const [isTheater, setIsTheater] = useState(false);
+    const [isTheater , setIsTheater] = useState(false);
     const [shouldThumbShowing, setShouldThumbShowing] = useState(true);
     const [downloadPopup , setDownloadPopup] = useState(false);
     const [settingPopup , setSettingPopup] = useState(false);
     const [downloadSelected, setDownloadSelected] = useState(" ");
     const [progressPercent , setProgressPercent] = useState(0);
+    const [token , setToken] = useState("");
+
 
     // useRef
     const videoPlayerRef = useRef<HTMLVideoElement>(null)!;
@@ -84,6 +86,10 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
     const downloadListRef = useRef<HTMLUListElement>(null);
     const nextVideo = useSelector(selectVideo)
     
+    useLayoutEffect(() =>{
+        const actoken = localStorage.getItem("ACTKEN");
+        setToken(actoken)
+    })
 
     const userState = useSelector(selectUser)
     const dispatch = useDispatch();
@@ -92,7 +98,6 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
     const handleKeyDown = (event:React.mouesEvent) => {
         if(event){
             if(event.target.className.includes && !event.target.className.includes("event_lister")){
-                console.log('A key was pressed', event);
                 setDownloadPopup(false);
                 setSettingPopup(false);
             }
@@ -663,7 +668,7 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
                                                               <div className={styles.downloadList_container}>
                                                                   
                                                                    {
-                                                                       !userState.user ?   
+                                                                       token === null || token.length <= 0 ?   
                                                                        <div className={styles.notLogin_container}>
                                                                          <span>you aren't logged in</span>  
                                                                          <Link href={`/login`}>

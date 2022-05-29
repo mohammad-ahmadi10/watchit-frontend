@@ -1,6 +1,6 @@
 import axios from "axios";
 import { login , register} from "..//src/features/userSlice";
-import { store } from '../src/store';
+import {  store  } from '../src/store';
 
 /* "http://192.168.188.52:8200"  "https://api.theone-web.com" */
 const BASE_URL = "https://api.theone-web.com";
@@ -9,6 +9,7 @@ const instance = axios.create({
 });
 
 if (typeof window !== 'undefined') {
+
   const token = localStorage.getItem("ACTKEN");
   instance.interceptors.request.use(
     (config)=> {
@@ -33,6 +34,7 @@ if (typeof window !== 'undefined') {
         }))
       }
       else if(status === 400){
+        
         store.dispatch(register({
           user: null,
           logIn:false,
@@ -40,19 +42,22 @@ if (typeof window !== 'undefined') {
         }))
       }       
       else if(err.response?.status === 409){
-        store.dispatch(register({
+        const ms  = store.dispatch(register({
           user: null,
           logIn:false,
           errorMSG:err?.response?.data
         }))
+        localStorage.setItem("user", JSON.stringify(ms));
+
         
       }
       else if(status === 403){
-        store.dispatch(login({
+        const ms = store.dispatch(login({
           user: null,
           logIn:false,
           errorMSG:err?.response?.data
         }))
+        localStorage.setItem("user", JSON.stringify(ms));
       }
       else{
         store.dispatch(login({
@@ -77,11 +82,12 @@ if (typeof window !== 'undefined') {
         
       } catch (error) {
         if(axios.isAxiosError(error)){
-          store.dispatch(login({
+          const ms = store.dispatch(login({
             user: null,
             logIn:false,
             errorMSG:"Invalid refreshtoken"
           }))
+          localStorage.setItem("user", JSON.stringify(ms));
           return error.response?.data;
         }
       }

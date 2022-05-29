@@ -1,4 +1,4 @@
-import type { GetServerSideProps, NextPage } from 'next'
+import type {  NextPage } from 'next'
 import Head from 'next/head'
 import styles from '../styles/Home.module.scss'
 import Link from 'next/link'
@@ -6,23 +6,27 @@ import Image from 'next/image';
 import {useDispatch, useSelector} from "react-redux";
 import { selectUser } from './../src/store';
 import costumAxios from "../utils/axios";
-import useSWR from "swr";
 import { SpinnerDotted } from 'spinners-react';
 import useLayoutEffect from "../utils/IsOrmorphicLayoutEffect";
 import Router from 'next/router'
 import { login, logout } from '../src/features/userSlice';
-
-
-const fetcher = async() => {
-  const res =  await costumAxios.get("/");
-  return res.data
-}
+import {regularTime} from "../utils/functions";
+import axios from "axios";
+import {VideoPrevData} from "../types/page";
+import { motion } from "framer-motion"
+import UseAnimations from "react-useanimations";
+import bookmark from 'react-useanimations/lib/bookmark'
+import {BiCheckShield } from "react-icons/bi";
+import {modifyUplodedDate , modifyAmountOfView} from "../utils/functions";
 
 
 interface HomeProps{
-  VideoPrevData:[VideoPrevData]
+  videos:[VideoPrevData]
 }
 
+const onBookmarkClicked = (_:any) =>{
+        
+}
 
 export const myLoader=({src}:any)=>{
   return `${process.env.NEXT_PUBLIC_REMOTE}/watch/thumb/${src}`;
@@ -34,40 +38,54 @@ export const myLoader=({src}:any)=>{
         is an object von type VideoPrewData 
 */
 export const displayImage = (file:VideoPrevData) =>{
-  let date = new Intl.DateTimeFormat('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }).format(+file.date)
-   return <div key={file.id}  id={file.id}>
-             <Link href={`watch/${file.id}`}>
-               <a href="#">
-                 <Image loader={myLoader} height={200} width={200}
-                      src={`${file.id}`} alt={file.id}
-                  />
-               </a>
-             </Link>
-             <span>{file.title}</span>
-               <span>{date}</span>
-               <span>{file.duration.minute}:{file.duration.second}</span>
-           </div>
+  const [minute, second] = regularTime(file.duration);
+
+  return <Link href={`watch/${file.id}`} key={file.id}  id={file.id} className={styles.otherVideoContainer}>
+  <a href="#" className={styles.thumbContainer}>
+    <div className={styles.img_wrapper}>
+       <Image loader={myLoader} height={160} width={200}
+            src={`${file.id}`} alt={file.id} layout="fixed"
+        />
+        <div className={styles.duration_container}>
+         <span>{minute}</span>
+         :
+         <span>{second}</span>
+      </div>
+    </div>
+
+      
+    <motion.div 
+      whileHover={{ scale: 1.3 }}
+      className={styles.bookmarkContainer}
+    >
+         <UseAnimations animation={bookmark}  strokeColor={"white"} fillColor={"white"} onClick={onBookmarkClicked}/>
+    </motion.div>
+  
+   <div className={styles.videoInfoContainer}>
+     <span>{file.title}</span>
+     <div className={styles.usernameContainer}>
+       <span>{file.username}</span>
+       <BiCheckShield size={18} style={{color:"green"}}/>
+     </div>
+     <div className={styles.view_dateContainer}>
+          <span>{modifyAmountOfView(/* +file.view */ 20)}</span>
+          <span>{modifyUplodedDate(new Date(file.date))} </span>
+     </div>
+    </div>
+  </a>
+</Link>
 }
 
 /*
  calling the api and getting videos back
 */
-export const getVideos = () =>{
-  const {data , error} = useSWR('/' , fetcher)
-  return {
-    videos:data,
-    isLoading: !error && !data,
-    isError:error
-  }
-}
 
-const Home: NextPage<HomeProps> = () => {
+
+const Home: NextPage = ({videos}:HomeProps) => {
   const dispatch = useDispatch();
-  
   const user = useSelector(selectUser).user
   const message = useSelector(selectUser).errorMSG;
 
-  const {videos,isLoading,isError} = getVideos();
 
   useLayoutEffect(() =>{
       if(message.includes("Invalid refresh")){
@@ -95,8 +113,8 @@ const Home: NextPage<HomeProps> = () => {
       <div className={styles.main}>
 
             {
-              isLoading ? <SpinnerDotted/> :
-              videos &&  videos.map((d:VideoPrewData) => {
+              
+              videos &&  videos.map((d:VideoPrevData) => {
                 return displayImage(d);
               }) 
             }
@@ -110,6 +128,19 @@ const Home: NextPage<HomeProps> = () => {
     </div>
   )
 }
+
+Home.getInitialProps  = async () =>{
+  try {
+  const {data} = await costumAxios.get("/");
+  return{videos:data}
+    
+  } catch (error) {
+    if(axios.isAxiosError(error)){
+      return {};
+    }
+  }
+}
+
 
 
 

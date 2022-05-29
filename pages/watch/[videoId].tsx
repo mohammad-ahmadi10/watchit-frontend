@@ -1,14 +1,13 @@
-import Router, {useRouter} from "next/router";
+import  {useRouter} from "next/router";
 import { NextPageContext } from "next";
 import Videoplayer from "../../components/Videoplayer";
 import styles from "../../styles/videoPage.module.scss";
 import clientAxios from "../../utils/axios";
 import axios from 'axios';
 import useLayoutEffect from "../../utils/IsOrmorphicLayoutEffect";
-import costumAxios from "../../utils/axios";
 import Link from "next/link";
-import {useRef , useState , useCallback } from "react";
-import { useDispatch, useSelector } from 'react-redux';
+import {useRef , useState  } from "react";
+import { useDispatch } from 'react-redux';
 import { setNextVideo } from '../../src/features/VideoSlice';
 import Image from 'next/image';
 import {regularTime} from "../../utils/functions";
@@ -18,7 +17,8 @@ import {BsBookmarkStar , BsBookmarkStarFill} from "react-icons/bs";
 import { motion } from "framer-motion"
 import UseAnimations from "react-useanimations";
 import bookmark from 'react-useanimations/lib/bookmark'
-import {VideoPrevData} from "../../types";
+import {VideoPrevData} from "../../types/page";
+import {modifyUplodedDate , modifyAmountOfView} from "../../utils/functions";
 
 
 interface Video{
@@ -70,44 +70,7 @@ const  Video = (props:videoProps) => {
     </>
   }
   
-  const onBookmarkClicked = (_) =>{
-        
-  }
-
-
-  const modifyAmountOfView = (view:number)=>{
-    let modifiedViews = ""
-    if(view === 1){
-      modifiedViews = `${view} view . `
-    }
-    else if(view <= 0)
-      modifiedViews = ""
-    else 
-    modifiedViews = `${view} views . `
-    return <span>{modifiedViews}</span>
-  }
-
-  const modifyUplodedDate = (d:Date) =>{
-    let now = new Date()
-
-    const year = now.getFullYear() - d.getFullYear();
-    const month = now.getMonth() - d.getMonth();
-    const day = now.getDate() - d.getDate();
-    
-    if(year > 0){
-       return `since ${year} year${year > 1 ?  "s" : ""} ago`   
-    }
-    if(year === 0){
-      
-      if(month > 0 )
-       return `since ${month} month${month > 1 ? "s" : ""} ago`
-      
-      else if(month === 0){
-        if(day > 0)
-        return `since ${day} day${day > 1 ? "s" : ""} ago`
-        else return `since today`
-      }
-    }    
+  const onBookmarkClicked = (_:any) =>{ 
   }
 
     const myLoader=({src}:any)=>{
@@ -120,7 +83,6 @@ const  Video = (props:videoProps) => {
             is an object von type Video 
     */
     const displayImage = (file:Video) =>{
-      
       let date = new Intl.DateTimeFormat('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }).format(+file.date)
       const [minute, second] = regularTime(file.duration);
        return <Link href={`${file.id}`} key={file.id}  id={file.id} className={styles.otherVideoContainer}>

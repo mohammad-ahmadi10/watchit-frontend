@@ -1,4 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { HYDRATE} from 'next-redux-wrapper';
+
+
 
 import {
     Action,
@@ -55,11 +58,23 @@ export const userSlice = createSlice({
             state.errorMSG = ""
         }
 
-    }
+    },
+    extraReducers: {
+        [HYDRATE]: (state, action) => {
+            console.log('HYDRATE', state, action.payload);
+            return {
+                ...state,
+                ...action.payload.subject,
+            };
+        },
+    },
+
 })
 
 export const {login , logout , register} = userSlice.actions;
 
+
 export default  userSlice.reducer;
+//export default  userSlice;
 
 

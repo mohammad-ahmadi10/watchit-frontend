@@ -79,25 +79,27 @@ function Register() {
         const tokens = response.data.tokens;
         localStorage.setItem("ACTKEN", tokens.ACTKEN)
         localStorage.setItem("SSRFSH", tokens.SSRFSH)
-        const {id, username, email} = response.data!.user; 
+        const {id, username, email, avatar} = response.data!.user; 
         setPassword(id);
         const newUser:User = {
         id,
         username,
         email,
-        profileImage:"",
+        profileImage:avatar,
         }
 
-        dispatch(login({
+        const ms = dispatch(login({
             user: newUser,
             logIn:true,
             errorMSG:""
         }))
-
+        localStorage.setItem("user", JSON.stringify(ms));
         setPassword("")
         setEmailUsername("") 
-        
-        Router.push("/")
+        setTimeout(() =>{
+            Router.back()
+            
+        }, 1000)
         }else{
             errRef.current!.focus();
             setErrMSG("no Response");

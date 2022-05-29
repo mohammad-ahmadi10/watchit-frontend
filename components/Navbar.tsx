@@ -14,7 +14,6 @@ import menu from "react-useanimations/lib/menu"
 import UseAnimations from 'react-useanimations';
 import infinity from "react-useanimations/lib/infinity"
 
-
 import { Button } from 'antd';
 import {CgMenu , CgClose} from "react-icons/cg";
 import {AiOutlineHome} from "react-icons/ai";
@@ -27,23 +26,23 @@ import useLayoutEffect from "../utils/IsOrmorphicLayoutEffect";
 import costumAxios from "../utils/axios";
 import { selectUser } from '../src/store';
 import { useSelector } from 'react-redux';
-import { User} from '../src/features/userSlice';
 import {useRouter} from 'next/router'
 
 import Image from 'next/image';
 import {BsFillPersonFill} from "react-icons/bs";
 import {UploadStatus} from "../utils/enums";
+import {forceReload} from "../utils/functions";
 
 
 const variants = { 
-  open: { opacity: 1, x: 0, transition:{stiffness: 100} },
+  open: { opacity: 1, x: 0, transition:{stiffness: 5, staggerChildren: 0.05 } },
+  closed: { opacity: 0, x: "-100%" },
+}
+const item = {
+  open: { opacity: 1, x: 0 },
   closed: { opacity: 0, x: "-100%" },
 }
 
-const onLogout = async (e:React.MouseEvent<HTMLParagraphElement>) =>{
-  const response = await clientAxios.get("auth/logout");
-  console.log(response.data)
-}
 
 
 
@@ -54,15 +53,27 @@ function Navbar() {
   const [avatar, setAvatar] = useState("");
   const [isAvatarClicked, setIsAvatarClicked] = useState(false);
   const [upStatus,  setUploadStatus] = useState(UploadStatus.ONSTART);
-  const [newUser, setNewUser] = useState(false);
-  const user = useSelector(selectUser).user
-
+  const [user,setUser] = useState(null);
+  
   const router = useRouter();
+  const [token , setToken] = useState("");
 
-
-  const forceReload = () =>{
-    router.reload();
+  useLayoutEffect(() =>{
+      const actoken = localStorage.getItem("ACTKEN");
+      setToken(actoken)
+  })
+  
+  const onLogout = async (e:React.MouseEvent<HTMLParagraphElement>) =>{
+    const response = await clientAxios.get("auth/logout");
+    if(response.status === 200){
+      localStorage.setItem("ACTKEN", "")
+      localStorage.setItem("SSRFSH", "")
+      localStorage.setItem("user" , "")
+      setUser(null);
+      forceReload(router)
+    }
   }
+  
 
   const onNavbarContainerClick = (e:React.MouseEvent<HTMLDivElement>) =>{
     const el = e.target as HTMLDivElement;
@@ -75,27 +86,37 @@ function Navbar() {
 
   
 
-  const getUser = async (user:User) =>{
+  const getUser = async () =>{
     
-    setUsername(user.username)
-    if(user.profileImage.length > 0){
+    const userSt = localStorage.getItem("user");
+    if(userSt){
+      const {user} = JSON.parse(userSt).payload;
+      if(user === null) return;
+      setUser(user);
+      setUsername(user.username)
       setAvatar("")
       const res = await costumAxios.get(`/auth/avatar`, {responseType: 'blob'});
       let blob = new Blob([ res.data ], {type: 'image/jpeg'}) 
       const objectURL = URL.createObjectURL(blob);
       setAvatar(objectURL)
       setIsAvatarClicked(false)  
+    }else{
+      const token = localStorage.getItem("ACTKEN");
+      if(token){
+        setTimeout(() =>{
+          forceReload(router); 
+        }, 250)
+      }
     }
   }
 
   useLayoutEffect(()=>{
-    (async () => {
-      if(user){
-        await getUser(user);
-      }  
+    
+    (async () => { 
+        await getUser();
     })();
 
-  },[user])
+  },[])
 
   const onFileUpload = useCallback( async (files , err)=>{
     const file = files[0];
@@ -119,12 +140,7 @@ function Navbar() {
       });
       if(res.status === 200){
         setUploadStatus(UploadStatus.ONSTART);
-        console.log(user.username)
-        if(user){
-          await getUser(user)
-        }
-        
-
+        await getUser()
       }
 
     }catch(e){
@@ -146,12 +162,16 @@ function Navbar() {
 
   const avatarTooltip = () => (<span>change your avatar</span>)
 
+
+ 
   return (
     <div className={styles.navbarContainer} onClick={onNavbarContainerClick}>
       <div className={styles.navbarWrapper}>
 
         <div className={styles.start}>  
         <motion.div
+             initial="closed"
+
              animate={isOpen ? "closed" : "open"}
              variants={variants}
              className={styles.nav_menu_closed}
@@ -166,25 +186,30 @@ function Navbar() {
             <motion.nav
              animate={isOpen ? "open" : "closed"}
              variants={variants}
+             initial="closed"
              className={styles.nav_menu}
             >
               
-              <ul>
-                <li className={styles.start_nav_opened}>
+              <motion.ul
+                     animate={isOpen ? "open" : "closed"}
+                     variants={variants}
+                     initial="closed"
+              >
+                <motion.li variants={item}  className={styles.start_nav_opened}>
                   <span><CgClose size={iconSize} onClick={() => setIsOpen(s =>!s)}/></span>
                   <span>LOGO</span>  
-              </li>
+              </motion.li>
                 
-                <li>
+                <motion.li variants={item} >
                     <Link href={"/"}>
                       <a href={"#"}>  
                                       <span><AiOutlineHome size={iconSize}/></span>
                                       <span>Home</span>
                       </a>
                     </Link>
-                </li>
+                </motion.li>
 
-                <li>
+                <motion.li variants={item} >
                   <Link href={"/profile"}>
                     <a href={"#"}>
                       <span>
@@ -195,8 +220,8 @@ function Navbar() {
                       </span>
                     </a>
                   </Link> 
-                </li>
-                <li>
+                </motion.li>
+                <motion.li variants={item} >
                   <Link href={"/upload-video"}>
                     <a href={"#"}>
                       <span><TiUploadOutline size={iconSize}/></span>
@@ -205,8 +230,8 @@ function Navbar() {
                       </span>
                     </a>
                   </Link>
-                </li>
-                <li>
+                </motion.li>
+                <motion.li variants={item} >
                   <Link href={"/history"}>
                       <a href={"#"}>
                         <span>
@@ -216,15 +241,15 @@ function Navbar() {
                          History
                         </span>
                       </a>
-                  </Link></li>
-                <li className={styles.logout}> 
+                  </Link></motion.li>
+                <motion.li variants={item}  className={styles.logout}> 
                      <Button type="primary" ghost size={"large"} 
                              style={{width:"100%"}}>
                             Logout
                      </Button>
 
-                </li>
-              </ul>
+                </motion.li>
+              </motion.ul>
 
             </motion.nav>
         </div>
@@ -234,7 +259,7 @@ function Navbar() {
 
         <div className={styles.end}>
          
-        {!user ? <Button type="primary" ghost size={"large"}>
+        {user === null || token === null || token.length <= 0 ? <Button type="primary" ghost size={"large"}>
                   <Link href={"/login"}>
                       <a href={"#"}>
                          Login

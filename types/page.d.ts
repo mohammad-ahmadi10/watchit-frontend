@@ -14,7 +14,7 @@ export interface VideoPrevData{
   title:string,
   folder:string,
   date:string,
-  duration:{minute:number , second:number},
+  duration:number,
   view:number,
   userID:Number,
   username:string,

@@ -2,6 +2,7 @@
 @use  "styles/breakpoints" as bp;
 
 .navbarContainer{
+    
     position:fixed;
     z-index:1000;
     background:linear-gradient(180deg, rgba(62, 66, 183, 0.5)  ,  rgba(62, 66 , 193,0.05) 94%);
@@ -10,8 +11,6 @@
     @include ux.center(row);
     justify-content:flex-start;
     padding: 0px 20px;
-    
-    
 }
 
 .start{
