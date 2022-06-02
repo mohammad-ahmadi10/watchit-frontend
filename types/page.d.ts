@@ -12,11 +12,18 @@ export type Page<P = {}> = NextPage<P> & {
 export interface VideoPrevData{
   id:string,
   title:string,
-  folder:string,
   date:string,
   duration:number,
   view:number,
   userID:Number,
   username:string,
-  
+  description:string
+}
+
+
+export interface UserData {
+  id:string,
+  username:string,
+  email:string,
+  avatar:string
 }

@@ -20,18 +20,20 @@ import {AiOutlineHome} from "react-icons/ai";
 import {ImProfile} from "react-icons/im";
 import {TiUploadOutline} from "react-icons/ti";
 import {VscHistory} from "react-icons/vsc";
+import {IoIosSearch} from "react-icons/Io";
 
 import Link from 'next/link'
 import useLayoutEffect from "../utils/IsOrmorphicLayoutEffect";
 import costumAxios from "../utils/axios";
-import { selectUser } from '../src/store';
-import { useSelector } from 'react-redux';
+
 import {useRouter} from 'next/router'
 
 import Image from 'next/image';
 import {BsFillPersonFill} from "react-icons/bs";
 import {UploadStatus} from "../utils/enums";
 import {forceReload} from "../utils/functions";
+import { ReactSearchAutocomplete } from 'react-search-autocomplete'
+import {VideoPrevData} from "../types/page";
 
 
 const variants = { 
@@ -43,6 +45,13 @@ const item = {
   closed: { opacity: 0, x: "-100%" },
 }
 
+
+interface searchedTitleType{
+  sIndex:number,
+  eIndex:number,
+  title:string,
+  id:string
+}
 
 
 
@@ -58,10 +67,83 @@ function Navbar() {
   const router = useRouter();
   const [token , setToken] = useState("");
 
+  const [titles, setTitles] = useState<searchedTitleType[]>();
+  const [shouldShowSearchSuggestion,setShouldShowSearchSuggestion] = useState(false);
+  const [load, setLoad] = useState(false);
+
+  // end search
+  const onSearchChange = async (s:React.ChangeEvent) => {
+    try{
+      setLoad(false)
+      const input = s.target as HTMLInputElement;
+      const searchKey = input.value
+      const {data} = await clientAxios.get(`${process.env.NEXT_PUBLIC_REMOTE}/watch/search_query/${searchKey}`)
+        
+        let modifiedTitles = [];
+        if(data.length > 0){
+          modifiedTitles = data.map((v:VideoPrevData) => {
+            const title = v.title.toLowerCase();
+            const sIndex = title.indexOf(searchKey) 
+            const eIndex = sIndex+(searchKey.length)
+            return {sIndex,eIndex, ...v, title}
+          })
+        }
+        
+        setTitles(modifiedTitles)
+        setLoad(false)
+        setShouldShowSearchSuggestion(true)
+    }catch(e){
+      setTitles([])
+        setShouldShowSearchSuggestion(false)
+        setLoad(false)
+    }
+  }
+  
+  
+
+  const onSearch = async (s:string) =>{
+        
+  }
+
+  interface costumHTMLElement extends HTMLElement{
+     name?:string
+  }
+  const handleKeyDown = (e:React.MouseEvent) => {
+      const t = e.target as costumHTMLElement;
+      if(t.name && t.name.includes("search"))return;
+
+      setShouldShowSearchSuggestion(false)
+  }
+
+  const onSearchClick = (e:any)=>{
+    setShouldShowSearchSuggestion(true)
+  }
+
+  const onSearchEnter = (e:any)=>{
+    const t = e.target as HTMLInputElement;
+    const value = t.value;
+
+    router.push(`/search/search-query=${value}`)
+    
+  }
+
+  useLayoutEffect(() => {
+    window.addEventListener('click', handleKeyDown);    
+    // cleanup this component
+    return () => {
+      window.removeEventListener('click', handleKeyDown);
+    };
+  }, []);
+
+
   useLayoutEffect(() =>{
       const actoken = localStorage.getItem("ACTKEN");
+      if(actoken !== null)
       setToken(actoken)
   })
+
+
+
   
   const onLogout = async (e:React.MouseEvent<HTMLParagraphElement>) =>{
     const response = await clientAxios.get("auth/logout");
@@ -87,7 +169,6 @@ function Navbar() {
   
 
   const getUser = async () =>{
-    
     const userSt = localStorage.getItem("user");
     if(userSt){
       const {user} = JSON.parse(userSt).payload;
@@ -111,12 +192,12 @@ function Navbar() {
   }
 
   useLayoutEffect(()=>{
-    
     (async () => { 
         await getUser();
     })();
-
   },[])
+ 
+
 
   const onFileUpload = useCallback( async (files , err)=>{
     const file = files[0];
@@ -180,7 +261,14 @@ function Navbar() {
               <span>
                 <CgMenu size={iconSize}/>
               </span>
-              <span>LOGO</span>  
+                   <span>
+                   <Link href={"/"}>
+                      <a href={"#"}>  
+                                      <span>LOGO</span>
+                      </a>
+                    </Link>  
+                   </span>
+                   
         </motion.div>
             
             <motion.nav
@@ -200,17 +288,17 @@ function Navbar() {
                   <span>LOGO</span>  
               </motion.li>
                 
-                <motion.li variants={item} >
+                <motion.li variants={item}>
                     <Link href={"/"}>
                       <a href={"#"}>  
-                                      <span><AiOutlineHome size={iconSize}/></span>
-                                      <span>Home</span>
+                          <span><AiOutlineHome size={iconSize}/></span>
+                          <span>Home</span>
                       </a>
                     </Link>
                 </motion.li>
 
                 <motion.li variants={item} >
-                  <Link href={"/profile"}>
+                  <Link href={`/user/${username}`}>
                     <a href={"#"}>
                       <span>
                         <ImProfile size={iconSize}/>
@@ -243,7 +331,7 @@ function Navbar() {
                       </a>
                   </Link></motion.li>
                 <motion.li variants={item}  className={styles.logout}> 
-                     <Button type="primary" ghost size={"large"} 
+                     <Button type="primary" onClick={onLogout} ghost size={"large"} 
                              style={{width:"100%"}}>
                             Logout
                      </Button>
@@ -254,18 +342,50 @@ function Navbar() {
             </motion.nav>
         </div>
         <div className={styles.center}>
-            <Search placeholder="search" loading enterButton size={"large"} style={{width:500}}/>
+            <Search placeholder="search..." loading={load} size={"large"} 
+                                        
+                                         onSearch={onSearch} 
+                                         onChange={onSearchChange}
+                                         allowClear
+                                         className={styles.search}
+                                         onClick={onSearchClick}
+                                         onPressEnter={onSearchEnter}
+                                         name={"search"}
+                                         
+                                         />
+           {shouldShowSearchSuggestion && <div className={styles.search_items}> 
+                  {titles !== null && typeof titles !== "undefined" && titles.map((s,k) =>  
+                                      {
+
+                                        return  <span key={k}><Link href={`/search/search-query=${s.title}`} >
+                                                      <a href={"#"}>
+                                                         <span>
+                                                          
+                                                          {s.title.slice(0,s.sIndex)}
+                                                          <strong>{s.title.slice(s.sIndex,s.eIndex)}</strong>
+                                                          {s.title.slice(s.eIndex)}
+                                                         </span>
+                                                         <IoIosSearch size={25} style={{color:"black", marginRight:"5px"}}/>
+                                                      </a>
+                                                </Link></span>
+                                     }
+                              )
+                                  
+                 }
+            </div>
+           }
         </div>
 
         <div className={styles.end}>
          
-        {user === null || token === null || token.length <= 0 ? <Button type="primary" ghost size={"large"}>
+        {user === null || token === null || token.length <= 0 ? 
+                <Button type="primary" ghost size={"large"}>
                   <Link href={"/login"}>
                       <a href={"#"}>
                          Login
                       </a>
                   </Link>
-                  </Button>
+                </Button>
         :
          
         <Tooltip placement="left" title={avatarTooltip}>

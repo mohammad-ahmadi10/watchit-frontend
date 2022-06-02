@@ -148,7 +148,10 @@ const  Video = (props:videoProps) => {
          
          <div className={`${theaterMode ? styles.videoplayer__theater_wrapper : styles.videoplayer_wrapper }`}>
               <div ref={standardRef} className={`${!theaterMode && styles.standard_wrapper}`}>
+                <div className={styles.innerVideoWrapper}>
                  {setVideoPlayer(metadata, videoId)}
+                </div>
+
               </div>      
               <div ref={otherVideosContainerRef} className={styles.other_videos_container}>
                   <div className={styles.wrapper}>

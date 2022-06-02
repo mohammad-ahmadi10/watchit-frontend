@@ -196,7 +196,7 @@ useLayoutEffect( ()=>{
 const onTitleChange = (e:React.ChangeEvent<HTMLInputElement>) =>{
   const inputElement = e.target as HTMLInputElement;
  
-  setTitle(inputElement.value)
+  setTitle(inputElement.value.toLowerCase())
 }
 
 const onDescriptionChange = (e:React.ChangeEvent<HTMLTextAreaElement>) =>{

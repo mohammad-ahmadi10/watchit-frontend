@@ -2,6 +2,8 @@
 @use "styles/utilsMixin" as ux;
 
 
+
+
 .video_container{
     display: flex;
     justify-content: center;
@@ -10,7 +12,10 @@
     width: 100%;
     height: 100vh;
     @include ux.moveY();
-    
+}
+
+.innerVideoWrapper{
+
 }
 
 
@@ -21,6 +26,9 @@
     display:grid;
     grid-template-columns:2fr  1fr;
 
+    @include bp.xxl{
+        grid-template-columns: 1.5fr 1fr;
+    }
     @include bp.md{
         grid-template-columns:3fr;
     }
@@ -48,6 +56,9 @@
     padding:20px;
 /*     grid-column: span 3;
     grid-row: span 3; */
+
+    display:flex;
+    justify-content:flex-end;
 
 }
 
@@ -114,6 +125,7 @@
     font-weight: 400;
     letter-spacing:1px;
     text-align:center;
+    color:white;
 }
 
 .bookmarkContainer{

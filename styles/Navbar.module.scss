@@ -1,5 +1,7 @@
 @use "styles/utilsMixin" as ux;
 @use  "styles/breakpoints" as bp;
+@use "sass:color";
+@use "styles/variables" as *;
 
 .navbarContainer{
     
@@ -11,17 +13,85 @@
     @include ux.center(row);
     justify-content:flex-start;
     padding: 0px 20px;
+
+    @include bp.xs{
+        position:relative;
+        height:120px;
+        
+    }
+
+    .navbarWrapper{
+        @include bp.xs{
+            position:relative;
+            @include ux.center(column);
+            
+        }
+    }
+
 }
 
 .start{
     @include ux.center(row);
     height:100%;
+
+    @include bp.xs{
+        position:relative;
+        align-self: flex-start;
+        margin-bottom:10px;
+    }
+
+    
+
 }
 
 .center, .end{
     height:100%;
     @include ux.center(row);
     padding:10px;
+}
+
+.center{
+    position:absolute;
+    width:500px;
+    z-index:20;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    padding:0;
+    display:inline-block;
+    color:black;
+    margin-top:5px;
+        
+    & > span {
+        color:black;
+        
+        &  span{
+                left:0!important;
+        } 
+
+    }
+
+
+    @include bp.sm{
+    width:300px;
+    }
+    @include bp.xs{
+        width:100%;
+        position:relative;
+        order:2;
+    }
+
+}
+
+.end{
+
+    @include bp.xs{
+        position:absolute;
+        justify-self:flex-start;
+        align-self: flex-end;
+        top:-26px;
+    }
 }
 
 .navbarWrapper{
@@ -40,6 +110,11 @@
     width:100vw;
     height:100vh;
     z-index:100;
+
+    @include bp.xs{
+        align-self: flex-start;
+        height:100vh;
+    }
 
     & ul{
       background:rgba(62, 66, 183, 1);
@@ -161,4 +236,34 @@
 .popup_title{
     @include ux.center(row);
     justify-content:space-between;
+}
+
+.search_items{
+    background:white;
+  
+   
+      
+      & > span{
+          display:block; 
+          height:45px;
+          font-family:"Sancs-pro";
+          letter-spacing: 1px;
+          &:hover{
+              background-color: color.scale($primary-color, $lightness: 80%);
+          }
+          
+          a{
+              display:flex;
+              align-items:center;
+              color:black;
+              height:100%;
+              width:100%;
+              & > span{
+                  width:100%;
+                  display:flex;
+                  align-items:center;
+                  padding-left:13px;
+              }
+          }
+      }    
 }

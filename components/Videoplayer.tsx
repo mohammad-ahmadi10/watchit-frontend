@@ -88,6 +88,7 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
     
     useLayoutEffect(() =>{
         const actoken = localStorage.getItem("ACTKEN");
+        if(actoken)
         setToken(actoken)
     })
 
@@ -95,7 +96,7 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
     const dispatch = useDispatch();
     
     
-    const handleKeyDown = (event:React.mouesEvent) => {
+    const handleKeyDown = (event:React.MouseEvent) => {
         if(event){
             if(event.target.className.includes && !event.target.className.includes("event_lister")){
                 setDownloadPopup(false);
@@ -476,14 +477,10 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
 
     return(
 
-        <section className={`${styles.video_container_wrapper}`} onKeyPress={onInput} tabIndex={0}
+        <section className={styles.video_container_wrapper} onKeyPress={onInput} tabIndex={0}
         >
-                 {/* {test} */}
-                        
+
                         <div ref={fade} className={`${shouldFade? styles.fadeIn : styles.fadeOut }`}></div>  
-
-                                                            
-
                         <motion.div
                             initial={{opacity:0}}
                             animate={{opacity:1}}

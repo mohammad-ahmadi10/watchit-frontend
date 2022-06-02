@@ -10,14 +10,13 @@ import { SpinnerDotted } from 'spinners-react';
 import useLayoutEffect from "../utils/IsOrmorphicLayoutEffect";
 import Router from 'next/router'
 import { login, logout } from '../src/features/userSlice';
-import {regularTime} from "../utils/functions";
 import axios from "axios";
 import {VideoPrevData} from "../types/page";
 import { motion } from "framer-motion"
 import UseAnimations from "react-useanimations";
 import bookmark from 'react-useanimations/lib/bookmark'
 import {BiCheckShield } from "react-icons/bi";
-import {modifyUplodedDate , modifyAmountOfView} from "../utils/functions";
+import {modifyUplodedDate , modifyAmountOfView, regularTime} from "../utils/functions";
 
 
 interface HomeProps{
@@ -39,28 +38,26 @@ export const myLoader=({src}:any)=>{
 */
 export const displayImage = (file:VideoPrevData) =>{
   const [minute, second] = regularTime(file.duration);
-
-  return <Link href={`watch/${file.id}`} key={file.id}  id={file.id} className={styles.otherVideoContainer}>
+  
+  return <Link href={`watch/${file.id}`} key={file.id}  id={file.id} className={styles.gridChild}>
   <a href="#" className={styles.thumbContainer}>
     <div className={styles.img_wrapper}>
-       <Image loader={myLoader} height={160} width={200}
-            src={`${file.id}`} alt={file.id} layout="fixed"
+       <Image loader={myLoader} 
+            src={`${file.id}`} alt={file.id} layout="fill"
         />
         <div className={styles.duration_container}>
          <span>{minute}</span>
          :
          <span>{second}</span>
       </div>
-    </div>
-
-      
     <motion.div 
-      whileHover={{ scale: 1.3 }}
+      whileHover={{ scale: 1.2 }}
       className={styles.bookmarkContainer}
     >
          <UseAnimations animation={bookmark}  strokeColor={"white"} fillColor={"white"} onClick={onBookmarkClicked}/>
     </motion.div>
-  
+    </div>
+
    <div className={styles.videoInfoContainer}>
      <span>{file.title}</span>
      <div className={styles.usernameContainer}>
@@ -87,12 +84,12 @@ const Home: NextPage = ({videos}:HomeProps) => {
   const message = useSelector(selectUser).errorMSG;
 
 
-  useLayoutEffect(() =>{
+  /* useLayoutEffect(() =>{
       if(message.includes("Invalid refresh")){
         Router.push("/login")
         dispatch(logout())
         }
-      })
+  }) */
   
   return (
     <div className={styles.container}>
@@ -111,15 +108,18 @@ const Home: NextPage = ({videos}:HomeProps) => {
       </Head>
 
       <div className={styles.main}>
-
+            <div className={styles.gridWrapper}>
             {
-              
               videos &&  videos.map((d:VideoPrevData) => {
                 return displayImage(d);
               }) 
             }
-             
-            
+            {
+              videos &&  videos.map((d:VideoPrevData) => {
+                return displayImage(d);
+              }) 
+            }
+            </div>
       </div>
 
       <footer className={styles.footer}>

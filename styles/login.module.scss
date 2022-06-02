@@ -1,3 +1,6 @@
+@use  "styles/breakpoints" as bp;
+@use "styles/utilsMixin" as ux;
+
 /* resgister */
 .section_container {
   width: 100%;
@@ -30,8 +33,31 @@
   
   }
 
+
+  
+
   a, a:visited {
     color: #fff;
+  }
+}
+
+.loggedInContainer{
+  @include ux.center(column);
+  background:transparent;
+  height:100vh;
+  width:100vw;
+}
+.back{
+  @include ux.center(column);
+
+  a {
+    @include ux.center(column);
+    font-size:20px;
+    font-family:Ashkar;
+  }
+
+  span{
+    padding:10px;
   }
 }
 

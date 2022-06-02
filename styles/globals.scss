@@ -10,7 +10,12 @@
   font-weight: 300;
   font-style: normal;
 }
-
+@font-face {
+  font-family: 'Sancs-pro';
+  src: url('../asset/sancs-pro/SourceSansPro-Regular.ttf');
+  font-weight: 300;
+  font-style: normal;
+}
 
 
 [data-theme='dark'] {
@@ -59,7 +64,7 @@ a {
 
 a{
   all: unset;
-color: white;
+  color: white;
 }
 
 .global_icon_container{

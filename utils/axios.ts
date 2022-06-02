@@ -8,8 +8,9 @@ const instance = axios.create({
   baseURL: BASE_URL
 });
 
-if (typeof window !== 'undefined') {
 
+if (typeof window !== 'undefined') {
+  
   const token = localStorage.getItem("ACTKEN");
   instance.interceptors.request.use(
     (config)=> {
@@ -23,7 +24,7 @@ if (typeof window !== 'undefined') {
         const originalRequest = err.config;
         
         const status = err.response ? err.response.status : null; 
-        
+        console.log(status)
         if(axios.isAxiosError(err) ){  
           
           if(!err?.response){
@@ -47,7 +48,7 @@ if (typeof window !== 'undefined') {
           logIn:false,
           errorMSG:err?.response?.data
         }))
-        localStorage.setItem("user", JSON.stringify(ms));
+        /* localStorage.setItem("user", JSON.stringify(ms)); */
 
         
       }
@@ -57,7 +58,7 @@ if (typeof window !== 'undefined') {
           logIn:false,
           errorMSG:err?.response?.data
         }))
-        localStorage.setItem("user", JSON.stringify(ms));
+        /* localStorage.setItem("user", JSON.stringify(ms)); */
       }
       else{
         store.dispatch(login({
@@ -68,6 +69,7 @@ if (typeof window !== 'undefined') {
       }
     }
     if(status === 401){
+      
       try {
         const token = localStorage.getItem("SSRFSH");
         const res = await axios.get(`${BASE_URL}/auth/refresh`, 
@@ -87,7 +89,7 @@ if (typeof window !== 'undefined') {
             logIn:false,
             errorMSG:"Invalid refreshtoken"
           }))
-          localStorage.setItem("user", JSON.stringify(ms));
+          /* localStorage.setItem("user", JSON.stringify(ms)); */
           return error.response?.data;
         }
       }

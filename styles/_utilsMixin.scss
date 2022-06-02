@@ -10,3 +10,8 @@
 @mixin moveY($v:80px){
     transform:translateY($v);
 }
+
+@mixin ellipsis(){
+    text-overflow: ellipsis; 
+    overflow:hidden;
+}

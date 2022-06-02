@@ -1,0 +1,161 @@
+@use  "styles/breakpoints" as bp;
+@use "styles/utilsMixin" as ux;
+@use "styles/variables" as *;
+
+
+.search_container{
+    @include ux.moveY();
+    overflow:hidden;
+}
+
+.search_wrapper{
+    width:100%;
+    height:100%;
+    overflow-x:hidden;
+    scrollbar-width: none;
+    padding: 10px;
+    @include ux.center(column);
+
+   
+}
+
+.gridChild{
+    @include ux.center(row);
+    position:relative;
+    
+
+}
+
+.search_child{
+    width:100px;
+    overflow:hidden;
+    position:relative;
+    
+}
+
+.seaarchthumbContainer{
+    width:700px;
+    
+
+    
+    display:grid;
+    margin-bottom:10px;
+    /* grid-template-columns: 1fr fit-content(100%); */
+    grid-template-columns: 1fr 4fr;
+    overflow-x:hidden;
+
+    @include bp.md{
+        width:500px;
+    }
+    @include bp.sm{
+        width:500px;
+    }
+    @include bp.xs{
+        width:100%;
+        display:flex;
+        flex-direction:column;
+        justify-content:center;
+        align-items:center;
+    }
+
+
+}
+
+.search_img_wrapper{
+    width:200px;
+    height:200px;
+    position: relative;
+
+    
+}
+
+
+.duration_container{
+    position: absolute;
+    z-index: 10;
+    background: black;
+    bottom: 5px;
+    right: 5px;
+    padding: 0px 5px;
+    color:white;
+  }
+  
+  .bookmarkContainer{
+      position:absolute;
+      bottom:5px;
+      
+  }
+
+
+  .thumbContainer{
+    @include ux.center(column);
+
+  
+  }
+
+  .img_wrapper{
+    bottom:0;
+    position:relative;
+    width:100%;
+    height:100%;
+  }
+
+  .videoInfoContainer{
+    margin-left:10px;
+    position:relative;
+    overflow:hidden;
+    letter-spacing:1.1px;
+    width:unset;
+
+    & > span{
+      font-family:Akshar;
+      font-size:22px;
+      @include ux.ellipsis();
+      display:block;
+      color:white;
+
+      @include bp.xs{
+        font-size:16px;
+        margin-top:10px;
+    }
+
+    }
+  }
+
+
+  .usernameContainer{
+    @include ux.center(row);
+    justify-content:flex-start;
+    font-size:12px;
+    font-weight:bold;
+    text-transform:capitalize;
+    margin-top:10px;
+    & > span{
+        @include ux.ellipsis();
+    }
+
+    @include bp.xs{
+        font-size:10px;
+    }
+  }
+  
+  .view_dateContainer{
+    font-size:11px;
+    @include ux.ellipsis();
+
+    @include bp.xs{
+        font-size:10px;
+    }
+
+  }
+.descrip{
+    margin-top:10px;
+    font-size:13px;
+    @include ux.ellipsis();
+    position:relative;
+
+    @include bp.xs{
+        opacity:0;
+        
+    }
+}
