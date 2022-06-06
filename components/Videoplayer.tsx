@@ -8,7 +8,7 @@ import { BsFillVolumeUpFill , BsFillVolumeDownFill, BsFillVolumeMuteFill , BsFil
        } from 'react-icons/bs';
 import { BiRectangle , BiDownload  } from "react-icons/bi";
 import {MdCropSquare} from "react-icons/md";
-
+import {TiArrowBack} from "react-icons/ti"
 import Link from 'next/link'
 import Image from 'next/image';
 
@@ -28,7 +28,7 @@ import arrowRightCircle from 'react-useanimations/lib/arrowRightCircle'
 import UseAnimations from "react-useanimations";
 import {VolumeState , DownloadStatus} from "../utils/enums";
 import {CostumDocument , CostumHTMLDivElement} from "../utils/fullscreen"
-
+import {useRouter} from 'next/router'
 
 const displayIcon = (ICON:IconType , v?:number,  classN?:string) =>  { 
     if (typeof classN !== 'undefined')
@@ -63,7 +63,7 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
     const [currentTime , setCurrentTime] = useState(0);
     const [modifiedduration , setModifiedDuration] = useState({minute:0 , second:0});
     const [modifiedCurrentTime , setModifiedCurrentTime] = useState({minute:0 , second:0});
-    const [isVolumeOff , setIsVolumeOff] = useState(false);
+
     const [volumeValue ,setVolumeValue] = useState(50);
     const [videoRange , SetvideoRange] = useState(0);
     const [shouldFullScreen , setShouldFullScreen] = useState(false);
@@ -77,6 +77,9 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
     const [downloadSelected, setDownloadSelected] = useState(" ");
     const [progressPercent , setProgressPercent] = useState(0);
     const [token , setToken] = useState("");
+    const [seekingVal , setSeekingVal] = useState(0);
+    const [shouldViewUp , setShouldViewUp] = useState(false);
+    const [viewSuccess , setViewSuccess] = useState(false);
 
 
     // useRef
@@ -86,11 +89,29 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
     const downloadListRef = useRef<HTMLUListElement>(null);
     const nextVideo = useSelector(selectVideo)
     
+    const [isControllHover , setIsControllHover] = useState(false);
+
+    const router = useRouter();
+
     useLayoutEffect(() =>{
         const actoken = localStorage.getItem("ACTKEN");
         if(actoken)
         setToken(actoken)
     })
+
+    /* view up if use has skiped 3 times or shouldViewUp is true */
+    useLayoutEffect(() =>{
+        (
+            async () =>{
+                if(seekingVal === 3 || shouldViewUp ){
+                    if(!viewSuccess){
+                        const {data} = await costumAxios.put("/video/view", {id:videoPath})
+                        setViewSuccess(true);
+                    }
+                }
+            }
+        )();
+    }, [seekingVal , shouldViewUp ])
 
     const userState = useSelector(selectUser)
     const dispatch = useDispatch();
@@ -169,7 +190,6 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
  }
  
  const isFullScreen = function(document:CostumDocument) {
-     console.log(document)
     return !!( document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement || document.fullscreenElement);
  }
  const setFullscreenData = function(state:boolean) {
@@ -207,19 +227,22 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
                (
                   async () =>{
                     const rs = await costumAxios.get("/auth/me");
-                    const {id, email , username} = rs.data.modifiedUser;
-                    const newUser:User = {
-                        id,
-                        username,
-                        email,
-                        profileImage:"",
-                        }
-
-                    dispatch(login({
-                        user: newUser,
-                        logIn:true,
-                        errorMSG:""
-                    }))
+                    if(typeof res !== 'undefined') {
+                        const {id, email , username} = rs.data.modifiedUser;
+                        const newUser:User = {
+                            id,
+                            username,
+                            email,
+                            profileImage:"",
+                            }
+    
+                        dispatch(login({
+                            user: newUser,
+                            logIn:true,
+                            errorMSG:""
+                        }))
+                    }
+                    
 
                    }
                )()
@@ -238,8 +261,11 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
     },[])
 
 
-
-
+    const controll_variants = {
+        open: { opacity: 1 },
+        closed: { opacity: 0, transition:{ delay: 1 } },
+    }
+    
     useLayoutEffect(() =>{
         videoPlayerRef.current!.volume = (+volumeValue / 100);
     }, [videoPlayerRef, volumeValue])
@@ -267,12 +293,25 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
         setShouldPlay(false);
     }
 
+    
+
+    const onVideoSeeking = (e:React.MouseEvent<HTMLVideoElement>) =>{
+        setSeekingVal(v => v+1);
+    }
+
+
     const onVideoTimeUpdate =  (e:React.MouseEvent<HTMLVideoElement>) =>{
         const currentTime = videoPlayerRef.current!.currentTime;
         setCurrentTime(currentTime);
         const [minute , second ] = regularTime(currentTime)
         setModifiedCurrentTime( {minute:+minute , second:+second} )
+
+        const currentVideoProcent = Math.round(currentTime * 100 / duration);
+        if(!shouldViewUp)
+          setShouldViewUp( currentVideoProcent > 5)
       }
+  
+
 
   
 
@@ -374,16 +413,31 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
     const onVideoRangeChange =  (newValue:number) =>{
         if(VideoControllerRef){
             videoPlayerRef.current!.currentTime = (newValue * +duration / 100);
+            localStorage.setItem("rg", JSON.stringify({v:newValue, id:videoPath }));
             SetvideoRange(newValue)
         }
    
     }   
 
     useLayoutEffect(() =>{
+        const rg = localStorage.getItem("rg");
+        if(rg){
+            const {v, id} = JSON.parse(rg);
+            if(id === videoPath ) {
+                SetvideoRange(v)
+                videoPlayerRef.current!.currentTime = (v * +duration / 100);;
+            }
+        }
+    }, [])
+
+    useLayoutEffect(() =>{
         
         const newPos = 100 * videoPlayerRef.current!.currentTime / +duration;
-        if(!isNaN(newPos))
-        SetvideoRange(newPos)
+        if(!isNaN(newPos)){
+        
+                SetvideoRange(newPos)
+                localStorage.setItem("rg", JSON.stringify({v:newPos , id:videoPath}));
+        }
      }, [currentTime, duration, videoPlayerRef])
 
 
@@ -467,12 +521,13 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
     const onInput = (e: React.KeyboardEvent<FormControl>) =>{
         const document : CostumDocument = window.document;
         if(e.key === "Escape"){
-           
-           console.log(e)
-        }
-        
+        } 
     }
 
+
+    const onBackClick = (e:React.MouseEvent<HTMLDivElement>) =>{
+          router.back();
+    }
 
 
     return(
@@ -491,7 +546,7 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
                           <div ref={videoPlayerContainerRef} onKeyDown={onInput} tabIndex={1}>
 
                         { !isTheater &&<div className={`${shouldThumbShowing ? styles.thumbBackground : styles.onStyle}`}>
-                        <Image loader={myLoader} layout={"fill"}  src={`${videoPath}`} alt={videoPath ? videoPath!.toString() : "thumb"}
+                        <Image loader={myLoader} priority={true} layout={"fill"}  src={`${videoPath}`} alt={videoPath ? videoPath!.toString() : "thumb"}
                          />
 
 
@@ -503,7 +558,7 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
                                     onProgress={onVideoProgress}
                                     onLoadedData={onVideoLoaded}
                                     onKeyDown={onInput}
-
+                                    onSeeking={onVideoSeeking}
                                     >
                                     {
                                         resolutions.length === 0 ?
@@ -522,23 +577,31 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
                              animate={isVolumeHover ? "show" : "hidden"}
                             >
                             <div onClick={onControllClick} ref={VideoControllerRef}  className={styles.video_controller} >
-                                <div id={"videoController"} className={styles.video_controller_wrapper} >
-                                <div className={`${shouldThumbShowing ?  styles.thumbPlayBt_Wrapper : styles.onStyle}`}>
-                               <motion.div 
+                                <motion.div 
+                                   initial={"closed"}
+                                   animate={isControllHover ? "open" : "closed"}
+                                   variants={controll_variants}
+                                   onMouseEnter={() => setIsControllHover(true)}
+                                   onMouseLeave={() => setIsControllHover(false)}
+                                   /* animate={isHover ? "open":"closed"} */
+                                   id={"videoController"} 
+                                   className={`${isTheater ? styles.video_controller_wrapper_theater_mode : styles.video_controller_wrapper}`} >
+                                   <div className={`${shouldThumbShowing ?  styles.thumbPlayBt_Wrapper : styles.onStyle}`}>
+                                    <motion.div 
                                        className={styles.thumbPlayButton}
                                        whileHover={{ scale: 1.1 }}
                                        whileTap={{ scale: 0.9 }}
-                                >
-                                       {displayIcon( BsPlay , 100 )}
-                                </motion.div>
-                            </div>
+                                     >
+                                         {displayIcon( BsPlay , 100 )}
+                                     </motion.div>
+                                   </div>
 
                                    { !shouldThumbShowing &&
                                         <div className={styles.top_layer}>
-                                           <div className={styles.leftside}>
+                                           <div className={` ${styles.leftside} ${isTheater ? styles.toplayer_theater_mode : ""}`}>
                                                <span>{title}</span>
                                            </div>
-                                          <div className={`${styles.rightside}`}>
+                                          <div className={` ${styles.rightside} ${isTheater ? styles.toplayer_theater_mode : ""}`}>
                                              {
                                                  nextVideo.id !== 0 && 
                                                  <Popover placement="rightTop" content={
@@ -597,6 +660,9 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
                                                 <div className={styles.video_bottom_controll_player}>
                                                     <div className={styles.bottom__left}>
 
+                                                    <div className={styles.center} onClick={onBackClick}>
+                                                       {displayIcon( TiArrowBack)}
+                                                    </div>
                                                     <div className={styles.center} onClick={onPlayClick}> 
                                                    
                                                                 {
@@ -808,7 +874,7 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
                                                 </div>
                                         </div>
                                         }
-                                    </div>
+                                </motion.div>
                             </div>
                             </motion.div>
                     </div>

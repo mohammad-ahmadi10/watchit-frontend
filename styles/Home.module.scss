@@ -14,24 +14,44 @@
 
 
   @include ux.moveY(40px);
-
+  @include ux.center(column);
+  justify-content:flex-start;
 }
 
 .gridWrapper{
   
   display:grid;
   grid-gap:50px;
-  grid-template-columns: repeat(auto-fit, minmax(250px , 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(200px , 1fr));
   grid-auto-rows:250px;
   grid-auto-flow:dense;
+  width:1000px;
+  
+ 
+  @include bp.lg{
+    width:800px;
+  }
+  @include bp.md{
+    width:500px;
+  }
+  @include bp.sm{
+    width:300px;
+  }
+  @include bp.xs{
+    width:250px;
+  }
+
+
   
   .gridChild{
     @include ux.center(row);
-    
+    align-items:initial;
   }
 
   .thumbContainer{
     @include ux.center(column);
+    width:100%;
+    height:100%;
   }
 
   .img_wrapper{

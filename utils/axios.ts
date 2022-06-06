@@ -1,7 +1,7 @@
 import axios from "axios";
 import { login , register} from "..//src/features/userSlice";
 import {  store  } from '../src/store';
-
+import Router from "next/router";
 /* "http://192.168.188.52:8200"  "https://api.theone-web.com" */
 const BASE_URL = "https://api.theone-web.com";
 const instance = axios.create({

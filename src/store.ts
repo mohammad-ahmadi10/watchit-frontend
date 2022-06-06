@@ -4,6 +4,7 @@ import { configureStore,  combineReducers,
  } from "@reduxjs/toolkit";
 import userReducer from "./features/userSlice";
 import videoReducer from "./features/VideoSlice";
+import avatarReducer from "./features/avatarSlice";
 
 import {createWrapper, HYDRATE} from 'next-redux-wrapper';
 
@@ -12,6 +13,7 @@ import {createWrapper, HYDRATE} from 'next-redux-wrapper';
 const rootReducer =  combineReducers({
     user:userReducer,
     video:videoReducer,
+    avatar:avatarReducer
 })
 
 
@@ -57,3 +59,4 @@ export const wrapper = createWrapper(makeStore, { debug: true });
 
 export const selectUser = (state:RootState) => state.user;
 export const selectVideo = (state:RootState) => state.video
+export const selectAvatar = (state:RootState) => state.avatar

@@ -1,6 +1,6 @@
 import { Input , Avatar, Popover , Progress, Tooltip} from 'antd';
 const { Search } = Input;
-import {useState , useCallback} from "react";
+import {useState , useCallback, useRef} from "react";
 import Upload from "./Upload";
 import imageCompression from 'browser-image-compression';
 import "antd/dist/antd.dark.css"
@@ -21,7 +21,7 @@ import {ImProfile} from "react-icons/im";
 import {TiUploadOutline} from "react-icons/ti";
 import {VscHistory} from "react-icons/vsc";
 import {IoIosSearch} from "react-icons/Io";
-
+import {MdOutlineClear} from "react-icons/md";
 import Link from 'next/link'
 import useLayoutEffect from "../utils/IsOrmorphicLayoutEffect";
 import costumAxios from "../utils/axios";
@@ -31,9 +31,12 @@ import {useRouter} from 'next/router'
 import Image from 'next/image';
 import {BsFillPersonFill} from "react-icons/bs";
 import {UploadStatus} from "../utils/enums";
-import {forceReload} from "../utils/functions";
+import {forceReload, finduserIfExists} from "../utils/functions";
 import { ReactSearchAutocomplete } from 'react-search-autocomplete'
 import {VideoPrevData} from "../types/page";
+import { useDispatch, useSelector } from 'react-redux';
+import { setAvatar } from '../src/features/avatarSlice';
+import { selectAvatar } from '../src/store';
 
 
 const variants = { 
@@ -59,24 +62,43 @@ function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
   const [iconSize, setIconSize] = useState(40);
   const [username, setUsername] = useState("");
-  const [avatar, setAvatar] = useState("");
+  const [avatar, setAvatarPath] = useState("");
   const [isAvatarClicked, setIsAvatarClicked] = useState(false);
   const [upStatus,  setUploadStatus] = useState(UploadStatus.ONSTART);
   const [user,setUser] = useState(null);
-  
+  const [query , setQuery] = useState("");
+
   const router = useRouter();
   const [token , setToken] = useState("");
 
   const [titles, setTitles] = useState<searchedTitleType[]>();
   const [shouldShowSearchSuggestion,setShouldShowSearchSuggestion] = useState(false);
   const [load, setLoad] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [oldScrolled, setOldScrolled] = useState(0);
+  const [searchVal, setSearchVal] = useState("");
 
+
+  const dispatch = useDispatch();
+  const selector = useSelector(selectAvatar);
+  const inputContainerRef = useRef<HTMLDivElement>(null);
+
+
+
+  useLayoutEffect(()=>{
+    if(typeof window !== 'undefined' && window !== null ){
+      const val = localStorage.getItem("q")
+        val ? setSearchVal(val) : setSearchVal("")
+    }
+  }, [])
   // end search
   const onSearchChange = async (s:React.ChangeEvent) => {
     try{
       setLoad(false)
       const input = s.target as HTMLInputElement;
       const searchKey = input.value
+      setSearchVal(searchKey);
+
       const {data} = await clientAxios.get(`${process.env.NEXT_PUBLIC_REMOTE}/watch/search_query/${searchKey}`)
         
         let modifiedTitles = [];
@@ -99,21 +121,41 @@ function Navbar() {
     }
   }
   
-  
+  useLayoutEffect(() =>{
+     const q = localStorage.getItem("q");
+     setQuery(q);
+  }, []) 
 
-  const onSearch = async (s:string) =>{
-        
+  const onSearch = async (s:string) =>{  
+    if(s.length <= 0) return;
+    localStorage.setItem("q" , s);
+
+    router.push(`/search/search-query=${s}`)
   }
+
 
   interface costumHTMLElement extends HTMLElement{
      name?:string
   }
-  const handleKeyDown = (e:React.MouseEvent) => {
+  const handleKeyDown = (e:any) => {
       const t = e.target as costumHTMLElement;
       if(t.name && t.name.includes("search"))return;
 
       setShouldShowSearchSuggestion(false)
   }
+
+  const handleScroll = (e:any) =>{
+      const lp = window.scrollY;
+      const oldScroll = localStorage.getItem("oldScroll")
+      if(lp > oldScroll){
+        setIsScrolled(true)
+      }
+      else{
+        setIsScrolled(false)
+      }
+      localStorage.setItem("oldScroll", lp)
+  } 
+
 
   const onSearchClick = (e:any)=>{
     setShouldShowSearchSuggestion(true)
@@ -122,25 +164,44 @@ function Navbar() {
   const onSearchEnter = (e:any)=>{
     const t = e.target as HTMLInputElement;
     const value = t.value;
+    if(value.length <= 0) return;
+    localStorage.setItem("q" , value);
 
     router.push(`/search/search-query=${value}`)
     
   }
 
   useLayoutEffect(() => {
-    window.addEventListener('click', handleKeyDown);    
+    window.addEventListener('click', handleKeyDown);
+
+    window.addEventListener('scroll', handleScroll)
+
     // cleanup this component
     return () => {
       window.removeEventListener('click', handleKeyDown);
+      window.removeEventListener('scroll', handleScroll);
+
     };
   }, []);
 
 
   useLayoutEffect(() =>{
       const actoken = localStorage.getItem("ACTKEN");
+      const isAvatar = localStorage.getItem("avatar");
       if(actoken !== null)
       setToken(actoken)
   })
+
+
+  useLayoutEffect(() =>{      
+    if(selector.page.length > 0)
+      setAvatarPath(selector.path)
+  })
+  useLayoutEffect(() =>{      
+    localStorage.setItem("oldScroll", 0)
+  }, [])
+
+
 
 
 
@@ -152,7 +213,7 @@ function Navbar() {
       localStorage.setItem("SSRFSH", "")
       localStorage.setItem("user" , "")
       setUser(null);
-      forceReload(router)
+      router.push("/")
     }
   }
   
@@ -166,30 +227,31 @@ function Navbar() {
 
   }
 
+ 
   
 
-  const getUser = async () =>{
-    const userSt = localStorage.getItem("user");
-    if(userSt){
-      const {user} = JSON.parse(userSt).payload;
-      if(user === null) return;
-      setUser(user);
-      setUsername(user.username)
-      setAvatar("")
-      const res = await costumAxios.get(`/auth/avatar`, {responseType: 'blob'});
-      let blob = new Blob([ res.data ], {type: 'image/jpeg'}) 
-      const objectURL = URL.createObjectURL(blob);
-      setAvatar(objectURL)
-      setIsAvatarClicked(false)  
-    }else{
-      const token = localStorage.getItem("ACTKEN");
-      if(token){
-        setTimeout(() =>{
-          forceReload(router); 
-        }, 250)
+
+  const getUser = async ( ) =>{
+    if(finduserIfExists){
+      const {user , objectURL} = await finduserIfExists(router , costumAxios);
+
+      if(user){
+        setUser(user);
+        setUsername(user.username)
+        setAvatarPath("")
+        setAvatarPath(objectURL)
+        setIsAvatarClicked(false)
+        dispatch(setAvatar({
+          path:objectURL.toString(),
+          page:"navbar"
+        }))
       }
+      
+
+
     }
-  }
+    
+  } 
 
   useLayoutEffect(()=>{
     (async () => { 
@@ -223,7 +285,6 @@ function Navbar() {
         setUploadStatus(UploadStatus.ONSTART);
         await getUser()
       }
-
     }catch(e){
       console.log(e)
     }      
@@ -244,9 +305,13 @@ function Navbar() {
   const avatarTooltip = () => (<span>change your avatar</span>)
 
 
- 
+  const onClearClick = (e:React.MouseEvent<HTMLSpanElement>) =>{
+       localStorage.setItem("q", "")
+       setSearchVal("")
+  }
+
   return (
-    <div className={styles.navbarContainer} onClick={onNavbarContainerClick}>
+    <div className={`${styles.navbarContainer} ${isScrolled && !isOpen ? styles.scrolled_nav : ""}`} onClick={onNavbarContainerClick}>
       <div className={styles.navbarWrapper}>
 
         <div className={styles.start}>  
@@ -256,7 +321,7 @@ function Navbar() {
              animate={isOpen ? "closed" : "open"}
              variants={variants}
              className={styles.nav_menu_closed}
-             onClick={() => setIsOpen(s => !s)}
+             onClick={() => {setIsOpen(s => !s)}}
         >
               <span>
                 <CgMenu size={iconSize}/>
@@ -284,7 +349,7 @@ function Navbar() {
                      initial="closed"
               >
                 <motion.li variants={item}  className={styles.start_nav_opened}>
-                  <span><CgClose size={iconSize} onClick={() => setIsOpen(s =>!s)}/></span>
+                  <span><CgClose size={iconSize} onClick={() => {setIsOpen(s =>!s);}}/></span>
                   <span>LOGO</span>  
               </motion.li>
                 
@@ -297,10 +362,12 @@ function Navbar() {
                     </Link>
                 </motion.li>
 
-                <motion.li variants={item} >
-                  <Link href={`/user/${username}`}>
+                 <motion.li variants={item} >
+
+                  <Link href={`/user/${username ? username : "undefined"}`}>
                     <a href={"#"}>
                       <span>
+                        
                         <ImProfile size={iconSize}/>
                       </span>
                       <span>
@@ -309,7 +376,7 @@ function Navbar() {
                     </a>
                   </Link> 
                 </motion.li>
-                <motion.li variants={item} >
+                 <motion.li variants={item} >
                   <Link href={"/upload-video"}>
                     <a href={"#"}>
                       <span><TiUploadOutline size={iconSize}/></span>
@@ -319,7 +386,7 @@ function Navbar() {
                     </a>
                   </Link>
                 </motion.li>
-                <motion.li variants={item} >
+                 <motion.li variants={item} >
                   <Link href={"/history"}>
                       <a href={"#"}>
                         <span>
@@ -330,37 +397,41 @@ function Navbar() {
                         </span>
                       </a>
                   </Link></motion.li>
-                <motion.li variants={item}  className={styles.logout}> 
+                {user ? <motion.li variants={item}  className={styles.logout}> 
                      <Button type="primary" onClick={onLogout} ghost size={"large"} 
                              style={{width:"100%"}}>
                             Logout
                      </Button>
 
                 </motion.li>
+                : 
+                ""
+                }
               </motion.ul>
 
             </motion.nav>
         </div>
-        <div className={styles.center}>
+        <div className={styles.center} ref={inputContainerRef}>
+            {searchVal.length > 0 && <span className={styles.clearIcon} onClick={onClearClick} >
+                <MdOutlineClear size={20} color={"rgba(256,256,256,0.4)"} />
+            </span>}
+                                                        
             <Search placeholder="search..." loading={load} size={"large"} 
-                                        
-                                         onSearch={onSearch} 
+                                       
+                                         onSearch={onSearch}
+                                         value={searchVal ? searchVal : ""} 
                                          onChange={onSearchChange}
-                                         allowClear
                                          className={styles.search}
                                          onClick={onSearchClick}
                                          onPressEnter={onSearchEnter}
                                          name={"search"}
-                                         
                                          />
            {shouldShowSearchSuggestion && <div className={styles.search_items}> 
                   {titles !== null && typeof titles !== "undefined" && titles.map((s,k) =>  
                                       {
-
                                         return  <span key={k}><Link href={`/search/search-query=${s.title}`} >
-                                                      <a href={"#"}>
+                                                      <a href={"#"} onClick={() => localStorage.setItem("q", s.title)}>
                                                          <span>
-                                                          
                                                           {s.title.slice(0,s.sIndex)}
                                                           <strong>{s.title.slice(s.sIndex,s.eIndex)}</strong>
                                                           {s.title.slice(s.eIndex)}
@@ -369,8 +440,7 @@ function Navbar() {
                                                       </a>
                                                 </Link></span>
                                      }
-                              )
-                                  
+                              )      
                  }
             </div>
            }

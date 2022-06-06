@@ -11,8 +11,8 @@ import { IconType } from 'antd/lib/notification';
 import "antd/dist/antd.dark.css"
 import SetVideoInfo from '../components/SetVideoInfo';
 import {UploadStatus} from "../utils/enums";
-
-
+import {CgLogIn} from "react-icons/cg";
+import Link from 'next/link'
 
 const openNotificationWithIcon = (type:IconType) => {
   notification[type]({
@@ -33,7 +33,7 @@ const  uploadVideo = () => {
   const [uploadedPath, setUploadedPath] = useState("");
   const [progressPercent , setProgressPercent] = useState(0);
   const [popup, setPopup] = useState(false);
-
+  const [user , setUser] = useState("")
 
 
   const onFileUpload = useCallback( async (files , err)=>{
@@ -56,15 +56,31 @@ const  uploadVideo = () => {
       }
   }, [])
 
+
+
   useLayoutEffect(()=>{
       if(upStatus === UploadStatus.UPLOADED){
       {openNotificationWithIcon('success')}
       }
   }, [upStatus])
 
+  useLayoutEffect(()=>{
+      const u = localStorage.getItem("user");
+      if(u){
+        const user = JSON.parse(u);
+        setUser(u)
+      }else setUser("")
+      
+  }, [])
 
   return (
-    <div className={styles.uploadVideoWrapper}>
+ 
+      <>
+
+      {
+        user.length > 0 ? 
+
+        <div className={styles.uploadVideoWrapper}>
            {
             upStatus === UploadStatus.UPLOADED ?
             <div className={styles.uploadVideo_container}>
@@ -111,9 +127,6 @@ const  uploadVideo = () => {
           </div>
         </section>
         } 
-        
-        
-
         {
           popup ?     
           <div className={styles.setVideoInfoWrapper}>
@@ -124,10 +137,26 @@ const  uploadVideo = () => {
           
          :""
         }
-        
-        
-        
     </div>
+     
+     : 
+
+     <div className={styles.login}>
+                   <span>Login in order to upload your videos</span>
+
+                   <Link href={`/login`}>
+                    <a href={"#"}>
+                      <span>
+                        <CgLogIn size={35}/>
+                      </span>
+                      <span>
+                         Login
+                      </span>
+                    </a>
+                  </Link> 
+          </div>
+    }
+    </>
   )
 }
 

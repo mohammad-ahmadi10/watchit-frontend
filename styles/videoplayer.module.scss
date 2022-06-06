@@ -23,6 +23,7 @@
         /* object-fit: initial; */
         z-index:1;
 
+       
         @include bp.md{
            height:600px;
         }
@@ -68,7 +69,16 @@
     align-items: center;
     padding:10px;
     position: relative;
-    height:98%;
+    height:90%;
+    width:98%;
+}
+.video_controller_wrapper_theater_mode{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding:0px;
+    position: relative;
+    height:100%;
     width:98%;
 }
 
@@ -235,13 +245,14 @@
         pointer-events:pointer;
         opacity:0.5;
         padding-top:20px;
-        
         & a {
             @include ux.center(column);
             color:white;
-            
         }
         
+    }
+    .toplayer_theater_mode{
+        top:-10px;
     }
 }
 
@@ -365,6 +376,7 @@
 }
 .center{
     @include ux.center(column);
+    margin-right:10px;
 
 }
 .noOpacity{

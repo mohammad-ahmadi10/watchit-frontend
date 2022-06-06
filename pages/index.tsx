@@ -5,9 +5,9 @@ import Link from 'next/link'
 import Image from 'next/image';
 import {useDispatch, useSelector} from "react-redux";
 import { selectUser } from './../src/store';
-import costumAxios from "../utils/axios";
 import { SpinnerDotted } from 'spinners-react';
 import useLayoutEffect from "../utils/IsOrmorphicLayoutEffect";
+import costumAxios from "../utils/axios";
 import Router from 'next/router'
 import { login, logout } from '../src/features/userSlice';
 import axios from "axios";
@@ -17,11 +17,13 @@ import UseAnimations from "react-useanimations";
 import bookmark from 'react-useanimations/lib/bookmark'
 import {BiCheckShield } from "react-icons/bi";
 import {modifyUplodedDate , modifyAmountOfView, regularTime} from "../utils/functions";
+import {useState , useRef , useCallback} from "react";
+import UseVideoSearch from "../utils/useVideoSearch";
 
 
-interface HomeProps{
+/* interface HomeProps{
   videos:[VideoPrevData]
-}
+} */
 
 const onBookmarkClicked = (_:any) =>{
         
@@ -36,10 +38,11 @@ export const myLoader=({src}:any)=>{
  @file: VideoPrewData 
         is an object von type VideoPrewData 
 */
-export const displayImage = (file:VideoPrevData) =>{
+const displayImage = (file:VideoPrevData , ref?:any) =>{
   const [minute, second] = regularTime(file.duration);
   
-  return <Link href={`watch/${file.id}`} key={file.id}  id={file.id} className={styles.gridChild}>
+  return <div ref={ref ? ref : null}  key={file.id}  id={file.id} className={styles.gridChild} >
+    <Link href={`watch/${file.id}`}>
   <a href="#" className={styles.thumbContainer}>
     <div className={styles.img_wrapper}>
        <Image loader={myLoader} 
@@ -71,6 +74,7 @@ export const displayImage = (file:VideoPrevData) =>{
     </div>
   </a>
 </Link>
+</div>
 }
 
 /*
@@ -78,11 +82,28 @@ export const displayImage = (file:VideoPrevData) =>{
 */
 
 
-const Home: NextPage = ({videos}:HomeProps) => {
+const Home: NextPage = () => {
   const dispatch = useDispatch();
   const user = useSelector(selectUser).user
   const message = useSelector(selectUser).errorMSG;
-
+  
+  const [query , setQuery] = useState("");
+  const [pageNr, setPageNr] = useState(0);
+  const observer = useRef<HTMLDivElement | IntersectionObserver>(null);
+  const {videos, hasMore, loading, error } = UseVideoSearch("", pageNr)
+  const lastVideosElementRef = useCallback(node => {
+    if(loading) return;
+    if(observer && observer.current) observer.current.disconnect()
+    observer.current = new IntersectionObserver(entries =>{
+            if(entries[0].isIntersecting){
+              if(node !== null){
+                if(hasMore)
+                setPageNr(n => n+1)
+              }
+            }
+    })
+    if(node) observer.current.observe(node)    
+  }, [loading, hasMore]);
 
   /* useLayoutEffect(() =>{
       if(message.includes("Invalid refresh")){
@@ -90,6 +111,7 @@ const Home: NextPage = ({videos}:HomeProps) => {
         dispatch(logout())
         }
   }) */
+
   
   return (
     <div className={styles.container}>
@@ -110,36 +132,33 @@ const Home: NextPage = ({videos}:HomeProps) => {
       <div className={styles.main}>
             <div className={styles.gridWrapper}>
             {
-              videos &&  videos.map((d:VideoPrevData) => {
-                return displayImage(d);
+              videos &&  videos.map((d:VideoPrevData, index) => {
+                if(videos.length === index+1)
+                return displayImage(d, lastVideosElementRef);
+                return displayImage(d); 
               }) 
             }
             {
-              videos &&  videos.map((d:VideoPrevData) => {
-                return displayImage(d);
-              }) 
+              <span>{loading && 'loading'}</span>
             }
             </div>
       </div>
-
-      <footer className={styles.footer}>
-        
-      </footer>
     </div>
   )
 }
 
-Home.getInitialProps  = async () =>{
+/* Home.getInitialProps  = async () =>{
   try {
-  const {data} = await costumAxios.get("/");
-  return{videos:data}
+  const {data} = await costumAxios.get("/watch/");
+  console.log(data)
+  return{PreVideos:data}
     
   } catch (error) {
     if(axios.isAxiosError(error)){
       return {};
     }
   }
-}
+} */
 
 
 

@@ -4,7 +4,7 @@
 
 
 .search_container{
-    @include ux.moveY();
+    padding-top:8em;
     overflow:hidden;
 }
 
@@ -158,4 +158,11 @@
         opacity:0;
         
     }
+}
+
+.noVideo{
+    @include ux.center(column);
+    font-size : 2rem;
+    width:100vw;
+    height:100vh;
 }

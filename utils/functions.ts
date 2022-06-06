@@ -1,3 +1,6 @@
+import {AxiosInstance} from "axios";
+
+
 export const regularTime = (time:number )=>{
     const minute = parseInt((time / 60).toString() , 10).toLocaleString('en-US' , {minimumIntegerDigits:2 , useGrouping:false})
     const second = parseInt((time % 60).toString() , 10).toLocaleString('en-US' , {minimumIntegerDigits:2 , useGrouping:false})
@@ -39,3 +42,29 @@ export const modifyUplodedDate = (d:Date) =>{
   }    
 }
 
+
+export const finduserIfExists = async (router:any , costumAxios:AxiosInstance) =>{
+  const userSt = localStorage.getItem("user");
+
+  
+  if(userSt){
+    const {user} = JSON.parse(userSt).payload;
+
+    if(user === null) return {user, objectURL:""};
+    
+    const res = await costumAxios.get(`/auth/avatar`, {responseType: 'blob', params:{userID:user.id}});
+    let blob = new Blob([ res.data ], {type: 'image/jpeg'}) 
+    const objectURL = URL.createObjectURL(blob);
+    return {user , objectURL}
+
+  }else{
+    const token = localStorage.getItem("ACTKEN");
+    if(token){
+      setTimeout(() =>{
+        forceReload(router); 
+      }, 250)
+    }
+    return {user:null, objectURL:""};
+    
+  }
+}

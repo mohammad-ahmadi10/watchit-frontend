@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState,useRef , useCallback } from 'react'
 import { useRouter } from 'next/router'
 import { NextPageContext } from 'next'
 import clientAxios from "../../utils/axios";
@@ -11,13 +11,9 @@ import { motion } from "framer-motion"
 import UseAnimations from "react-useanimations";
 import bookmark from 'react-useanimations/lib/bookmark'
 import {BiCheckShield } from "react-icons/bi";
-
-import { GetServerSideProps } from 'next'
-
-interface SearchProps{
-    videos:[VideoPrevData]
-}
-
+import UseVideoSearch from "../../utils/useVideoSearch";
+import useLayoutEffect from "../../utils/IsOrmorphicLayoutEffect";
+import notFound from "../../public/not_found.png";
 
 export const myLoader=({src}:any)=>{
   return `${process.env.NEXT_PUBLIC_REMOTE}/watch/thumb/${src}`;
@@ -29,9 +25,34 @@ const onBookmarkClicked = (_:any) =>{
 }
 
 
-const  Search =({videos}:SearchProps) => {
+const  Search =() => {
   const router = useRouter()
-  
+  const {search} = router.query;
+  const [query , setQuery] = useState(""); // set query and remove any smiley
+  const [pageNr, setPageNr] = useState(0);
+  const observer = useRef<HTMLDivElement | IntersectionObserver>(null);
+
+  useLayoutEffect(()=>{
+    if(typeof search !== 'undefined')
+    if(typeof router.query.search === "string")
+     setQuery(router.query.search.split("=")[1].replace(/[^\p{L}\p{N}\p{P}\p{Z}^$\n]/gu, ''))
+  }, [search])
+
+  const {videos, hasMore, loading, error } = UseVideoSearch(query, pageNr)
+  const lastVideosElementRef = useCallback(node => {
+    if(loading) return;
+    if(observer && observer.current) observer.current.disconnect()
+     // Error: Cannot assign to 'current' because it is a read-only property.ts(2540)
+    observer.current = new IntersectionObserver(entries =>{
+            if(entries[0].isIntersecting){
+              if(node !== null){
+                if(hasMore)
+                setPageNr(n => n+1)
+              }
+            }
+    })
+    if(node) observer.current.observe(node)    
+  }, [loading, hasMore]);
 
   const displayImage = (file:VideoPrevData) =>{
     const [minute, second] = regularTime(file.duration);
@@ -76,8 +97,17 @@ const  Search =({videos}:SearchProps) => {
     <div className={styles.search_container}>
         <div className={styles.search_wrapper}>
              {
-               videos && videos.length > 0 &&  
+               videos && videos.length > 0 ?  
                videos.map(v => displayImage(v))
+               : 
+               <div className={styles.noVideo}>
+                 <span>
+                 <Image src={notFound} alt={"not-found"} width={500} height={400}
+                  />
+                 </span>
+                <span>Video is not found!</span>
+                <span>double check your search and try it again</span>
+               </div>
              }
             
 
@@ -85,28 +115,6 @@ const  Search =({videos}:SearchProps) => {
     </div>
   )
 }
-
-
-export const getServerSideProps:GetServerSideProps = async (c) =>{
-    const routes = c.query.search
-    const url = (routes.split("=")[1]).replace(/[^\p{L}\p{N}\p{P}\p{Z}^$\n]/gu, '')
-    const {data} = await clientAxios.get(`${process.env.NEXT_PUBLIC_REMOTE}/watch/search_query/${url}`)
-    
-    if(data.length <= 0){
-      return {
-        notFound:true
-      }
-    }
-
-    return {
-      props:{
-        videos:data
-      }}
-}
-
-
-
-
 
 
 export default Search

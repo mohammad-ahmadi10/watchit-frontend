@@ -1,7 +1,7 @@
 @use  "styles/breakpoints" as bp;
 @use "styles/utilsMixin" as ux;
-
-
+@use "styles/variables" as *;
+@use "sass:color";
 
 
 .video_container{
@@ -10,7 +10,7 @@
     align-items: center;
     flex-direction:column;
     width: 100%;
-    height: 100vh;
+    height: 100%;
     @include ux.moveY();
 }
 
@@ -23,14 +23,18 @@
     width:100%;
     height:100%;
     
-    display:grid;
-    grid-template-columns:2fr  1fr;
-
-    @include bp.xxl{
+    display: grid;
+grid-template-columns: 1.5fr 1fr;
+grid-template-rows: repeat(1, 1fr);
+grid-column-gap: 7px;
+grid-row-gap: 0px; 
+    
+   /*  @include bp.xxl{
         grid-template-columns: 1.5fr 1fr;
-    }
+    } */
     @include bp.md{
-        grid-template-columns:3fr;
+        grid-template-columns: 1.5fr 1fr;
+
     }
     @include bp.sm{
         grid-template-columns:3fr;
@@ -46,33 +50,41 @@
     padding-top:20px;
     
     display:grid;
-    grid-template-columns:3fr;
+    grid-template-columns: 1.5fr 1fr;
+    grid-template-rows: repeat(2, 1fr);
+    grid-column-gap: 0px;
+    grid-row-gap: 20px; 
+    
 }
 
 
 
 
-.standard_wrapper{
-    padding:20px;
-/*     grid-column: span 3;
-    grid-row: span 3; */
-
-    display:flex;
-    justify-content:flex-end;
-
-}
 
 .other_videos_container{
     padding-top:42px;
-    overflow:hidden;
-    
+    grid-area: 1 / 2 / 3 / 3; 
+
 }   
+.other_videos_container_theater_mode{
+    grid-area: 2 / 2 / 3 / 3;
+}
+
+
+.standard_wrapper{
+    height:auto; 
+    grid-area: 1 / 1 / 2 / 2;
+
+}
+.standard_wrapper_theater_mode{
+    grid-area: 1 / 1 / 2 / 3; 
+}
+
 
 .wrapper{
-   overflow:auto;
+   
    width:100%;
    height:100%;
-   cursor:pointer;
 }
 
 .thumbContainer{
@@ -164,4 +176,212 @@
     & span:first-child{
       margin-right:2px;
     }
+}
+
+
+.video_info{
+    grid-area: 2 / 1 / 2 / 2;
+    width:97%;
+    height:100%;
+    padding:0 25px;
+    overflow-x:clip;
+    position:relative;
+    .upper_info{
+
+        & > span{
+            font-size: clamp(1.4rem, 20%, 40%);
+            font-family:"Ashkar";
+            border-bottom: 0.1px groove color.scale($primary-color , $lightness:-52%);
+            overflow-wrap: break-word;
+            padding-bottom:2px;
+
+            
+        }
+    }
+
+    .like_wrapper{       
+        @include ux.center(row);
+        align-items:flex-start;
+        border-top: 0.1px solid color.scale($primary-color , $lightness:-52%);
+
+        padding-top:20px;
+        position:relative;
+        &  span{
+            @include ux.center(column);
+            margin: 0 1rem;
+            cursor:pointer;
+            width:50px;
+            height:100%;
+        }
+
+        & > div:nth-child(1){
+            font-size: clamp(0.75rem, 10%, 50%);
+            font-weight:bold;
+            height:100%;
+            position:absolute;
+            top:-1.6em;
+
+            left:0;
+        }
+        & > div:nth-child(2){
+            flex:1;
+            @include ux.center(row);
+            justify-content:center;
+            
+        }
+        
+    }
+
+    .description{
+        font-size:0.9rem;
+        margin-bottom:1.5rem;
+        width:80%;
+        height:auto;
+        
+        & > p{
+            white-space: initial;
+            width:100%;
+            display:block;
+            overflow-wrap: break-word;
+        }
+    }
+
+    .avatar_container{
+        @include ux.center(row);
+        padding-bottom:2rem;
+        border-bottom:0.1px groove color.scale($primary-color , $lightness:-52%);
+        justify-content:flex-start;
+        & > div{
+            @include ux.center(row);
+            justify-content:space-evenly;
+            margin-left:10px;
+            width:min(140px, 160px);
+            text-transform:capitalize;
+            & > div{
+                font-size:1.1rem;
+            }
+        }
+    }
+}
+
+.shareContent{
+    color: white;
+
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 2fr);
+    width: 400px;
+    padding:1rem;
+    gap:1rem;
+
+    & > div{
+        @include ux.center(column);
+        cursor:pointer;
+    }
+}
+
+.shareButton{
+    @include ux.center(column);
+}
+
+.center{
+    @include ux.center(row);
+}
+
+.playlistContainer{
+    overflow-y:auto;
+
+    
+}
+
+.newPlaylist{
+    @include ux.center(row);
+    justify-content:flex-start;
+    margin-top:2rem;
+    
+}
+
+.playlistItem{
+    @include ux.center(row);
+    justify-content:flex-start;
+    font-size:1.1rem;
+    overflow-y:auto;
+    margin-bottom:10px;
+
+    & > input{
+        margin-right:1rem;
+        width:1rem;
+        height:1rem;
+
+    }
+
+    & > div{
+        @include ux.center(row);
+        margin-left:auto;
+        cursor:pointer;
+    }
+}
+
+
+.commentActions{
+    @include ux.center(row);
+    justify-content:space-evenly;
+    width:6rem;
+
+}
+
+.listComment{
+    position:relative;   
+    
+}
+
+.commentEditContainer{
+  position:absolute;
+  content:"";
+  top:10px;
+  right:1rem;
+  height:50%;
+  width:4em;
+  @include ux.center(row);   
+  justify-content:space-between;
+}
+
+
+.editCommentContainer{
+    width:50%;
+    position:sticky;
+    bottom:20rem;
+    & * {
+        width:100%;
+        margin-bottom:1.4rem;
+    }
+}
+
+.popup{
+    width:50rem;
+}
+
+.editCommentContainer{
+    
+}
+
+.open{
+    opacity:1;
+    display:block;
+}
+
+.editContainer{
+    position:fixed;
+    padding:0;
+    margin:0;
+
+    top:0;
+    left:0;
+    bottom:0;
+    width: 100%;
+    height: 100%;
+    background:rgba(0,0,0,0.9);
+    @include ux.center(row);
+    align-items:flex-end;
+    z-index:10000;
 }

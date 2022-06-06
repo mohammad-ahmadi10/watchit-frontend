@@ -1,0 +1,159 @@
+@use  "styles/breakpoints" as bp;
+@use "styles/utilsMixin" as ux;
+@use "styles/variables" as *;
+
+
+
+.user_container{
+   
+   @include ux.center(column);
+   width: 100vw;
+   padding-top:150px;
+   
+}
+
+.user_wrapper{
+   width:1100px;
+   height:100vh;
+   background:rgba(0,0,0,0.5);
+   
+   display:grid;
+   grid-template-columns: 1fr 1.5fr;
+   
+}
+
+.profile{
+   @include ux.center(column);
+   justify-content:flex-start;
+   padding-top:10px;
+}
+
+
+.avatar_container{
+    position:relative;
+
+  & > span{
+   z-index:2;
+  }
+
+  & > .avatar_layer{
+    background:rgba(0,0,0,0.1);
+    content:"";
+    position:absolute;
+    height:100%;
+    width:100%;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    border-radius:50%;
+    z-index:3;
+   }
+
+   & > .avatar_layer_hover{
+      background:rgba(0,0,0,0.3);
+    content:"";
+    position:absolute;
+    height:100%;
+    width:100%;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    border-radius:50%;
+    z-index:3;
+
+   }
+ 
+
+
+   & > .avatar_ring{  
+    content:"";
+    position:absolute;
+    height:105%;
+    width:105%;
+    top:0;
+    left:50%;
+    right:0;
+    bottom:0;
+    margin: auto auto;
+    transform: translate(-50%, 0);
+
+    border-radius:50%;
+    background: $primary-color;
+    z-index:1;   
+    
+    &::after{
+      background:$secondary-color;
+      content:"";
+      position:absolute;
+      height:96.5%;
+      width:96.5%;
+      top:0;
+      left:50%;
+      right:0;
+      bottom:0;
+      margin: auto auto;
+      transform: translate(-50%, 0);
+      border-radius:50%;
+    }
+   }
+
+   & > .avatar_uploader{
+      position:absolute;
+      height:20%;
+      width:40%;
+      z-index:5;
+      margin: 0 auto;
+      border-radius:50%;
+      color:white;
+      text-align:center;
+      left:0;
+      right:0;
+      bottom:0;
+      @include ux.center(row);
+      justify-content:space-around;
+      pointer-events:none;
+   }
+}
+
+.upload{
+   opacity: 0;
+   position: absolute;
+   z-index: -1;
+   width:100%;
+   height:100%;
+
+}
+
+.info{
+   margin-top:50px;
+   display:grid;
+   width:80%;
+
+   & > span{
+      margin-bottom:10px;
+   }
+}
+
+.videos{
+   background:brown;
+}
+
+.login{
+   @include ux.center(column);
+   font-size:20px;
+   width:100%;
+   height:60vh;
+   
+   & > a{
+      @include ux.center(row);
+      margin-top:10px;
+      &  > span{
+         margin-right:10px;
+         font-size:20px;
+         @include ux.center(column);
+
+      }
+   }
+}

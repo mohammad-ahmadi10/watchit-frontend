@@ -30,7 +30,7 @@ function MyApp({ Component, pageProps }: Props) {
     return  <>
      <Navbar/>
      {children}
-     <Footer/>
+     {/* <Footer/> */}
      </>
   }
 

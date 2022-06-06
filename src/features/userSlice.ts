@@ -31,7 +31,7 @@ const initialState:UserState = {
     user: null,
     errorMSG:"",
     logIn:false
-
+    
 }
 
 
@@ -61,7 +61,6 @@ export const userSlice = createSlice({
     },
     extraReducers: {
         [HYDRATE]: (state, action) => {
-            console.log('HYDRATE', state, action.payload);
             return {
                 ...state,
                 ...action.payload.subject,
