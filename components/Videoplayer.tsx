@@ -55,7 +55,7 @@ interface VideoPlayerProps {
 
 
 
-const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resolutions=[] }:VideoPlayerProps) =>{
+const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resolutions=[""] }:VideoPlayerProps) =>{
     const VideoControllerRef = useRef<HTMLDivElement>(null)!;
     const [downloadstatus,  setDownloadstatus] = useState(DownloadStatus.ONPAUSE);
 
