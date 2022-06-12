@@ -14,6 +14,9 @@ import {MdOutlineClear} from "react-icons/md";
 import { Button, Form, Input , notification , Radio , Checkbox , Typography } from 'antd';
 import type { RadioChangeEvent } from 'antd';
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
+import {InputRef} from "antd";
+import {VscWorkspaceTrusted} from "react-icons/vsc";
+
 
 const { Title } = Typography;
 const onChange = (e: RadioChangeEvent) => {
@@ -73,7 +76,7 @@ function Register() {
     }
 
 
-    const userRef = useRef<HTMLInputElement>(null)!;
+    const userRef = useRef<InputRef>(null)!;
     const errRef = useRef<HTMLParagraphElement>(null)!;
     
     const memorizedUSER_REGES = useMemo(() =>{
@@ -140,6 +143,10 @@ function Register() {
         }    
     }, [userState.errorMSG])
 
+      /* render icon from react-icons */
+  const displayIcon = (ICON:any, color?:string, size?:number) =>  { 
+    return  <ICON size={size ? size : iconSize} style={{pointerEvents:"none", color:color}}/>
+  }
 
     const onRegisterSubmit = async (e:React.MouseEvent<HTMLFormElement>) =>{
         setIslogging(true)
@@ -173,16 +180,14 @@ function Register() {
                 logIn:false,
                 errorMSG:""
             }))
-          openNotification(<div className={styles.center}>{displayIcon(VscWorkspaceTrusted, "green")} <span style={{marginLeft:10}}>successfully registered</span></div>)
-          
+            openNotification(<div className={styles.center}>{displayIcon(VscWorkspaceTrusted, "green")} <span style={{marginLeft:10}}>successfully registered</span></div>)
         }else{
             openNotification(<div className={styles.center}>{displayIcon(VscWorkspaceTrusted, "red")} <span style={{marginLeft:10}}>there is something wrong with your Registration!</span></div>)
-
         }
-       
         setIslogging(false)
-
     }
+
+
     const onUsernameChange = (e:React.ChangeEvent<HTMLInputElement>) =>{
         const inputElement = e.target as HTMLInputElement;
         setUsername(inputElement.value)
@@ -209,7 +214,6 @@ function Register() {
 
     return (
         <>
-
         {
             success?
             (<section>
@@ -218,117 +222,104 @@ function Register() {
                    <Link href={"/login"}><a href='#'>Sign in</a></Link>
                 </p>
             </section>)
-            
                 :
                    ( <section className={styles.section_container}>
-                        
                         <div className={styles.registerContainer}>
-
-
-                      
                         <p  ref={errRef}
                             className={`${errMSG ? styles.errmsg : styles.offscreen} `}
                             aria-live="assertive"
                         >
                             {errMSG}
-
                         </p>
                         {/* start */}
                             <div className={styles.form_wrapper}>
                                 <div className={styles.form_container}>
-                                        
-                                        
-
                                         <Form
-      name="clasic"
-      initialValues={{ remember: true }}
-      onFinish={onFinish}
-      onFinishFailed={onFinishFailed}
-      autoComplete="off"
-      className={styles.form}
-    >
-        <Form.Item>
-        <Title level={2}>Registration</Title>
-        </Form.Item>
-      <Form.Item
-        name="username"
-        rules={[{ required: true, message: 'Please input your username!' }]}        
-        className={styles.usernameContainer}
+                                          name="clasic"
+                                          initialValues={{ remember: true }}
+                                          onFinish={onFinish}
+                                          onFinishFailed={onFinishFailed}
+                                          autoComplete="off"
+                                          className={styles.form}
+                                        >
+                                         <Form.Item>
+                                         <Title level={2}>Registration</Title>
+                                         </Form.Item>
+                                         <Form.Item
+                                           name="username"
+                                           rules={[{ required: true, message: 'Please input your username!' }]}        
+                                           className={styles.usernameContainer}
+                                         >
+                                         <Input 
+                                         name="username" 
+                                         id="username"
+                                         placeholder="Username" 
+                                         ref={userRef}
+                                         autoComplete={"off"}
+                                         onChange={onUsernameChange}
+                                         required
+                                         aria-invalid={validusername ? "false" : "true"}
+                                         aria-describedby={"uidnote"}
+                                         onFocus={()=> setUsernameFocus(true)}
+                                         onBlur={()=> setUsernameFocus(false)}
+                                         style={{borderRadius:"0px", height:"50px"}}
+                                         />
+                                                                {/* <span className={`${ validusername ? styles.valid : styles.hide}`}>
+                                                                       <AiOutlineCheck color="green" size={iconSize}/>
+                                                                    </span>
+                                                                    <span className={`${validusername || !username ? styles.hide : styles.invalid}`}>
+                                                                        <MdOutlineClear color="red" size={iconSize}/>
+                                                                    </span> 
+                                                                */}
 
-      >
-        <Input 
-        name="username" 
-        id="username"
-        placeholder="Username" 
-        ref={userRef}
-        autoComplete={"off"}
-        onChange={onUsernameChange}
-        required
-        aria-invalid={validusername ? "false" : "true"}
-        aria-describedby={"uidnote"}
-        onFocus={()=> setUsernameFocus(true)}
-        onBlur={()=> setUsernameFocus(false)}
-        style={{borderRadius:"0px", height:"50px"}}
-        />
- {/*                                                                     <span className={`${ validusername ? styles.valid : styles.hide}`}>
-                                                                    <AiOutlineCheck color="green" size={iconSize}/>
-                                                                </span>
-                                                                <span className={`${validusername || !username ? styles.hide : styles.invalid}`}>
-                                                                    <MdOutlineClear color="red" size={iconSize}/>
-                                                                </span> */}
-
-                                                            <p id="uidnote"
-                                                            className={` ${usernameFocus && username && !validusername ?
+                                                            <p 
+                                                                id="uidnote"
+                                                                className={` ${usernameFocus && username && !validusername ?
                                                                 styles.instructions : styles.hide}`}
-                                                                
                                                             >
-                                                                {/*  */}
                                                                 4 to 24 characters.<br/>
                                                                 Must begin with a letter.<br/>
                                                                 Letters, numbers, underscores, hyphens allowed.
-                                                                
                                                             </p>
 
-      </Form.Item>
-      <Form.Item
-        name="Email"
-        rules={[{ required: true, message: 'Please input your Email!', type: 'email' }]}
-
-      >
-        <Input 
+                                                            </Form.Item>
+                                                            <Form.Item
+                                                              name="Email"
+                                                              rules={[{ required: true, message: 'Please input your Email!', type: 'email' }]}
+                                                            >
+                                                              <Input 
+                                                                 type="text" 
+                                                                 name="email" 
+                                                                 id="email"
+                                                                 placeholder="username@email.com" 
+                                                                 autoComplete={"false"}
+                                                                 autoCorrect={"false"}
+                                                                 onChange={onEmailChange}
+                                                                 required
+                                                                 aria-invalid={validEmail ? "false" : "true"}
+                                                                 aria-describedby={"emailnote"}
+                                                                 onFocus={()=> setEmailFocus(true)}
+                                                                 onBlur={()=> setEmailFocus(false)}
+                                                                 style={{borderRadius:"0px", height:"50px"}}
+                                                                />
         
-        type="text" 
-        name="email" 
-        id="email"
-        placeholder="username@email.com" 
-        autoComplete={"false"}
-        autoCorrect={"false"}
-        onChange={onEmailChange}
-        required
-        aria-invalid={validEmail ? "false" : "true"}
-        aria-describedby={"emailnote"}
-        onFocus={()=> setEmailFocus(true)}
-        onBlur={()=> setEmailFocus(false)}
-        style={{borderRadius:"0px", height:"50px"}}
-
-
-        />
-        
-{/*         <span className={`${validEmail ? styles.valid : styles.hide}`}>
+                                                            {/* <span className={`${validEmail ? styles.valid : styles.hide}`}>
                                                                     <AiOutlineCheck color="green" size={iconSize}/>
                                                                 </span>
                                                                 <span className={`${validEmail || !email ? styles.hide : styles.invalid}`}>
                                                                     <MdOutlineClear color="red" size={iconSize}/>
-                                                                </span> */}
-                                                            <p id="emailnote"
-                                                            className={`${emailFocus && email && !validEmail ?
+                                                                </span> 
+                                                            */}
+                                                            <p 
+                                                                id="emailnote"
+                                                                className={`${emailFocus && email && !validEmail ?
                                                                 styles.instructions : styles.offscreen}`}>
-                                                            
-                                                            Email Must have<br/>          <span aria-label="at symbol">@</span><br/>
-                                                                                            <span aria-label="dot symbol">.</span>
+                                                                Email Must have<br/>          
+                                                                <span aria-label="at symbol">@</span><br/>
+                                                                <span aria-label="dot symbol">.</span>
                                                             </p>  
 
-      </Form.Item>
+                                                            </Form.Item>
 
       <Form.Item
         name="password"
@@ -416,7 +407,7 @@ function Register() {
                                                     </Radio.Group>
 
                                                     <div className={styles.term_conditons_container}>
-                                                    <Checkbox onChange={onChange} checked={agreement} onChange={onAgreementChange}>
+                                                    <Checkbox checked={agreement} onChange={onAgreementChange}>
                                                     I agree with terms and <Link href={"/conditions"}><a href='#'>conditions</a></Link>
                                                     </Checkbox>
                                                     </div>
