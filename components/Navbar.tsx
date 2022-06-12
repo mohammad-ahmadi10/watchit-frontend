@@ -144,13 +144,16 @@ const  Navbar = () => {
   const handleScroll = (e:any) =>{
       const lp = window.scrollY;
       const oldScroll = localStorage.getItem("oldScroll")
-      if((+lp )> (+oldScroll)){
-        setIsScrolled(true)
+      if(oldScroll !== null){
+        if((+lp )> (+oldScroll)){
+          setIsScrolled(true)
+        }
+        else{
+          setIsScrolled(false)
+        }
+        localStorage.setItem("oldScroll", lp)
       }
-      else{
-        setIsScrolled(false)
-      }
-      localStorage.setItem("oldScroll", lp)
+      
   } 
 
 
