@@ -79,7 +79,6 @@ const onEmailChange = (e:React.ChangeEvent<HTMLInputElement>) =>{
                                                               placeholder='example@gmail.com' 
                                                               onChange={onEmailChange}
                                                               value={email}
-                                                              rules={[{ required: true , type:"email"}]}
                                                               required
                                                               style={{borderRadius:"0px", height:"50px"}}
                                                             />
