@@ -17,16 +17,18 @@ const  useVideoSearch = (s?:string , p?:number) => {
     useLayoutEffect(()=>{
       setLoading(true)
       setError(false);
-           let params:{p:number,s?:string};
+           let params:{p:number,s?:string} ;
 
           if(s && s.length > 0 && p ){
             params = {p,s}
           }else {
             if(p)
-            params = {p}
+            params = {p}#
+            else 
+            params = {0}
           }
           costumAxios.get(`/watch`, {
-            params,
+            params:params,
             signal: controller.signal
          })
           .then(res => {
