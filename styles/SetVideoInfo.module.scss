@@ -138,12 +138,11 @@
         padding-top: 40px;
 
         }
-
         @include bp.sm{
-            width:400px;
+            width:100%;
         }
         @include bp.xs{
-            width:300px;
+            width:100%;
         }
 }
 

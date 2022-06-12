@@ -25,11 +25,12 @@ import { selectAvatar } from '../../src/store';
 import {AiOutlineUser} from "react-icons/ai"
 import {MdAlternateEmail} from "react-icons/md";
 import {CgLogIn} from "react-icons/cg";
-import { Input , Form , Button , notification  } from 'antd';
+import { Input , Form , Button , notification, Popover   } from 'antd';
 import {forceReload} from "../../utils/functions";
 import { login  } from '../../src/features/userSlice';
 import {VscWorkspaceTrusted} from "react-icons/vsc";
 import {RiEdit2Line} from "react-icons/ri";
+import {VideoPrevData} from "../../types/page"
 
 interface UserProps{
     username:string
@@ -54,7 +55,7 @@ const  User =({username}:UserProps) => {
   const [avatar, setAvatarPath] = useState("");
   const [isAvatarHover , setIsAvatarHover] = useState(false);
   const [iconSize , setIconSize] = useState(40);
-
+  const [videos , setVideos] = useState<VideoPrevData[]>([]);
   const dispatch = useDispatch();
   const selector = useSelector(selectAvatar);
 
@@ -67,6 +68,54 @@ const  User =({username}:UserProps) => {
 const displayIcon = (ICON:any, color?:string, size?:number) =>  { 
   return  <ICON size={size ? size : iconSize} style={{pointerEvents:"none", color:color}}/>
 }
+
+
+const onBookmarkClicked = (_:any) =>{
+        
+}
+
+const myLoader=({src}:any)=>{
+  return `${process.env.NEXT_PUBLIC_REMOTE}/watch/thumb/${src}`;
+}
+
+/* 
+ displays every video thumb which is got back from API
+ @file: VideoPrewData 
+        is an object von type VideoPrewData 
+*/
+const displayImage = (file:VideoPrevData , ref?:any) =>{
+  const [minute, second] = regularTime(file.duration);
+  
+  return <div ref={ref ? ref : null}  key={file.id}  id={file.id} className={styles.gridChild} >
+    <Link href={`/video/edit/${file.id}`}>
+  <a href="#" className={styles.thumbContainer}>
+    <div className={styles.img_wrapper}>
+       <Image loader={myLoader} 
+            src={`${file.id}`} alt={file.id} layout="fill"
+        />
+        <div className={styles.duration_container}>
+         <span>{minute}</span>
+         :
+         <span>{second}</span>
+      </div>
+    </div>
+
+   <div className={styles.videoInfoContainer}>
+     <span>{file.title}</span>
+     <div className={styles.usernameContainer}>
+       <span>{file.username}</span>
+       <BiCheckShield size={18} style={{color:"green"}}/>
+     </div>
+     <div className={styles.view_dateContainer}>
+          <span>{modifyAmountOfView(/* +file.view */ 20)}</span>
+          <span>{modifyUplodedDate(new Date(file.date))} </span>
+     </div>
+    </div>
+  </a>
+</Link>
+</div>
+}
+
 
 
   useLayoutEffect(() =>{
@@ -94,12 +143,16 @@ const displayIcon = (ICON:any, color?:string, size?:number) =>  {
             page:"profile"
         }))
       }
-      
-      
-      
-
   } 
 
+
+  useLayoutEffect(() =>{
+ 
+    ( async () =>{
+       const {data} = await costumAxios.get("/watch/myVideos");
+       setVideos(data);
+    })();
+  }, [])
 
   useLayoutEffect(()=>{
     (async () => { 
@@ -174,6 +227,19 @@ const displayIcon = (ICON:any, color?:string, size?:number) =>  {
 
 
 
+    const onAccountDelete = (e:any) =>{
+
+    }
+
+
+    const deleteAccount = (
+      <div>
+        <p>your all shared video will be removed as Well!</p>
+        <Button onClick={onAccountDelete} type={"danger"}  style={{width:"100%"}}>DELETE</Button>
+      </div>
+    );
+
+
   return (
     <div className={styles.user_container}>
         {
@@ -230,14 +296,35 @@ const displayIcon = (ICON:any, color?:string, size?:number) =>  {
                             </Button>
                           </Form.Item>
                         </Form>
-
+                       <Form
+                         name="basic"
+                         labelCol={{ span: 8 }}
+                         wrapperCol={{ span: 22 }}
+                         initialValues={{ remember: true }}
+                         autoComplete="off"
+                        >
+                          <Form.Item wrapperCol={{ offset: 0, span: 22 }}>
+                          <Popover content={deleteAccount} title="delete" trigger="click">
+                                     <Button type="danger" ghost htmlType="submit" size={"large"} style={{width:"100%"}}>
+                                          Delete acount
+                                      </Button>
+                                   </Popover>
+                            
+                          </Form.Item>
+                        </Form>
+                        
+                            
                 </div>
 
 
 
               </div>
 
-                   <div className={styles.videos} >videos</div>
+                   <div className={styles.gridWrapper} >
+                     {videos.length > 0 && videos.map(v =>(
+                       displayImage(v)
+                     ))}
+                   </div>
      
 
           </div>

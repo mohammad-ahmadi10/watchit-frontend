@@ -9,10 +9,34 @@ import Link from 'next/link'
 import costumAxios from "../utils/axios";
 import { selectUser } from '../src/store';
 import { register} from "../src/features/userSlice";
+import {AiOutlineCheck} from "react-icons/ai";
+import {MdOutlineClear} from "react-icons/md";
+import { Button, Form, Input , notification , Radio , Checkbox , Typography } from 'antd';
+import type { RadioChangeEvent } from 'antd';
+import type { CheckboxChangeEvent } from 'antd/es/checkbox';
+
+const { Title } = Typography;
+const onChange = (e: RadioChangeEvent) => {
+    console.log(`radio checked:${e.target.value}`);
+  };
+
+
+
+const onFinish = (values: any) => {
+    console.log('Success:', values);
+  };
+
+  const onFinishFailed = (errorInfo: any) => {
+    console.log('Failed:', errorInfo);
+  };
+
+
 
 function Register() {
     const userState = useSelector(selectUser)
     const dispatch = useDispatch();
+
+    const [iconSize , setIconSize] = useState(25);
 
     const [username , setUsername] = useState("");
     const [validusername, setValidusername] = useState(false);
@@ -32,11 +56,21 @@ function Register() {
     const [validEmail, setValidEmail] = useState(false);
     const [emailFocus , setEmailFocus] = useState(false);
     
+    const [isLogging , setIslogging] = useState(false);
 
     const [errMSG , setErrMSG] = useState("");
     const [success , setSuccess] = useState(false);
 
     const [agreement , setAgreement] = useState(false);
+
+    const openNotification = (content:React.ReactNode) => {
+      notification.open({
+        message: content,
+        style: {
+          width: 300,
+        },
+      });
+    }
 
 
     const userRef = useRef<HTMLInputElement>(null)!;
@@ -108,6 +142,7 @@ function Register() {
 
 
     const onRegisterSubmit = async (e:React.MouseEvent<HTMLFormElement>) =>{
+        setIslogging(true)
         e.preventDefault();
         const v1 = memorizedUSER_REGES.test(username);
         const v2 = memorizedPSS_REGES.test(password);
@@ -138,9 +173,14 @@ function Register() {
                 logIn:false,
                 errorMSG:""
             }))
+          openNotification(<div className={styles.center}>{displayIcon(VscWorkspaceTrusted, "green")} <span style={{marginLeft:10}}>successfully registered</span></div>)
+          
+        }else{
+            openNotification(<div className={styles.center}>{displayIcon(VscWorkspaceTrusted, "red")} <span style={{marginLeft:10}}>there is something wrong with your Registration!</span></div>)
+
         }
        
-
+        setIslogging(false)
 
     }
     const onUsernameChange = (e:React.ChangeEvent<HTMLInputElement>) =>{
@@ -162,9 +202,10 @@ function Register() {
         setEmail(inputElement.value)
     }
 
-    const onAgreementChange = (e:React.ChangeEvent<HTMLInputElement>) =>{
-          setAgreement(!agreement);
+    const onAgreementChange = (e: CheckboxChangeEvent) =>{
+        setAgreement(!agreement);
     }
+
 
     return (
         <>
@@ -181,7 +222,10 @@ function Register() {
                 :
                    ( <section className={styles.section_container}>
                         
+                        <div className={styles.registerContainer}>
 
+
+                      
                         <p  ref={errRef}
                             className={`${errMSG ? styles.errmsg : styles.offscreen} `}
                             aria-live="assertive"
@@ -190,116 +234,126 @@ function Register() {
 
                         </p>
                         {/* start */}
-                            <div className="form_wrapper">
-                                <div className="form_container">
+                            <div className={styles.form_wrapper}>
+                                <div className={styles.form_container}>
                                         
-                                        <h2>Registration</h2>
-                                        <form onSubmit={onRegisterSubmit} 
-                                                className={styles.form_container}
-                                                
-                                            >
-                                                    <div className={styles.username_container}>
-                                                            <label htmlFor="username">
-                                                                username:
-                                                                <span className={`${validusername ? styles.valid : styles.hide}`}>
-                                                                    GREEN CHECK
+                                        
+
+                                        <Form
+      name="clasic"
+      initialValues={{ remember: true }}
+      onFinish={onFinish}
+      onFinishFailed={onFinishFailed}
+      autoComplete="off"
+      className={styles.form}
+    >
+        <Form.Item>
+        <Title level={2}>Registration</Title>
+        </Form.Item>
+      <Form.Item
+        name="username"
+        rules={[{ required: true, message: 'Please input your username!' }]}        
+        className={styles.usernameContainer}
+
+      >
+        <Input 
+        name="username" 
+        id="username"
+        placeholder="Username" 
+        ref={userRef}
+        autoComplete={"off"}
+        onChange={onUsernameChange}
+        required
+        aria-invalid={validusername ? "false" : "true"}
+        aria-describedby={"uidnote"}
+        onFocus={()=> setUsernameFocus(true)}
+        onBlur={()=> setUsernameFocus(false)}
+        style={{borderRadius:"0px", height:"50px"}}
+        />
+ {/*                                                                     <span className={`${ validusername ? styles.valid : styles.hide}`}>
+                                                                    <AiOutlineCheck color="green" size={iconSize}/>
                                                                 </span>
                                                                 <span className={`${validusername || !username ? styles.hide : styles.invalid}`}>
-                                                                    RED X
-                                                                </span>
-                                                            </label>
-
-                                                            <input 
-                                                                type="text" 
-                                                                name="username" 
-                                                                id="username"
-                                                                placeholder="Username" 
-                                                                ref={userRef}
-                                                                autoComplete={"off"}
-                                                                onChange={onUsernameChange}
-                                                                required
-                                                                aria-invalid={validusername ? "false" : "true"}
-                                                                aria-describedby={"uidnote"}
-                                                                onFocus={()=> setUsernameFocus(true)}
-                                                                onBlur={()=> setUsernameFocus(false)}
-                                                            />
+                                                                    <MdOutlineClear color="red" size={iconSize}/>
+                                                                </span> */}
 
                                                             <p id="uidnote"
-                                                            className={`${usernameFocus && username && !validusername ?
-                                                                            styles.instructions : styles.offscreen}`}
+                                                            className={` ${usernameFocus && username && !validusername ?
+                                                                styles.instructions : styles.hide}`}
+                                                                
                                                             >
+                                                                {/*  */}
                                                                 4 to 24 characters.<br/>
                                                                 Must begin with a letter.<br/>
                                                                 Letters, numbers, underscores, hyphens allowed.
                                                                 
                                                             </p>
-                                                    </div>
+
+      </Form.Item>
+      <Form.Item
+        name="Email"
+        rules={[{ required: true, message: 'Please input your Email!', type: 'email' }]}
+
+      >
+        <Input 
+        
+        type="text" 
+        name="email" 
+        id="email"
+        placeholder="username@email.com" 
+        autoComplete={"false"}
+        autoCorrect={"false"}
+        onChange={onEmailChange}
+        required
+        aria-invalid={validEmail ? "false" : "true"}
+        aria-describedby={"emailnote"}
+        onFocus={()=> setEmailFocus(true)}
+        onBlur={()=> setEmailFocus(false)}
+        style={{borderRadius:"0px", height:"50px"}}
 
 
-                                                    <div className={styles.email_container}>
-                                                    <label htmlFor="email">
-                                                                Email:
-                                                                <span className={`${validEmail ? styles.valid : styles.hide}`}>
-                                                                    GREEN CHECK
+        />
+        
+{/*         <span className={`${validEmail ? styles.valid : styles.hide}`}>
+                                                                    <AiOutlineCheck color="green" size={iconSize}/>
                                                                 </span>
                                                                 <span className={`${validEmail || !email ? styles.hide : styles.invalid}`}>
-                                                                    RED X
-                                                                </span>
-                                                            </label>
-
-                                                            <input 
-                                                                type="text" 
-                                                                name="email" 
-                                                                id="email"
-                                                                placeholder="username@email.com" 
-                                                                autoComplete={"false"}
-                                                                autoCorrect={"false"}
-                                                                onChange={onEmailChange}
-                                                                required
-                                                                aria-invalid={validEmail ? "false" : "true"}
-                                                                aria-describedby={"emailnote"}
-                                                                onFocus={()=> setEmailFocus(true)}
-                                                                onBlur={()=> setEmailFocus(false)}
-                                                            />
-
+                                                                    <MdOutlineClear color="red" size={iconSize}/>
+                                                                </span> */}
                                                             <p id="emailnote"
                                                             className={`${emailFocus && email && !validEmail ?
                                                                 styles.instructions : styles.offscreen}`}>
                                                             
                                                             Email Must have<br/>          <span aria-label="at symbol">@</span><br/>
                                                                                             <span aria-label="dot symbol">.</span>
-                                                                                        
-                                                                                                    
-                                                            </p>
+                                                            </p>  
 
+      </Form.Item>
 
-                                                    </div>
+      <Form.Item
+        name="password"
+        rules={[{ required: true, message: 'Please input your password!' }]}
 
-                                                    <div className={styles.pass_container}> 
-                                                        
-                                                            <label htmlFor="password">
-                                                                password:
-                                                               
-                                                                <span className={`${validPass ? styles.valid : styles.hide}`}>
-                                                                    GREEN CHECK
+      >
+        <Input.Password 
+        type="password" 
+        name="password" 
+        id="password"
+        placeholder="password" 
+        onChange={onPassChange}
+        required
+        aria-invalid={validPass ? "false" : "true"}
+        aria-describedby={"pwddnote"}
+        onFocus={()=> setPassFocus(true)}
+        onBlur={()=> setPassFocus(false)}
+
+        />
+ {/*                                                                        <span className={`${validPass ? styles.valid : styles.hide}`}>
+                                                                    <AiOutlineCheck color="green" size={iconSize}/>
                                                                 </span>
                                                                 <span className={`${validPass || !password ? styles.hide : styles.invalid}`}>
-                                                                    RED X
-                                                                </span>
-                                                            </label>
-
-                                                            <input 
-                                                                type="password" 
-                                                                name="password" 
-                                                                id="password"
-                                                                placeholder="password" 
-                                                                onChange={onPassChange}
-                                                                required
-                                                                aria-invalid={validPass ? "false" : "true"}
-                                                                aria-describedby={"pwddnote"}
-                                                                onFocus={()=> setPassFocus(true)}
-                                                                onBlur={()=> setPassFocus(false)}
-                                                            />
+                                                                    <MdOutlineClear color="red" size={iconSize}/>
+                                                                </span> */}
 
                                                             <p id="pwddnote"
                                                             className={`${passFocus && !validusername ?
@@ -314,33 +368,33 @@ function Register() {
                                                                                             <span aria-label="percent">%</span>
                                                                 
                                                             </p>
-                                                    </div>
 
+      </Form.Item>
+      <Form.Item
+        name="password"
+        rules={[{ required: true, message: 'Confirm your Password!' }]}
 
-                                                    <div className={styles.confirmpass_container}>
-                                                    
-                                                    <label htmlFor="password">
-                                                                Confirm Password:
-                                                                <span className={`${validConfirmPass && confirmPassword ? styles.valid : styles.hide}`}>
-                                                                    GREEN CHECK
+      >
+        <Input.Password 
+        type="password" 
+        name="confirm_password" 
+        id="confirm_password"
+        placeholder="confirm_password" 
+        onChange={onConfirmPassChange}
+        required
+        aria-invalid={validPass ? "false" : "true"}
+        aria-describedby={"confpwddnote"}
+        onFocus={()=> setConfirmPassFocus(true)}
+        onBlur={()=> setConfirmPassFocus(false)}
+
+        />
+{/*                                                                         <span className={`${validConfirmPass && confirmPassword ? styles.valid : styles.hide}`}>
+                                                                    <AiOutlineCheck color="green" size={iconSize}/>
                                                                 </span>
                                                                 <span className={`${validConfirmPass || !confirmPassword ? styles.hide : styles.invalid}`}>
-                                                                    RED X
+                                                                    <MdOutlineClear color="red" size={iconSize}/>
                                                                 </span>
-                                                            </label>
-
-                                                            <input 
-                                                                type="password" 
-                                                                name="confirm_password" 
-                                                                id="confirm_password"
-                                                                placeholder="confirm_password" 
-                                                                onChange={onConfirmPassChange}
-                                                                required
-                                                                aria-invalid={validPass ? "false" : "true"}
-                                                                aria-describedby={"confpwddnote"}
-                                                                onFocus={()=> setConfirmPassFocus(true)}
-                                                                onBlur={()=> setConfirmPassFocus(false)}
-                                                            />
+ */}
 
                                                             <p id="confpwddnote"
                                                             className={`${confirmPassFocus && !validConfirmPass ?
@@ -349,27 +403,39 @@ function Register() {
                                                             MUST match the first password input filed.                                             
                                                             </p>
 
-                                                    </div>
-                                                    <div className={styles.gender_opt_container}>
-                                                        <input type="radio" name="radiogroup1" id="rd1" defaultChecked/>
-                                                        <label htmlFor="rd1">Male</label>
-                                                        <input type="radio" name="radiogroup1" id="rd2"/>
-                                                        <label htmlFor="rd2">Female</label>
-                                                        <input type="radio" name="radiogroup1" id="rd3"/>
-                                                        <label htmlFor="rd2">Divers</label>
-                                                    </div>
-                                                <div className={styles.term_conditons_container}>
-                                                    <input type="checkbox" id="cb1" checked={agreement} onChange={onAgreementChange} />
-                                                    <label htmlFor="cb1">I agree with terms and conditions</label>
-                                                </div>
+      </Form.Item>
 
-                                                <input defaultValue={"Register"}
-                                                type="submit"
-                                                disabled={ !validusername || !validPass || !validConfirmPass || !validEmail || !agreement ? true : false}           
-                                                />
-                                            </form>
 
-                                        <p>
+
+     <Form.Item>
+         
+                                                    <Radio.Group onChange={onChange} defaultValue="Male">
+                                                     <Radio.Button value="a">Male</Radio.Button>
+                                                     <Radio.Button value="b">Female</Radio.Button>
+                                                     <Radio.Button value="c">Divers</Radio.Button>
+                                                    </Radio.Group>
+
+                                                    <div className={styles.term_conditons_container}>
+                                                    <Checkbox onChange={onChange} checked={agreement} onChange={onAgreementChange}>
+                                                    I agree with terms and <Link href={"/conditions"}><a href='#'>conditions</a></Link>
+                                                    </Checkbox>
+                                                    </div>
+
+
+     </Form.Item>
+      <Form.Item >
+        <Button type="primary" htmlType="submit"
+         disabled={ !validusername || !validPass || !validConfirmPass || !validEmail || !agreement ? true : false}    
+         className={styles.button} 
+         loading={ isLogging }
+         onClick={onRegisterSubmit}     
+         >
+          Submit
+        </Button>
+      </Form.Item>
+      <Form.Item >
+          
+      <p>
                                             Already registerd?<br/>
                                             <span
                                                 className={styles.line }
@@ -378,9 +444,11 @@ function Register() {
                                                 <Link href={"/login"}><a href='#'>Sign in</a></Link>
                                             </span>
                                         </p>
+      </Form.Item>
+    </Form>  
                                 </div>
-                            </div>
-
+                             </div>
+                        </div>
                         {/* End */}
                     </section>)
 

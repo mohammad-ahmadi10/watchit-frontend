@@ -17,7 +17,9 @@ export interface VideoPrevData{
   view:number,
   userID:Number,
   username:string,
-  description:string
+  description:string,
+  resolutions:string[],
+  
 }
 
 

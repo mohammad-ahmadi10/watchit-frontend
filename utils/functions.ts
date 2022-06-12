@@ -59,11 +59,11 @@ export const finduserIfExists = async (router:any , costumAxios:AxiosInstance) =
 
   }else{
     const token = localStorage.getItem("ACTKEN");
-    if(token){
+    /* if(token){
       setTimeout(() =>{
         forceReload(router); 
       }, 250)
-    }
+    } */
     return {user:null, objectURL:""};
     
   }

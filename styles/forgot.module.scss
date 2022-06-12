@@ -1,0 +1,56 @@
+@use  "styles/breakpoints" as bp;
+@use "styles/utilsMixin" as ux;
+@use "styles/variables" as *;
+@use "sass:color";
+
+
+
+.forgotPassContainer{
+   @include ux.center(column);
+   width:100vw;
+   height:100vh;
+   justify-content:flex-start;
+   padding-top:10em;
+}
+
+.wrapper{
+   width:90%;
+   overflow:hidden;
+   @include ux.center(column);
+   font-size:1.4em;
+   text-align:center;
+   
+   
+   @include bp.sm{
+      font-size:1.3em;
+   }
+   
+   @include bp.xs{
+       font-size:1.1em;
+    }
+
+
+
+    & > p{
+       word-wrap: break-word;
+       width:100%;
+    }
+
+   & > h1{
+      text-transform:uppercase;
+      font-family:ashkar;
+      
+   }
+}
+
+.button{
+   margin-top:10px;
+   height: 30px;
+   width:100%;
+ }
+
+
+ .center{
+    @include ux.center(row);
+
+ }

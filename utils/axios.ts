@@ -64,7 +64,7 @@ if (typeof window !== 'undefined') {
         store.dispatch(login({
           user: null,
           logIn:false,
-          errorMSG:"Login Failed"
+          errorMSG:""
         }))
       }
     }
@@ -87,7 +87,7 @@ if (typeof window !== 'undefined') {
           const ms = store.dispatch(login({
             user: null,
             logIn:false,
-            errorMSG:"Invalid refreshtoken"
+            errorMSG:""
           }))
           /* localStorage.setItem("user", JSON.stringify(ms)); */
           return error.response?.data;

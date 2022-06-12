@@ -17,13 +17,9 @@
     background:black;
     position: relative;
     video{
-        /* height: 100%; */
         width:100%;
         height:600px;
-        /* object-fit: initial; */
         z-index:1;
-
-       
         @include bp.md{
            height:600px;
         }
@@ -33,7 +29,6 @@
         @include bp.xs{
             height:350px;
         }
-
     }
     & > div[data-fullscreen="true"]{
            video{
@@ -71,6 +66,13 @@
     position: relative;
     height:90%;
     width:98%;
+
+    @include bp.sm{
+        height:80%;
+    }
+    @include bp.xs{
+        height:100%;
+    }
 }
 .video_controller_wrapper_theater_mode{
     display: flex;
@@ -110,9 +112,27 @@
     height: 100%;
     font-size: 0.5em;
     padding-bottom:15px;
+
+   
+    
+    @include bp.xl{
+        padding-bottom:0px;
+    }
+
+    @include bp.md{
+        font-size: 25px;
+        padding-bottom:0px;
+    }
+    @include bp.sm{
+        font-size: 25px;
+        padding-bottom:0px;
+    }
     @include bp.xs{
         font-size: 25px;
+        padding-bottom:0px;
     }
+
+    
 
 }
 
@@ -125,7 +145,18 @@
     @include ux.center(row);
     margin-left:2em;
     
+
+
     @include bp.xs{
+        margin-left:0.2em;
+    }
+    @include bp.xl{
+        margin-left:0.2em;
+    }
+    @include bp.md{
+        margin-left:0.2em;
+    }
+    @include bp.sm{
         margin-left:0.2em;
     }
 }
@@ -136,6 +167,20 @@
     @include ux.center(row);
     justify-content:flex-end;
     width: 200px;
+
+    @include bp.xl{
+        width: 100px;
+    }
+    @include bp.md{
+        width: 100px;
+    }
+    @include bp.sm{
+        width: 100px;
+    }
+    @include bp.xs{
+        width: 50px;
+    }
+
 }
 
 
@@ -232,6 +277,19 @@
         padding-left:10px;
         text-transform: capitalize;
         padding-top:20px;
+        
+        
+        @include bp.md{
+            padding-top:0px;
+        }
+        
+        @include bp.sm{
+            padding-top:0px;
+        }
+        
+        @include bp.xl{
+            padding-top:0px;
+        }
     }
 
     .rightside{
@@ -245,6 +303,18 @@
         pointer-events:pointer;
         opacity:0.5;
         padding-top:20px;
+        @include bp.md{
+            padding-top:0px;
+        }
+        
+        @include bp.sm{
+            padding-top:0px;
+        }
+        
+        @include bp.xl{
+            padding-top:0px;
+        }
+
         & a {
             @include ux.center(column);
             color:white;
@@ -377,7 +447,7 @@
 .center{
     @include ux.center(column);
     margin-right:10px;
-
+    
 }
 .noOpacity{
     opacity:0;

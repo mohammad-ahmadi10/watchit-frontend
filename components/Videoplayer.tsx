@@ -121,7 +121,7 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
         if(event){
             if(event.target.className.includes && !event.target.className.includes("event_lister")){
                 setDownloadPopup(false);
-                setSettingPopup(false);
+/*                 setSettingPopup(false); */
             }
         }
     }
@@ -256,6 +256,14 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
         setModifiedDuration({minute:+minute , second:+second})
     }, [])
     useLayoutEffect(() =>{
+        (async () =>{
+            const rs = await costumAxios.put("/watch/addtoHistory", {videoID:videoPath})
+            console.log(rs)
+        })();
+    }, [])
+
+
+    useLayoutEffect(() =>{
         const [minute , second ] = regularTime(0)
         setModifiedCurrentTime({minute:+minute , second:+second})
     },[])
@@ -272,11 +280,14 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
 
 
     const onControllClick = (e:React.MouseEvent<HTMLDivElement>) =>{
+        console.log(e.target)
         if(e.target.className && e.target.className.includes  &&   e.target.className.includes("thumbPlay")){
             if(shouldThumbShowing){
                 setShouldThumbShowing(false);
                 setShouldPlay(true);
             }
+        }else if(e.target.className && e.target.className.includes  &&   e.target.className.includes("video_controller_wrapper") ){
+            setShouldPlay(p =>!p);
         }
         
         const contoller = e.target as HTMLDivElement;
@@ -577,15 +588,17 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
                              animate={isVolumeHover ? "show" : "hidden"}
                             >
                             <div onClick={onControllClick} ref={VideoControllerRef}  className={styles.video_controller} >
-                                <motion.div 
+                                {/* <motion.div 
                                    initial={"closed"}
                                    animate={isControllHover ? "open" : "closed"}
                                    variants={controll_variants}
                                    onMouseEnter={() => setIsControllHover(true)}
                                    onMouseLeave={() => setIsControllHover(false)}
-                                   /* animate={isHover ? "open":"closed"} */
+                                   animate={isHover ? "open":"closed"}
                                    id={"videoController"} 
-                                   className={`${isTheater ? styles.video_controller_wrapper_theater_mode : styles.video_controller_wrapper}`} >
+                                    */}
+                                   <div className={`${isTheater ? styles.video_controller_wrapper_theater_mode : styles.video_controller_wrapper}`} >
+                                   
                                    <div className={`${shouldThumbShowing ?  styles.thumbPlayBt_Wrapper : styles.onStyle}`}>
                                     <motion.div 
                                        className={styles.thumbPlayButton}
@@ -784,6 +797,7 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
 
                                                                   {/* menu start */}
                                                                   <Menu 
+                                                                  triggerSubMenuAction={"click"}
                                                                   style={{overflow:"auto"}}
                                                                   items={[
                                                                     {
@@ -874,7 +888,7 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
                                                 </div>
                                         </div>
                                         }
-                                </motion.div>
+                                </div>
                             </div>
                             </motion.div>
                     </div>

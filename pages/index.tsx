@@ -68,7 +68,7 @@ const displayImage = (file:VideoPrevData , ref?:any) =>{
        <BiCheckShield size={18} style={{color:"green"}}/>
      </div>
      <div className={styles.view_dateContainer}>
-          <span>{modifyAmountOfView(/* +file.view */ 20)}</span>
+          <span>{modifyAmountOfView(+file.view)}</span>
           <span>{modifyUplodedDate(new Date(file.date))} </span>
      </div>
     </div>

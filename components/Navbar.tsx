@@ -4,7 +4,6 @@ import {useState , useCallback, useRef} from "react";
 import Upload from "./Upload";
 import imageCompression from 'browser-image-compression';
 import "antd/dist/antd.dark.css"
-
 import styles from "../styles/Navbar.module.scss";
 
 import { motion } from "framer-motion"
@@ -37,7 +36,7 @@ import {VideoPrevData} from "../types/page";
 import { useDispatch, useSelector } from 'react-redux';
 import { setAvatar } from '../src/features/avatarSlice';
 import { selectAvatar } from '../src/store';
-
+import Logo from "../public/Logo.svg"
 
 const variants = { 
   open: { opacity: 1, x: 0, transition:{stiffness: 5, staggerChildren: 0.05 } },
@@ -56,9 +55,7 @@ interface searchedTitleType{
   id:string
 }
 
-
-
-function Navbar() {
+const  Navbar = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [iconSize, setIconSize] = useState(40);
   const [username, setUsername] = useState("");
@@ -329,7 +326,7 @@ function Navbar() {
                    <span>
                    <Link href={"/"}>
                       <a href={"#"}>  
-                                      <span>LOGO</span>
+                                      <Image src={Logo} alt={"logo"} width={80} height={80}/>
                       </a>
                     </Link>  
                    </span>
@@ -350,7 +347,8 @@ function Navbar() {
               >
                 <motion.li variants={item}  className={styles.start_nav_opened}>
                   <span><CgClose size={iconSize} onClick={() => {setIsOpen(s =>!s);}}/></span>
-                  <span>LOGO</span>  
+                  <span>                                      <Image src={Logo} alt={"logo"} width={70} height={70}/>
+</span>  
               </motion.li>
                 
                 <motion.li variants={item}>

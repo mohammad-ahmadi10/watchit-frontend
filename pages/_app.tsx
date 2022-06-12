@@ -17,7 +17,7 @@ import axios from "axios";
 import { login  , User } from '../src/features/userSlice';
 import {useRouter} from 'next/router'
 import {forceReload} from "../utils/functions";
-
+import Logo from "../public/Logo.svg";
 // this should give a better typing
 type Props = AppProps & {
   Component: Page
@@ -70,9 +70,9 @@ function MyApp({ Component, pageProps }: Props) {
              });
              
              localStorage.setItem("ACTKEN", res.data.accessToken)
-             setTimeout(() =>{
+/*              setTimeout(() =>{
                forceReload(router);
-             },250)
+             },250) */
           }else{
           const res = await costumAxios.get("/auth/me", { headers:{'Authorization':`Bearer ${token}`}} )
           if(res){

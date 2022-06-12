@@ -624,8 +624,8 @@ const displayShareIcon = (Node:any , ICON:ReactNode, name:string) =>  {
   }
   const getUserAvatar = async ( ) =>{
     const val = localStorage.getItem("user");
-
-    if(val && val.length > 0){
+    console.log(val)
+    if(val !== null && val.length > 0){
       const {user} = JSON.parse(val).payload
       setUser(user);
       if(user.id && user.id.length > 0){
@@ -657,7 +657,7 @@ const displayShareIcon = (Node:any , ICON:ReactNode, name:string) =>  {
   useLayoutEffect(() =>{
      const token = localStorage.getItem("ACTKEN");
      const user = localStorage.getItem("user");
-     if(token){
+     if(token && user){
       if(token.length > 0 && user.length > 0)
       setIsUserPresent(true)
      }
@@ -733,8 +733,8 @@ const displayShareIcon = (Node:any , ICON:ReactNode, name:string) =>  {
        return <Link href={`${file.id}`} key={file.id}  id={file.id} className={styles.otherVideoContainer}>
                 <a href="#" className={styles.thumbContainer}>
                   <div className={styles.img_wrapper}>
-                     <Image  priority={true} loader={myLoader} height={160} width={200}
-                          src={`${file.id}`} alt={file.id} layout="fixed"
+                     <Image  priority={true} loader={myLoader}
+                          src={`${file.id}`} alt={file.id} layout="fill"
                       />
                       <div className={styles.duration_container}>
                        <span>{minute}</span>
@@ -758,7 +758,7 @@ const displayShareIcon = (Node:any , ICON:ReactNode, name:string) =>  {
                      <BiCheckShield size={18} style={{color:"green"}}/>
                    </div>
                    <div className={styles.view_dateContainer}>
-                        <span>{modifyAmountOfView(/* +file.view */ 20)}</span>
+                        <span>{modifyAmountOfView(+file.view )}</span>
                         <span>{modifyUplodedDate(new Date(file.date))} </span>
                    </div>
                   </div>
@@ -817,6 +817,18 @@ const displayShareIcon = (Node:any , ICON:ReactNode, name:string) =>  {
               </div>      
               <div ref={otherVideosContainerRef} className={`${theaterMode ? styles.other_videos_container_theater_mode : styles.other_videos_container}`}>
                   <div className={styles.wrapper}>
+                  {
+                    videos &&  videos.map((d:VideoPrevData) => {
+                      if(d.id !== videoId)  
+                      return displayImage(d);
+                    }) 
+                  }
+                  {
+                    videos &&  videos.map((d:VideoPrevData) => {
+                      if(d.id !== videoId)  
+                      return displayImage(d);
+                    }) 
+                  }
                   {
                     videos &&  videos.map((d:VideoPrevData) => {
                       if(d.id !== videoId)  
@@ -941,7 +953,7 @@ const displayShareIcon = (Node:any , ICON:ReactNode, name:string) =>  {
 
 
                    <div className={styles.commentContainer}>
-                     <CostumComment avatar={userAvatar} alt={user.username}
+                     <CostumComment avatar={userAvatar} alt={typeof user !== "undefined" ? user.username : " "}
                                     onChange={handleCommentChange}
                                     handleSubmit={handleSubmitComment}
                                     submitting={commentSubmitting}

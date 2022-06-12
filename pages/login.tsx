@@ -14,13 +14,16 @@ import { login , User } from '../src/features/userSlice';
 import { selectUser } from '../src/store';
 import {useRouter} from 'next/router'
 import {forceReload} from "../utils/functions";
+import { Button ,  Input, Form} from 'antd';
+import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 
-const Register = () => {
+const Login = () => {
     const userState = useSelector(selectUser)
     const [password , setPassword] = useState("");
     const [emailusername ,setEmailUsername] = useState("");   
     const [errMSG , setErrMSG] = useState("");
     const [success , setSuccess] = useState(false);
+    const [isLogging , setIslogging] = useState(false);
 
     const emailuserRef = useRef<HTMLInputElement>(null)!;
     const errRef = useRef<HTMLParagraphElement>(null)!;
@@ -88,7 +91,14 @@ const Register = () => {
       setErrMSG("")
     }, [password , emailusername])
 
+
+    const onFinish = (values: any) => {
+        console.log('Success:', values);
+      };
+
+
     const onLoginSubmit = async (e:React.MouseEvent<HTMLFormElement>) =>{
+        setIslogging(true);
         e.preventDefault();
         
         const isEmail = memorizedEMAIL_REGES.test(emailusername);
@@ -116,10 +126,12 @@ const Register = () => {
         localStorage.setItem("user", JSON.stringify(ms));
         setPassword("")
         setEmailUsername("") 
+        setIslogging(false);
         setTimeout(() =>{
             forceReload(router)
         }, 1000)
         }else{
+            setIslogging(false);
             errRef.current!.focus();
             setErrMSG("no Response");
         }
@@ -169,7 +181,9 @@ const Register = () => {
             )
             
                 :
-                   ( <section className={styles.section_container}>
+                   ( 
+                   <section className={styles.loginWrapper}>
+                   <div className={styles.section_container}>
                         <p  ref={errRef}
                             className={`${errMSG ? styles.errmsg : styles.offscreen} `}
                             aria-live="assertive"
@@ -180,55 +194,66 @@ const Register = () => {
                             <div className={styles.form_wrapper}>
                                 <div className={styles.form_container}>    
                                         <h2>Login</h2>
-                                        <form onSubmit={onLoginSubmit} 
-                                                className={styles.form_container}
-                                            >
-                                                    <div className={styles.email_usersname_container}>
-                                                            <label htmlFor="email_uesrname">
-                                                                Email:
-                                                            </label>
-                                                            <input 
-                                                                type="text" 
-                                                                name="email_username" 
-                                                                id="email_username"
-                                                                ref={emailuserRef}
-                                                                placeholder="Username or Email" 
-                                                                autoComplete="off"
-                                                                onChange={onEmailUsernameChange}
-                                                                value={emailusername}
-                                                                required
+                                        <Form
+      name="basic"
+      labelCol={{ span: 8 }}
+      wrapperCol={{ span: 16 }}
+      initialValues={{ remember: true }}
+      onFinish={onFinish}
+      autoComplete="off"
+    >
+<Form.Item
+        name="email_uesrname"
+        rules={[{ required: true, message: 'Please input your username!' }]}
+        wrapperCol={{ offset: 0 , span: 24 }}
+      >
+         <Input 
+                                                              name="email_username" 
+                                                              id="email_username"
+                                                              ref={emailuserRef}
+                                                              placeholder="Username or Email" 
+                                                              autoComplete="off"
+                                                              onChange={onEmailUsernameChange}
+                                                              value={emailusername}
+                                                              required
+                                                              style={{borderRadius:"0px", height:"70px"}}
+
                                                             />
-                                                    </div>
 
-                                                    <div className={styles.pass_container}> 
-                                                        
-                                                            <label htmlFor="password">
-                                                                password:
-                                                            </label>
+      </Form.Item>
+        
 
-                                                            <input 
-                                                                type="password" 
+      <Form.Item
+        name="password"
+        rules={[{ required: true, message: 'Please input your password!' }]}
+        wrapperCol={{ offset: 0 , span: 24 }}
+      >
+         <Input.Password
                                                                 name="password" 
                                                                 id="password"
                                                                 placeholder="password" 
                                                                 onChange={onPassChange}
                                                                 value={password}
                                                                 required
+                                                                style={{borderRadius:"0px", height:"70px"}}
+                                                                iconRender={visible => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
                                                             />
-                                                    </div>
-                                            <input defaultValue={"Login"}
-                                                   type="submit"
-                                                   disabled={ emailusername.length <= 0 || password.length <= 0 ? true : false}
-                                                   className={styles.button} 
+                                            <span
+                                                className={styles.line}                                                
+                                            > 
+                                                <Link href={"/forgot-password"}><a href='#'>Forgot password?</a></Link>
+                                            </span>
+      </Form.Item>
+      <Form.Item wrapperCol={{ offset: 0, span: 24 }}>
+      <Button type="primary" htmlType="submit" ghost disabled={ emailusername.length <= 0 || password.length <= 0 ? true : false}
+                                                            className={styles.button}  onClick={onLoginSubmit }  loading={isLogging}>
+                                                           
+                                                       Login
+                                                     </Button>
+      </Form.Item>
+
+        </Form>
                                             
-                                            />
-                                            
-                                             <p>
-                                                <span className={styles.line}> 
-                                                    <Link href={"/forgot-password"}><a href='#'>forgot password?</a></Link>
-                                                </span>
-                                            </p>
-                                            </form>
                                         <p>
                                             Need an account?<br/>
                                             <span
@@ -240,11 +265,13 @@ const Register = () => {
                                 </div>
                             </div>
                         {/* End */}
-                    </section>)
+                    </div>
+                    </section>
+                    )
 
             }                                                  
     </>
   )
 }
 
-export default Register
+export default Login

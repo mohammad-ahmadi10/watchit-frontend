@@ -7,7 +7,11 @@ const nextConfig = {
         loader: 'less-loader',
         options: {
           modifyVars: darkTheme,
-        },
+        }
+      },
+      {
+        test: /\.svg$/,
+        use: ["@svgr/webpack"]
       }
     )
 

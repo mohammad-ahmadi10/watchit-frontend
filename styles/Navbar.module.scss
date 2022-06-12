@@ -126,6 +126,8 @@
     @include bp.xs{
         align-self: flex-start;
         height:100vh;
+        left:-12px;
+        padding-top:25px;
     }
 
     & ul{
@@ -134,6 +136,16 @@
       height:100%;
       overflow:hidden;
       position:relative;
+      
+      @include bp.sm{
+        width:25%;
+
+     }
+     
+     @include bp.xs{
+        width:80%;
+      }
+
 
       li{
           color:white;
@@ -162,10 +174,14 @@
 .nav_menu_closed{
     @include ux.center(row);
     height:100%;
-    
+    width:8em;
+    justify-content:space-around;
     & span:first-child{
         margin-right:10px;
 
+    }
+    & span:last-child{
+        margin-right:auto;
     }
 
 
@@ -281,10 +297,14 @@
 }
 
 
-.scrolled_nav{
-    transform:translateY(-100px);
-    transition: 0.5s  cubic-bezier(0.86, -0.06, 1, 1) transform;
+@media (hover: hover){
+    .scrolled_nav{
+        transform:translateY(-100px);
+        transition: 0.5s  cubic-bezier(0.86, -0.06, 1, 1) transform;
+    }
 }
+
+
 
 .burger_clicked{
     opacity:0;

@@ -30,7 +30,7 @@ const openNotificationWithIcon = (type:IconType) => {
 
 const  uploadVideo = () => {
   const [upStatus,  setUploadStatus] = useState(UploadStatus.ONSTART);
-  const [uploadedPath, setUploadedPath] = useState("");
+  const [uploadedPath, setUploadedPath] = useState("1652027776529KGXARatk");
   const [progressPercent , setProgressPercent] = useState(0);
   const [popup, setPopup] = useState(false);
   const [user , setUser] = useState("")
@@ -128,7 +128,7 @@ const  uploadVideo = () => {
         </section>
         } 
         {
-          popup ?     
+          !popup ?     
           <div className={styles.setVideoInfoWrapper}>
              <SetVideoInfo
              uploadedPath={uploadedPath}
