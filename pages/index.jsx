@@ -1,10 +1,9 @@
-import type {  NextPage } from 'next'
 import Head from 'next/head'
 import styles from '../styles/Home.module.scss'
 import Link from 'next/link'
 import Image from 'next/image';
 import {useDispatch, useSelector} from "react-redux";
-import { selectUser } from './../src/store';
+import { selectUser } from '../src/store';
 import { SpinnerDotted } from 'spinners-react';
 import useLayoutEffect from "../utils/IsOrmorphicLayoutEffect";
 import costumAxios from "../utils/axios";
@@ -25,11 +24,11 @@ import UseVideoSearch from "../utils/useVideoSearch";
   videos:[VideoPrevData]
 } */
 
-const onBookmarkClicked = (_:any) =>{
+const onBookmarkClicked = (_) =>{
         
 }
 
-export const myLoader=({src}:any)=>{
+export const myLoader=({src})=>{
   return `${process.env.NEXT_PUBLIC_REMOTE}/watch/thumb/${src}`;
 }
 
@@ -38,7 +37,7 @@ export const myLoader=({src}:any)=>{
  @file: VideoPrewData 
         is an object von type VideoPrewData 
 */
-const displayImage = (file:VideoPrevData , ref?:any) =>{
+const displayImage = (file , ref) =>{
   const [minute, second] = regularTime(file.duration);
   
   return <div ref={ref ? ref : null}  key={file.id}  id={file.id} className={styles.gridChild} >
@@ -82,7 +81,7 @@ const displayImage = (file:VideoPrevData , ref?:any) =>{
 */
 
 
-const Home: NextPage = () => {
+const Home = () => {
   const dispatch = useDispatch();
   const user = useSelector(selectUser).user
   const message = useSelector(selectUser).errorMSG;
@@ -132,7 +131,7 @@ const Home: NextPage = () => {
       <div className={styles.main}>
             <div className={styles.gridWrapper}>
             {
-              videos &&  videos.map((d:VideoPrevData, index) => {
+              videos &&  videos.map((d, index) => {
                 if(videos.length === index+1)
                 return displayImage(d, lastVideosElementRef);
                 return displayImage(d); 
