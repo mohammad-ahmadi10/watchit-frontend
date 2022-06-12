@@ -54,12 +54,24 @@ enum UploadStatus{
   ONSTART,UPLOADED
 }
 
+interface MetadataType {
+  id:string,
+  view:number,
+  title:string,
+  description:string,
+  duration:number,
+  data:Date,
+  resolution:string[],
+  like:number,
+  username:string,
+  userID:string
+}
 
 const SetVideoInfo = ({uploadedPath}:SetVideoInfoProps) => {
     const [upStatus,  setUploadStatus] = useState(UploadStatus.ONSTART);
     const [uploadFile, setUploadFile] = useState<string|StaticImageData>(uploadPNG);
     const [file, setFile] = useState<File>();
-    const [metadata , setMetadata] = useState(null);
+    const [metadata , setMetadata] = useState<MetadataType | null >(null);
 
     const [imgIndex, setImgIndex] = useState(1);
     const [load, setLoad] = useState(false);
@@ -111,8 +123,6 @@ const onExit = async (e:React.MouseEvent) =>{
         id:uploadedPath
       });
       const result = res.data;
-      /*  */
-      console.log(result)
       setExit(true);
       setMetadata(null)
       setTimeout(() =>{
@@ -178,7 +188,7 @@ useLayoutEffect( ()=>{
       try {
        
         const res = await clientAxios.get(`watch/metadata/${uploadedPath}`);
-        const result = res.data;
+        const result:MetadataType = res.data;
         setMetadata(result);
        
        } catch (error) {
