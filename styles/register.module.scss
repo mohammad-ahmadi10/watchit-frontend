@@ -11,15 +11,15 @@
   @include ux.center(row);
 
 @include bp.md{
-  padding-top:0px;
+  padding-top:20px;
 }
 
 @include bp.sm{
-  padding-top:0px;
+  padding-top:20px;
 }
 
 @include bp.xs{
-padding-top:0px;
+padding-top:20px;
 }
   
   input[type="text"],
@@ -138,6 +138,8 @@ padding-top:0px;
 .invalid {
   color: red;
   margin-left: 0.25rem;
+  @include ux.center(row);
+
 }
 
 .errmsg {

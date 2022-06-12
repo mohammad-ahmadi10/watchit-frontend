@@ -229,13 +229,17 @@
     @include ux.center(row);
     margin-right:20%;
     position:relative;
+
+   &:nth-child(3){
+    @include bp.sm{
+        display:none;
+    }
     @include bp.xs{
         margin-right:10%;
         font-size: 25px;
+        display:none;
     }
-
-
-
+   }
 }
 
 .time{

@@ -250,6 +250,13 @@ function Register() {
                                            rules={[{ required: true, message: 'Please input your username!' }]}        
                                            className={styles.usernameContainer}
                                          >
+                                            <span className={`${ validusername ? styles.valid : styles.hide}`}>
+                                                                       <AiOutlineCheck color="green" size={iconSize}/>
+                                                                    </span>
+                                                                    <span className={`${validusername || !username ? styles.hide : styles.invalid}`}>
+                                                                        <MdOutlineClear color="red" size={iconSize}/>
+                                                                    </span>
+                                                                    
                                          <Input 
                                          name="username" 
                                          id="username"
@@ -264,13 +271,8 @@ function Register() {
                                          onBlur={()=> setUsernameFocus(false)}
                                          style={{borderRadius:"0px", height:"50px"}}
                                          />
-                                                                {/* <span className={`${ validusername ? styles.valid : styles.hide}`}>
-                                                                       <AiOutlineCheck color="green" size={iconSize}/>
-                                                                    </span>
-                                                                    <span className={`${validusername || !username ? styles.hide : styles.invalid}`}>
-                                                                        <MdOutlineClear color="red" size={iconSize}/>
-                                                                    </span> 
-                                                                */}
+                                                                 
+                                                               
 
                                                             <p 
                                                                 id="uidnote"
@@ -287,6 +289,12 @@ function Register() {
                                                               name="Email"
                                                               rules={[{ required: true, message: 'Please input your Email!', type: 'email' }]}
                                                             >
+                                                                <span className={`${validEmail ? styles.valid : styles.hide}`}>
+                                                                    <AiOutlineCheck color="green" size={iconSize}/>
+                                                                </span>
+                                                                <span className={`${validEmail || !email ? styles.hide : styles.invalid}`}>
+                                                                    <MdOutlineClear color="red" size={iconSize}/>
+                                                                </span> 
                                                               <Input 
                                                                  type="text" 
                                                                  name="email" 
@@ -303,13 +311,8 @@ function Register() {
                                                                  style={{borderRadius:"0px", height:"50px"}}
                                                                 />
         
-                                                            {/* <span className={`${validEmail ? styles.valid : styles.hide}`}>
-                                                                    <AiOutlineCheck color="green" size={iconSize}/>
-                                                                </span>
-                                                                <span className={`${validEmail || !email ? styles.hide : styles.invalid}`}>
-                                                                    <MdOutlineClear color="red" size={iconSize}/>
-                                                                </span> 
-                                                            */}
+                                                            
+                                                           
                                                             <p 
                                                                 id="emailnote"
                                                                 className={`${emailFocus && email && !validEmail ?
@@ -326,6 +329,12 @@ function Register() {
         rules={[{ required: true, message: 'Please input your password!' }]}
 
       >
+          <span className={`${validPass ? styles.valid : styles.hide}`}>
+                                                                    <AiOutlineCheck color="green" size={iconSize}/>
+                                                                </span>
+                                                                <span className={`${validPass || !password ? styles.hide : styles.invalid}`}>
+                                                                    <MdOutlineClear color="red" size={iconSize}/>
+                                                                </span>
         <Input.Password 
         type="password" 
         name="password" 
@@ -339,12 +348,7 @@ function Register() {
         onBlur={()=> setPassFocus(false)}
 
         />
- {/*                                                                        <span className={`${validPass ? styles.valid : styles.hide}`}>
-                                                                    <AiOutlineCheck color="green" size={iconSize}/>
-                                                                </span>
-                                                                <span className={`${validPass || !password ? styles.hide : styles.invalid}`}>
-                                                                    <MdOutlineClear color="red" size={iconSize}/>
-                                                                </span> */}
+                                                                      
 
                                                             <p id="pwddnote"
                                                             className={`${passFocus && !validusername ?
@@ -366,6 +370,13 @@ function Register() {
         rules={[{ required: true, message: 'Confirm your Password!' }]}
 
       >
+                                                                <span className={`${validConfirmPass && confirmPassword ? styles.valid : styles.hide}`}>
+                                                                    <AiOutlineCheck color="green" size={iconSize}/>
+                                                                </span>
+                                                                <span className={`${validConfirmPass || !confirmPassword ? styles.hide : styles.invalid}`}>
+                                                                    <MdOutlineClear color="red" size={iconSize}/>
+                                                                </span>
+
         <Input.Password 
         type="password" 
         name="confirm_password" 
@@ -379,13 +390,8 @@ function Register() {
         onBlur={()=> setConfirmPassFocus(false)}
 
         />
-{/*                                                                         <span className={`${validConfirmPass && confirmPassword ? styles.valid : styles.hide}`}>
-                                                                    <AiOutlineCheck color="green" size={iconSize}/>
-                                                                </span>
-                                                                <span className={`${validConfirmPass || !confirmPassword ? styles.hide : styles.invalid}`}>
-                                                                    <MdOutlineClear color="red" size={iconSize}/>
-                                                                </span>
- */}
+                                                                       
+
 
                                                             <p id="confpwddnote"
                                                             className={`${confirmPassFocus && !validConfirmPass ?
@@ -416,7 +422,7 @@ function Register() {
      </Form.Item>
       <Form.Item >
         <Button type="primary" htmlType="submit"
-         disabled={ !validusername || !validPass || !validConfirmPass || !validEmail || !agreement ? true : false}    
+         disabled={ !validusername || !validPass || !validConfirmPass || !validEmail  ? true : false}    
          className={styles.button} 
          loading={ isLogging }
          onClick={onRegisterSubmit}     
