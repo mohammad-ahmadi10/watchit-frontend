@@ -25,7 +25,7 @@ const  useVideoSearch = (s?:string , p?:number) => {
             if(p)
             params = {p}
             else 
-            params = {0}
+            params = {p:0}
           }
           costumAxios.get(`/watch`, {
             params:params,
