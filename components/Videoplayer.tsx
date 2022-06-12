@@ -57,7 +57,7 @@ interface VideoPlayerProps {
 
 const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resolutions=[""] }:VideoPlayerProps) =>{
     const VideoControllerRef = useRef<HTMLDivElement>(null)!;
-    const [downloadstatus,  setDownloadstatus] = useState(DownloadStatus.ONPAUSE);
+    const [downloadstatusState,  setDownloadstatus] = useState(DownloadStatus.ONPAUSE);
 
     const [shouldPlay , setShouldPlay] = useState(false);
     const [currentTime , setCurrentTime] = useState(0);
@@ -117,28 +117,28 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
     const dispatch = useDispatch();
     
     
-    const handleKeyDown = (event:React.MouseEvent) => {
+/*     const handleKeyDown = (event:React.MouseEvent<HTMLElement, MouseEvent>) => {
         const t = event.target as HTMLElement;
         if(event){
             if(t.className.includes && !t.className.includes("event_lister")){
                 setDownloadPopup(false);
-/*                 setSettingPopup(false); */
+                setSettingPopup(false);
             }
         }
-    }
+    } */
     
     
-    useLayoutEffect(() => {
+/*     useLayoutEffect(() => {
         window.addEventListener('click', handleKeyDown);    
         // cleanup this component
         return () => {
           window.removeEventListener('click', handleKeyDown);
         };
-      }, []);
+      }, []); */
 
       useLayoutEffect(() =>{
         const v = localStorage.getItem("volume");
-        if(v){
+        if(v !== null){
             setVolumeValue(v)
             checkVolume(v);
         }
@@ -167,17 +167,14 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
     
     
     //// fullscreen 
-    const handleFullscreen = function() {
+   /*  const handleFullscreen = function() {
         const document : CostumDocument = window.document;
-
         if(!isFullScreen(document)){
-
             if(videoPlayerContainerRef && videoPlayerContainerRef.current){
                 if (videoPlayerContainerRef.current.requestFullScreen) videoPlayerContainerRef.current.requestFullScreen();
                 else if (videoPlayerContainerRef.current.mozRequestFullScreen) videoPlayerContainerRef.current.mozRequestFullScreen();
                 else if (videoPlayerContainerRef.current.webkitRequestFullScreen) videoPlayerContainerRef.current.webkitRequestFullScreen();
                 else if (videoPlayerContainerRef.current.msRequestFullScreen) videoPlayerContainerRef.current.msRequestFullScreen();
-                
                 setFullscreenData(true);
                 setShouldFullScreen(true);
             }
@@ -188,15 +185,15 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
             setFullscreenData(false);
             setShouldFullScreen(false);
         }
- }
+ } */
  
- const isFullScreen = function(document:CostumDocument) {
+/*  const isFullScreen = function(document:CostumDocument) {
     return !!( document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement || document.fullscreenElement);
- }
- const setFullscreenData = function(state:boolean) {
+ } */
+/*  const setFullscreenData = function(state:boolean) {
     if(videoPlayerContainerRef && videoPlayerContainerRef.current)
     videoPlayerContainerRef.current.setAttribute('data-fullscreen', (!!state).toString());
- }
+ } */
 //// fullscreen end
 
       const onImageEnter = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -220,15 +217,15 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
             const t = localStorage.getItem("theater");
             const acctoken = localStorage.getItem("ACTKEN");
             const refreshtoken = localStorage.getItem("SSRFSH");
-            if(t){
+            if(t !== null){
                 const val = t === 'true'
                 setIsTheater(val)
             }
-            if(acctoken && refreshtoken){
+            if(acctoken !== null && refreshtoken !== null){
                (
                   async () =>{
                     const rs = await costumAxios.get("/auth/me");
-                    if(typeof res !== 'undefined') {
+                    if(typeof rs !== 'undefined') {
                         const {id, email , username} = rs.data.modifiedUser;
                         const newUser:User = {
                             id,
@@ -259,7 +256,6 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
     useLayoutEffect(() =>{
         (async () =>{
             const rs = await costumAxios.put("/watch/addtoHistory", {videoID:videoPath})
-            console.log(rs)
         })();
     }, [])
 
@@ -281,13 +277,13 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
 
 
     const onControllClick = (e:React.MouseEvent<HTMLDivElement>) =>{
-        console.log(e.target)
-        if(e.target.className && e.target.className.includes  &&   e.target.className.includes("thumbPlay")){
+        const t = e.target as HTMLDivElement;
+        if(t.className && t.className.includes  &&   t.className.includes("thumbPlay")){
             if(shouldThumbShowing){
                 setShouldThumbShowing(false);
                 setShouldPlay(true);
             }
-        }else if(e.target.className && e.target.className.includes  &&   e.target.className.includes("video_controller_wrapper") ){
+        }else if(t.className && t.className.includes  &&   t.className.includes("video_controller_wrapper") ){
             setShouldPlay(p =>!p);
         }
         
@@ -328,7 +324,7 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
   
 
       const onSettingListitemClick = async (e:React.MouseEvent<HTMLElement>) =>{
-         const l = e.target as HTMLListitem;
+         const l = e.target as HTMLElement;
          const resu = l.innerHTML;
 
       }
@@ -336,7 +332,7 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
 
     const onDowloadListitemClick = async (e:React.MouseEvent<HTMLElement>) =>{
         
-        const l = e.target as HTMLListitem;
+        const l = e.target as HTMLElement;
         const resu = l.innerHTML;
         if(resu !== ""){
             let url = "";
@@ -396,12 +392,15 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
     const onVolumeIconClick = (e:React.MouseEvent<HTMLDivElement>) =>{
         if(volumeState !== VolumeState.MUTED){
             setVolumeState(VolumeState.MUTED)
-            localStorage.setItem("volume" , volumeValue);
+            localStorage.setItem("volume" , volumeValue.toString());
             setVolumeValue(0);
         }else{
             const v = localStorage.getItem("volume");
-            checkVolume(v)
-            setVolumeValue(v);
+            if(v !== null){
+                checkVolume(+v)
+                setVolumeValue(+v);
+            }
+
         }
 
     }
@@ -419,7 +418,7 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
     const onVolumeChange = (v:number) =>{
         checkVolume(v);
         setVolumeValue(v);
-        localStorage.setItem("volume" , v);
+        localStorage.setItem("volume" , v.toString());
     }   
 
     const onVideoRangeChange =  (newValue:number) =>{
@@ -433,7 +432,7 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
 
     useLayoutEffect(() =>{
         const rg = localStorage.getItem("rg");
-        if(rg){
+        if(rg !== null) {
             const {v, id} = JSON.parse(rg);
             if(id === videoPath ) {
                 SetvideoRange(v)
@@ -485,7 +484,7 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
         if(videoPlayerRef && videoPlayerRef.current){
 
             videoPlayerRef.current.pause()
-            const sr = videoPlayerRef.current.children[0];
+            const sr = videoPlayerRef.current.children[0] as HTMLSourceElement;
             const oldSRC = sr.src;
             const newSRC = `${process.env.NEXT_PUBLIC_REMOTE}/watch/${videoPath}/${el.innerHTML}`;
             sr.src = newSRC;
@@ -530,11 +529,6 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
       
 
 
-    const onInput = (e: React.KeyboardEvent<FormControl>) =>{
-        const document : CostumDocument = window.document;
-        if(e.key === "Escape"){
-        } 
-    }
 
 
     const onBackClick = (e:React.MouseEvent<HTMLDivElement>) =>{
@@ -544,7 +538,7 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
 
     return(
 
-        <section className={styles.video_container_wrapper} onKeyPress={onInput} tabIndex={0}
+        <section className={styles.video_container_wrapper}  tabIndex={0}
         >
 
                         <div ref={fade} className={`${shouldFade? styles.fadeIn : styles.fadeOut }`}></div>  
@@ -555,7 +549,7 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
                         >
 
                             
-                          <div ref={videoPlayerContainerRef} onKeyDown={onInput} tabIndex={1}>
+                          <div ref={videoPlayerContainerRef} tabIndex={1}>
 
                         { !isTheater &&<div className={`${shouldThumbShowing ? styles.thumbBackground : styles.onStyle}`}>
                         <Image loader={myLoader} priority={true} layout={"fill"}  src={`${videoPath}`} alt={videoPath ? videoPath!.toString() : "thumb"}
@@ -569,11 +563,11 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
                                     onTimeUpdate={onVideoTimeUpdate} 
                                     onProgress={onVideoProgress}
                                     onLoadedData={onVideoLoaded}
-                                    onKeyDown={onInput}
+                                    
                                     onSeeking={onVideoSeeking}
                                     >
                                     {
-                                        resolutions.length === 0 ?
+                                        resolutions.length <= 0 ?
                                         <source src={`${process.env.NEXT_PUBLIC_REMOTE}/watch/${videoPath}`} />
                                         :
                                         <source src={`${process.env.NEXT_PUBLIC_REMOTE}/watch/${videoPath}/${resolutions[resolutions.length -1]}`} />
@@ -773,7 +767,7 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
                                                              
 
                                                             { <motion.div 
-                                                                   className={`${downloadstatus !== DownloadStatus.ONPAUSE ? styles.noOpacity : styles.event_lister}`}
+                                                                   className={`${downloadstatusState !== DownloadStatus.ONPAUSE ? styles.noOpacity : styles.event_lister}`}
                                                                    whileHover={{ scale: 1.1 }}
                                                                    whileTap={{ scale: 0.9 }}
                                                             >
@@ -873,7 +867,7 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
                                                     </div>
                                                      
                                                     }
-                                                           {downloadstatus !== DownloadStatus.ONPAUSE && <div className={styles.progressBar}>
+                                                           {downloadstatusState !== DownloadStatus.ONPAUSE && <div className={styles.progressBar}>
                                                               <Progress percent={progressPercent} status="active"   type="line"
                                                                         strokeColor={{
                                                                         '0%': '#108ee9',
@@ -881,7 +875,7 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
                                                                         }}        
                                                             trailColor={"white"}
                                                             strokeLinecap={"round"} 
-                                                            showInfo={downloadstatus !== DownloadStatus.ONPAUSE}
+                                                            showInfo={downloadstatusState !== DownloadStatus.ONPAUSE}
                                                             strokeWidth={3}
                                                             style={{pointerEvents:"none"}}     
                                                             />
