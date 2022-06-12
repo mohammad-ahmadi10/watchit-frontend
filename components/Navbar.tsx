@@ -31,7 +31,6 @@ import Image from 'next/image';
 import {BsFillPersonFill} from "react-icons/bs";
 import {UploadStatus} from "../utils/enums";
 import {forceReload, finduserIfExists} from "../utils/functions";
-import { ReactSearchAutocomplete } from 'react-search-autocomplete'
 import {VideoPrevData} from "../types/page";
 import { useDispatch, useSelector } from 'react-redux';
 import { setAvatar } from '../src/features/avatarSlice';
