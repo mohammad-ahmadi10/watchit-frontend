@@ -118,8 +118,9 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
     
     
     const handleKeyDown = (event:React.MouseEvent) => {
+        const t = event.target as HTMLElement;
         if(event){
-            if(event.target.className.includes && !event.target.className.includes("event_lister")){
+            if(t.className.includes && !t.className.includes("event_lister")){
                 setDownloadPopup(false);
 /*                 setSettingPopup(false); */
             }
