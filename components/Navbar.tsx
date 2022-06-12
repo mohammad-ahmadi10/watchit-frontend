@@ -198,7 +198,7 @@ const  Navbar = () => {
       setAvatarPath(selector.path)
   })
   useLayoutEffect(() =>{      
-    localStorage.setItem("oldScroll", 0)
+    localStorage.setItem("oldScroll", "0")
   }, [])
 
 
