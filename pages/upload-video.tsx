@@ -128,7 +128,7 @@ const  uploadVideo = () => {
         </section>
         } 
         {
-          !popup ?     
+          popup ?     
           <div className={styles.setVideoInfoWrapper}>
              <SetVideoInfo
              uploadedPath={uploadedPath}
