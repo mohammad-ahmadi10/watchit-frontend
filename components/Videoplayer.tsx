@@ -30,7 +30,7 @@ import {VolumeState , DownloadStatus} from "../utils/enums";
 import {CostumDocument , CostumHTMLDivElement} from "../utils/fullscreen"
 import {useRouter} from 'next/router'
 
-const displayIcon = (ICON:IconType , v?:number,  classN?:string) =>  { 
+const displayIcon = (ICON:any , v?:number,  classN?:string) =>  { 
     if (typeof classN !== 'undefined')
         return <ICON  className={styles[classN]} style={{pointerEvents:"none"}}/>
     if(typeof v !== 'undefined')
