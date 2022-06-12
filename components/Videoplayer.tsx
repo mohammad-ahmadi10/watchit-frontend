@@ -139,8 +139,8 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
       useLayoutEffect(() =>{
         const v = localStorage.getItem("volume");
         if(v !== null){
-            setVolumeValue(v)
-            checkVolume(v);
+            setVolumeValue(+v)
+            checkVolume(+v);
         }
       }, [])
 
