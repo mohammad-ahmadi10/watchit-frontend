@@ -104,7 +104,7 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
         (
             async () =>{
                 if(seekingVal === 3 || shouldViewUp ){
-                    if(!viewSuccess){
+                    if(!viewSuccess && typeof videoPath !== 'undefined' &&  videoPath.length > 0){
                         const {data} = await costumAxios.put("/video/view", {id:videoPath})
                         setViewSuccess(true);
                     }
@@ -225,7 +225,7 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
                (
                   async () =>{
                     const rs = await costumAxios.get("/auth/me");
-                    if(typeof rs !== 'undefined') {
+                    if(typeof rs !== 'undefined' && typeof rs.data !== 'undefined') {
                         const {id, email , username} = rs.data.modifiedUser;
                         const newUser:User = {
                             id,
@@ -255,7 +255,8 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
     }, [])
     useLayoutEffect(() =>{
         (async () =>{
-            const rs = await costumAxios.put("/watch/addtoHistory", {videoID:videoPath})
+            if(typeof videoPath !== 'undefined' && videoPath.length > 0)
+            await costumAxios.put("/watch/addtoHistory", {videoID:videoPath})
         })();
     }, [])
 
@@ -264,12 +265,6 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
         const [minute , second ] = regularTime(0)
         setModifiedCurrentTime({minute:+minute , second:+second})
     },[])
-
-
-    const controll_variants = {
-        open: { opacity: 1 },
-        closed: { opacity: 0, transition:{ delay: 1 } },
-    }
     
     useLayoutEffect(() =>{
         videoPlayerRef.current!.volume = (+volumeValue / 100);
@@ -587,15 +582,7 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
                              animate={isVolumeHover ? "show" : "hidden"}
                             >
                             <div onClick={onControllClick} ref={VideoControllerRef}  className={styles.video_controller} >
-                                {/* <motion.div 
-                                   initial={"closed"}
-                                   animate={isControllHover ? "open" : "closed"}
-                                   variants={controll_variants}
-                                   onMouseEnter={() => setIsControllHover(true)}
-                                   onMouseLeave={() => setIsControllHover(false)}
-                                   animate={isHover ? "open":"closed"}
-                                   id={"videoController"} 
-                                    */}
+      
                                    <div className={`${isTheater ? styles.video_controller_wrapper_theater_mode : styles.video_controller_wrapper}`} >
                                    
                                    <div className={`${shouldThumbShowing ?  styles.thumbPlayBt_Wrapper : styles.onStyle}`}>
@@ -871,7 +858,7 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
                                                     </div>
                                                      
                                                     }
-                                                           {downloadstatusState !== DownloadStatus.ONSTART && <div className={styles.progressBar}>
+                                                           {downloadstatusState !== DownloadStatus.ONPAUSE && <div className={styles.progressBar}>
                                                               <Progress percent={progressPercent} status="active"   type="line"
                                                                         strokeColor={{
                                                                         '0%': '#108ee9',
@@ -879,7 +866,7 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
                                                                         }}        
                                                             trailColor={"white"}
                                                             strokeLinecap={"round"} 
-                                                            showInfo={downloadstatusState !== DownloadStatus.ONPAUSE}
+                                                            showInfo={true}
                                                             strokeWidth={3}
                                                             style={{pointerEvents:"none"}}     
                                                             />

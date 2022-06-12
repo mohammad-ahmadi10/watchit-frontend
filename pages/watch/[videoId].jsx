@@ -19,7 +19,6 @@ import {VscWorkspaceTrusted} from "react-icons/vsc";
 import { GetServerSideProps } from 'next'
 
 import {  Avatar, notification , Input,  Popconfirm, message, Checkbox, Comment, Form, Button, List , Popover} from 'antd';
-import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 import "antd/dist/antd.dark.css"
 import moment from 'moment';
 import CostumComment from "../../components/comment/CostumComment";
@@ -33,7 +32,6 @@ import copy from 'react-useanimations/lib/copy'
 import share from 'react-useanimations/lib/share'
 import {MdOutlineClear} from "react-icons/md"
 
-import {VideoPrevData} from "../../types/page";
 import UseVideoSearch from "../../utils/useVideoSearch";
 import costumAxios from "../../utils/axios";
 import userPNG from "../../public/user.png";
@@ -84,48 +82,6 @@ import {
   WorkplaceIcon
 } from "react-share";
 
-interface Video{
-    id:string,
-    title:string,
-    folder:string,
-    duration:number,
-    timestamp:number,
-    view:number,
-    comments:[string],
-    like:number,
-    resolutions:[string],
-    username:string,
-    date:Date,
-    userID:string,
-    description:string,
-    isLiked:boolean,
-    checkedPlaylist:[name:string]
-}
-
-
-interface videoProps{
-  videoId:string
-}
-
-interface PlaylistType {
-  id:string,
-  playlist:string
-}
-
-
-interface CommentItem {
-  author: string;
-  avatar: string;
-  content: React.ReactNode;
-  datetime: string;
-  actions:[React.ReactNode];
-  commentid:string,
-  likes:number
-}
-
-
-
-interface userProp {id:string, username:string, email:string, profileImage:string}
 
 
 
@@ -134,32 +90,39 @@ interface userProp {id:string, username:string, email:string, profileImage:strin
 
 
 
-const  Video = ({videoId}:videoProps) => {
+
+
+
+
+
+
+
+const  Video = ({videoId}) => {
   const router = useRouter();
 
   const [theaterMode , setTheaterMode] = useState(false);
   const [isbooked , setIsbooked] = useState(false);
   const [avatar , setOwnerAvatar] = useState("");
   const [userAvatar , setUserAvatar] = useState("");
-  const [user , setUser] = useState<userProp>()
+  const [user , setUser] = useState()
   const [iconSize , setIconSize] = useState(40);
-  const [metadata , setMetadata] = useState<Video>(null)
+  const [metadata , setMetadata] = useState(null)
   const [isLike , setIsLike] = useState(false);
   const [likes , setLikes] = useState(0);
   const [isUserPresent , setIsUserPresent] = useState(false);
   const [shareURL , setShareURL] = useState(`${process.env.NEXT_PUBLIC_FRONTEND}${router.asPath}`)
-  const [playlists , setPlaylists] = useState(null);
+  const [playlists , setPlaylists] = useState([]);
   const [shouldPlaylistsShown , setShouldPlaylistShown] = useState(false);
   const [newPlaylist , setNewPlaylist] = useState("");
   const [isPlaylistRemoved ,  setIsPlaylistRemoved] = useState(false);
   const [isNewPlaylistCreated , setIsNewPlaylistCreated] = useState(false);
   const [isPlaylistHoverd , setIsPlaylistHoverd] = useState(false);
-  const [checkedPlaylist, setCheckedPlaylist] = useState<Array<string>>([])
-  const [editComment , setEditComment] = useState<{id:number, body:string}>(null)
+  const [checkedPlaylist, setCheckedPlaylist] = useState([])
+  const [editComment , setEditComment] = useState({id:0 , content:""})
   const [isEditCommentShown , setIsEditCommentShown] = useState(false);
   const [editCommentVal , setEditCommentVal] = useState("");
 
-  const openNotification = (content:ReactNode) => {
+  const openNotification = (content) => {
     notification.open({
       message: content,
       style: {
@@ -170,31 +133,31 @@ const  Video = ({videoId}:videoProps) => {
 
  
   // comment
-  const [comments, setComments] = useState<CommentItem[]>([]);
+  const [comments, setComments] = useState([]);
   const [commentSubmitting, setCommentSubmitting] = useState(false);
   const [commentValue, setCommentValue] = useState('');
   
   
   /* render icon from react-icons */
-  const displayIcon = (ICON:IconType, color?:string, size?:number) =>  { 
+  const displayIcon = (ICON, color, size) =>  { 
     return  <ICON size={size ? size : iconSize} style={{pointerEvents:"none", color:color}}/>
   }
  
   /* saves the state of the new playlist Input  */
-  const onNewPlaylistChange = (e:React.ChangeEvent<HTMLInputElement>) =>{
-    const i = e.target as HTMLInputElement;
+  const onNewPlaylistChange = (e) =>{
+    const i = e.target;
     setNewPlaylist(i.value)
   }
 
  /* the  event will be triggered when the user pressed the enter*/
- const onNewPlaylistEnter = async (e:any) =>{
+ const onNewPlaylistEnter = async (e) =>{
   await addNewPlaylist();
 } 
 
  /* 
    the event will be triggered when the user clicked on create
   */
-   const onNewPlaylistClick = async (e:React.MouseEvent<HTMLButtonElement>) =>{
+   const onNewPlaylistClick = async (e) =>{
     await addNewPlaylist();
  }
 
@@ -202,7 +165,7 @@ const  Video = ({videoId}:videoProps) => {
  display all playlists if user has one or many
 */
 const displayPlaylists = () =>{
-  return playlists !== null && playlists.map((p:PlaylistType, i:number) =>
+  return playlists !== null && playlists.length > 0 &&  playlists.map((p , i) =>
     {
         return  <div className={`${styles.playlistItem}`}   key={p.id ? p.id : i }> 
                         <Checkbox  defaultChecked={ checkedPlaylist.includes && checkedPlaylist.includes(p.playlist)} onChange={onPlaylistItemChange} name={p.playlist}>{p.playlist}</Checkbox>
@@ -227,10 +190,10 @@ const displayPlaylists = () =>{
     </div>
   );
   
-  let editValue = editComment !== null ? editComment.body : "";
-  const onEditChange = (e:React.ChangeEvent<HTMLTextAreaElement>) =>{
-    const t = e.target as HTMLTextAreaElement;
-    editValue = t.value
+  //let editValue = editComment !== null ? editComment.body : "";
+  const onEditChange = (e) =>{
+   /*  const t = e.target;
+    editValue = t.value */
   }
 
   const editCommentAction = async ()=>{
@@ -252,10 +215,10 @@ const displayPlaylists = () =>{
     setIsEditCommentShown(false);
   }
 
-  const onEditCommentEnter = async (e:React.KeyboardEvent<HTMLTextAreaElement>) =>{
+  const onEditCommentEnter = async (e) =>{
     editCommentAction();
   }
-  const onEditCommitSubmit = async (e:MouseEvent<HTMLButtonElement>) =>{
+  const onEditCommitSubmit = async (e) =>{
    editCommentAction();
  }
 
@@ -263,8 +226,8 @@ const displayPlaylists = () =>{
 
   
 
-const CommentRemoveConfirm = async (e: React.MouseEvent<HTMLElement, MouseEvent> | undefined) => {
-  const t = e.target as HTMLSpanElement;
+const CommentRemoveConfirm = async (e) => {
+  const t = e.target ;
   const id = t.getAttribute("commentid")
 
   try{
@@ -301,8 +264,8 @@ const editCommentContent = (
 
 
 
-const onEditPopupClick = (e:any) =>{
-  const t = e.target as HTMLElement;
+const onEditPopupClick = (e) =>{
+  const t = e.target;
      const commentid = t.getAttribute("commentid");
      const content = t.getAttribute("commentbody");
      setEditComment({id:commentid, body:content})
@@ -310,7 +273,7 @@ const onEditPopupClick = (e:any) =>{
 }
 
 
-const CommentList = ({ comments }: { comments: CommentItem[] }) => (  
+const CommentList = ({ comments }) => (  
   <List
     dataSource={comments}
     header={`${comments.length} ${comments.length > 1 ? 'replies' : 'reply'}`}
@@ -413,21 +376,21 @@ const CommentList = ({ comments }: { comments: CommentItem[] }) => (
        console.log(e)
     }
   };
-  const handleCommentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const t = e.target as HTMLTextAreaElement;
+  const handleCommentChange = (e) => {
+    const t = e.target;
     setCommentValue(t.value);
   };
   // end comment 
 
 
-  const standardRef = useRef<HTMLDivElement>(null);
-  const otherVideosContainerRef = useRef<HTMLDivElement>(null);
+  const standardRef = useRef(null);
+  const otherVideosContainerRef = useRef(null);
   
   const dispatch = useDispatch();
   
   const [query , setQuery] = useState(metadata !== null ? metadata.title.replace(/[^\p{L}\p{N}\p{P}\p{Z}^$\n]/gu, '') : "");
   const [pageNr, setPageNr] = useState(0);
-  const observer = useRef<HTMLDivElement | IntersectionObserver>(null);
+  const observer = useRef(null);
 
   
   const {videos, hasMore, loading, error } = UseVideoSearch(query, pageNr)
@@ -435,7 +398,7 @@ const CommentList = ({ comments }: { comments: CommentItem[] }) => (
 
 
   
-  const onUnlikeClick = async (e:React.MouseEvent<HTMLDivElement>) =>{
+  const onUnlikeClick = async (e) =>{
     try{
       const {data} = await costumAxios.put("video/unlike", {id:metadata.id})
       if(data.success){
@@ -449,7 +412,7 @@ const CommentList = ({ comments }: { comments: CommentItem[] }) => (
     }
   }
 
-  const onLikeClick = async (e:React.MouseEvent<HTMLDivElement>) =>{
+  const onLikeClick = async (e) =>{
     try{
       const {data} = await costumAxios.put("video/like", {id:metadata.id})
       if(data.success){
@@ -466,7 +429,7 @@ const CommentList = ({ comments }: { comments: CommentItem[] }) => (
   
   
   /* copies the shareURL into the clipboard */
-  const copyTextToClipboard = async (text:string) => {
+  const copyTextToClipboard = async (text) => {
     if ('clipboard' in navigator) {
       return await navigator.clipboard.writeText(text);
     } else {
@@ -480,7 +443,7 @@ const CommentList = ({ comments }: { comments: CommentItem[] }) => (
 
   
   
-  const onCopyClick =  async(e:React.MouseEvent<HTMLDivElement>) =>{
+  const onCopyClick =  async(e) =>{
     copyTextToClipboard(shareURL)
     openNotification(<div className={styles.center}>{displayIcon(VscWorkspaceTrusted, "green")} <span style={{marginLeft:10}}>Copied URL</span></div>)
   }
@@ -494,7 +457,7 @@ const CommentList = ({ comments }: { comments: CommentItem[] }) => (
   );
   
   
-  const onSavePopover = async (e:React.MouseEvent<HTMLDivElement>) =>{
+  const onSavePopover = async (e) =>{
     if(playlists === null || isNewPlaylistCreated || isPlaylistRemoved){
       const {data} = await costumAxios.get("/video/allPlaylist");
       setPlaylists(data.success ? data.playlists : [])
@@ -503,8 +466,8 @@ const CommentList = ({ comments }: { comments: CommentItem[] }) => (
     setShouldPlaylistShown(v =>!v);
   }
   
-  const playlistRemovConfirm = async (e: React.MouseEvent<HTMLElement, MouseEvent> | undefined) => {
-    const t = e.target as HTMLSpanElement;
+  const playlistRemovConfirm = async (e) => {
+    const t = e.target;
     const playlistName = t.getAttribute("playlist")
     const {data} = await costumAxios.post("/video/rmPlaylist", {playlistName})
     if(data.success){
@@ -520,8 +483,8 @@ const CommentList = ({ comments }: { comments: CommentItem[] }) => (
   /* 
     adds or removes video from playlist => condition whether is chekced or unchecked
   */
-const onPlaylistItemChange = async (e:CheckboxChangeEvent) =>{
-   const t = e.target as HTMLInputElement;
+const onPlaylistItemChange = async (e) =>{
+   const t = e.target;
    const playlistName = t.name;
    const id = metadata !== null &&  metadata.id;
    if(t.checked){
@@ -585,7 +548,7 @@ const onPlaylistItemChange = async (e:CheckboxChangeEvent) =>{
   /* 
      render icon from react-share
   */
-const displayShareIcon = (Node:any , ICON:ReactNode, name:string) =>  { 
+const displayShareIcon = (Node , ICON, name) =>  { 
        return  <div>
                    <Node children={<span><ICON  size={iconSize} round={true} title={metadata !== null && metadata.title} /></span>} url={shareURL}/>
                    <span>{name}</span>
@@ -624,7 +587,6 @@ const displayShareIcon = (Node:any , ICON:ReactNode, name:string) =>  {
   }
   const getUserAvatar = async ( ) =>{
     const val = localStorage.getItem("user");
-    console.log(val)
     if(val !== null && val.length > 0){
       const {user} = JSON.parse(val).payload
       setUser(user);
@@ -698,11 +660,11 @@ const displayShareIcon = (Node:any , ICON:ReactNode, name:string) =>  {
   }, [loading, hasMore]);
   
   
-  const onTheaterClick = (value:boolean) =>{
+  const onTheaterClick = (value) =>{
     setTheaterMode(value)
   }
 
-  const setVideoPlayer = (metadata:Video, videoId:string) =>{
+  const setVideoPlayer = (metadata, videoId) =>{
     return <>
                 <Videoplayer duration={metadata.duration}  
                              videoPath={videoId} 
@@ -715,10 +677,10 @@ const displayShareIcon = (Node:any , ICON:ReactNode, name:string) =>  {
 
 
 
-  const onBookmarkClicked = (_:any) =>{ 
+  const onBookmarkClicked = (_) =>{ 
   }
 
-    const myLoader=({src}:any)=>{
+    const myLoader=({src})=>{
       return `${process.env.NEXT_PUBLIC_REMOTE}/watch/thumb/${src}`;
     }
     
@@ -727,7 +689,7 @@ const displayShareIcon = (Node:any , ICON:ReactNode, name:string) =>  {
      @file: Video 
             is an object von type Video 
     */
-    const displayImage = (file:VideoPrevData) =>{
+    const displayImage = (file) =>{
       let date = new Intl.DateTimeFormat('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }).format(+file.date)
       const [minute, second] = regularTime(file.duration);
        return <Link href={`${file.id}`} key={file.id}  id={file.id} className={styles.otherVideoContainer}>
@@ -789,8 +751,8 @@ const displayShareIcon = (Node:any , ICON:ReactNode, name:string) =>  {
 
 
 
-    const onEditContainerClick = (e:React.MouseEvent<HTMLDivElement>) =>{
-          const t = e.target as HTMLDivElement;
+    const onEditContainerClick = (e) =>{
+          const t = e.target;
           if(t.className.includes && t.className.includes("editContainer"))
             setIsEditCommentShown(false);
     }
@@ -818,47 +780,11 @@ const displayShareIcon = (Node:any , ICON:ReactNode, name:string) =>  {
               <div ref={otherVideosContainerRef} className={`${theaterMode ? styles.other_videos_container_theater_mode : styles.other_videos_container}`}>
                   <div className={styles.wrapper}>
                   {
-                    videos &&  videos.map((d:VideoPrevData) => {
+                    videos &&  videos.map((d) => {
                       if(d.id !== videoId)  
                       return displayImage(d);
                     }) 
-                  }
-                  {
-                    videos &&  videos.map((d:VideoPrevData) => {
-                      if(d.id !== videoId)  
-                      return displayImage(d);
-                    }) 
-                  }
-                  {
-                    videos &&  videos.map((d:VideoPrevData) => {
-                      if(d.id !== videoId)  
-                      return displayImage(d);
-                    }) 
-                  }
-                  {
-                    videos &&  videos.map((d:VideoPrevData) => {
-                      if(d.id !== videoId)  
-                      return displayImage(d);
-                    }) 
-                  }
-                  {
-                    videos &&  videos.map((d:VideoPrevData) => {
-                      if(d.id !== videoId)  
-                      return displayImage(d);
-                    }) 
-                  }
-                  {
-                    videos &&  videos.map((d:VideoPrevData) => {
-                      if(d.id !== videoId)  
-                      return displayImage(d);
-                    }) 
-                  }
-                  {
-                    videos &&  videos.map((d:VideoPrevData) => {
-                      if(d.id !== videoId)  
-                      return displayImage(d);
-                    }) 
-                  }
+                  }               
                   </div>
               </div>
               <div className={styles.video_info}>
@@ -975,7 +901,7 @@ const displayShareIcon = (Node:any , ICON:ReactNode, name:string) =>  {
 }
         
 
-export const getServerSideProps:GetServerSideProps = async (ctx) =>{
+export const getServerSideProps = async (ctx) =>{
   const {videoId} = ctx.query;
   return{props:{videoId:videoId}}
 }

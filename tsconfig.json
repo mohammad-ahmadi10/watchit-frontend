@@ -25,7 +25,7 @@
     "**/*.ts",
     "**/*.tsx",
     "index.d.ts"
-, "pages/index.jsx", "pages/search/[search].jsx"  ],
+, "pages/index.jsx", "pages/search/[search].jsx", "pages/watch/[videoId].jsx"  ],
   "exclude": [
     "node_modules"
   ]
