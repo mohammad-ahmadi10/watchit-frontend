@@ -2,7 +2,6 @@ import styles from "../styles/History.module.scss";
 import useLayoutEffect from "../utils/IsOrmorphicLayoutEffect";
 import UseVideoHistory from "../utils/useVideoHistory";
 import {useState , useRef , useCallback  } from "react";
-import {VideoPrevData} from "../types/page";
 import { motion } from "framer-motion"
 import UseAnimations from "react-useanimations";
 import bookmark from 'react-useanimations/lib/bookmark'

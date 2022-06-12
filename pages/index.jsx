@@ -10,7 +10,6 @@ import costumAxios from "../utils/axios";
 import Router from 'next/router'
 import { login, logout } from '../src/features/userSlice';
 import axios from "axios";
-import {VideoPrevData} from "../types/page";
 import { motion } from "framer-motion"
 import UseAnimations from "react-useanimations";
 import bookmark from 'react-useanimations/lib/bookmark'
@@ -88,7 +87,7 @@ const Home = () => {
   
   const [query , setQuery] = useState("");
   const [pageNr, setPageNr] = useState(0);
-  const observer = useRef<HTMLDivElement | IntersectionObserver>(null);
+  const observer = useRef(null);
   const {videos, hasMore, loading, error } = UseVideoSearch("", pageNr)
   const lastVideosElementRef = useCallback(node => {
     if(loading) return;

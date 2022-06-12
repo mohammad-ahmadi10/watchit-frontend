@@ -1,6 +1,6 @@
 import React, {  useState } from 'react'
 import { useRouter } from 'next/router'
-import { NextPageContext } from 'next'
+import {  GetServerSideProps } from 'next'
 import costumAxios from "../../utils/axios";
 import {UserData} from "../../types/page"
 import styles from "../../styles/user.module.scss"
@@ -16,7 +16,6 @@ import imageCompression from 'browser-image-compression';
 import {  Avatar } from 'antd';
 import userPNG from "../../public/user.png";
 
-import { GetServerSideProps } from 'next'
 import useLayoutEffect from "../../utils/IsOrmorphicLayoutEffect";
 import {finduserIfExists} from "../../utils/functions";
 import { useDispatch, useSelector } from 'react-redux';
@@ -173,7 +172,7 @@ const displayImage = (file:VideoPrevData , ref?:any) =>{
 
   const onInputChange = async (e:React.ChangeEvent<HTMLInputElement>) =>{
      const targ = e.target as HTMLInputElement;
-     const file = targ !== null && targ.files.length > 0 && targ.files[0]
+     const file = targ !== null && targ.files !== null &&  targ.files.length > 0 ? targ.files[0] : null
 
      const options = {
         maxSizeMB: 1,
@@ -181,7 +180,7 @@ const displayImage = (file:VideoPrevData , ref?:any) =>{
         useWebWorker: true
      }
 
-     if(file.type.includes("image")){
+     if(file !== null && file.type && file.type.includes("image")){
         try{
             const compressedFile = await imageCompression(file, options);
             const formData = new FormData();
@@ -203,7 +202,7 @@ const displayImage = (file:VideoPrevData , ref?:any) =>{
   const  capitalize = (s:string) => (s[0].toUpperCase() + s.slice(1));
    
 
-    const onFinish = async ({username}: {username:string, email:email}) => {
+    const onFinish = async ({username}: {username:string, email:string}) => {
       
       const {data} = await costumAxios.put("/auth/user/edit", {username:username})
       if(data.success){
@@ -235,7 +234,7 @@ const displayImage = (file:VideoPrevData , ref?:any) =>{
     const deleteAccount = (
       <div>
         <p>your all shared video will be removed as Well!</p>
-        <Button onClick={onAccountDelete} type={"danger"}  style={{width:"100%"}}>DELETE</Button>
+        <Button onClick={onAccountDelete}  style={{width:"100%"}}>DELETE</Button>
       </div>
     );
 
@@ -243,7 +242,7 @@ const displayImage = (file:VideoPrevData , ref?:any) =>{
   return (
     <div className={styles.user_container}>
         {
-            username !== 'undefined'  ? 
+            typeof username !== 'undefined'  ? 
 
   
           <div className={styles.user_wrapper}>
@@ -321,7 +320,7 @@ const displayImage = (file:VideoPrevData , ref?:any) =>{
               </div>
 
                    <div className={styles.gridWrapper} >
-                     {videos.length > 0 && videos.map(v =>(
+                     {typeof videos  !== 'undefined' && videos.length > 0 && videos.map(v =>(
                        displayImage(v)
                      ))}
                    </div>
@@ -349,9 +348,8 @@ const displayImage = (file:VideoPrevData , ref?:any) =>{
 }
 
 
-export const getServerSideProps:GetServerSideProps = async (c) =>{
+export const getServerSideProps:GetServerSideProps  = async (c) =>{
     const user = c.query.username
-    /* const url = (routes.split("=")[1]).replace(/[^\p{L}\p{N}\p{P}\p{Z}^$\n]/gu, '') */
     
     if(user){
         return {
@@ -359,6 +357,11 @@ export const getServerSideProps:GetServerSideProps = async (c) =>{
             username:user
            } 
         }        
+    }
+    return {
+      props:{
+        username:""
+      }
     }
 }
 

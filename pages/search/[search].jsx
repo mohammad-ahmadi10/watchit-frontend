@@ -1,8 +1,5 @@
 import React, { useState,useRef , useCallback } from 'react'
 import { useRouter } from 'next/router'
-import { NextPageContext } from 'next'
-import clientAxios from "../../utils/axios";
-import {VideoPrevData} from "../../types/page"
 import styles from "../../styles/search.module.scss"
 import {modifyUplodedDate , modifyAmountOfView, regularTime} from "../../utils/functions";
 import Link from 'next/link'
@@ -15,12 +12,12 @@ import UseVideoSearch from "../../utils/useVideoSearch";
 import useLayoutEffect from "../../utils/IsOrmorphicLayoutEffect";
 import notFound from "../../public/not_found.png";
 
-export const myLoader=({src}:any)=>{
+export const myLoader=({src})=>{
   return `${process.env.NEXT_PUBLIC_REMOTE}/watch/thumb/${src}`;
 }
 
 
-const onBookmarkClicked = (_:any) =>{
+const onBookmarkClicked = (_) =>{
         
 }
 
@@ -30,7 +27,7 @@ const  Search =() => {
   const {search} = router.query;
   const [query , setQuery] = useState(""); // set query and remove any smiley
   const [pageNr, setPageNr] = useState(0);
-  const observer = useRef<HTMLDivElement | IntersectionObserver>(null);
+  const observer = useRef(null);
 
   useLayoutEffect(()=>{
     if(typeof search !== 'undefined')
@@ -54,7 +51,7 @@ const  Search =() => {
     if(node) observer.current.observe(node)    
   }, [loading, hasMore]);
 
-  const displayImage = (file:VideoPrevData) =>{
+  const displayImage = (file) =>{
     const [minute, second] = regularTime(file.duration);
     
     return <Link href={`/watch/${file.id}`} key={file.id}  id={file.id} className={styles.gridChild}>
