@@ -304,7 +304,7 @@ const displayImage = (file:VideoPrevData , ref?:any) =>{
                         >
                           <Form.Item wrapperCol={{ offset: 0, span: 22 }}>
                           <Popover content={deleteAccount} title="delete" trigger="click">
-                                     <Button type="danger" ghost htmlType="submit" size={"large"} style={{width:"100%"}}>
+                                     <Button type="danger" htmlType="submit" size={"large"} style={{width:"100%"}}>
                                           Delete acount
                                       </Button>
                                    </Popover>
