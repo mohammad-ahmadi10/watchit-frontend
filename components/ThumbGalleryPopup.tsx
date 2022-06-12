@@ -56,7 +56,7 @@ const onImageClick = (e:React.MouseEvent) =>{
   setImageIndex(+selectedIndex)
 }
 
-const onImageEnter = (e: Reac.MouseEvent<HTMLDivElement>) => {
+const onImageEnter = (e: React.MouseEvent<HTMLDivElement>) => {
   e.preventDefault();
   // Do something
   const targ = e.currentTarget as HTMLDivElement;
