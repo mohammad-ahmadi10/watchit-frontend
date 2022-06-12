@@ -11,7 +11,7 @@ import {MdCropSquare} from "react-icons/md";
 import {TiArrowBack} from "react-icons/ti"
 import Link from 'next/link'
 import Image from 'next/image';
-
+import type {  MenuProps} from 'antd';
 import { Popover , Progress , Menu } from 'antd';
 import "antd/dist/antd.dark.css"
 import { Spin } from 'antd';
@@ -509,18 +509,22 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
           })
           return arr
       }
-      const getQualityChildren = ()=>{
-        const arr = typeof resolutions !== 'undefined' && resolutions.map((r, ind) =>{
+
+
+
+/* (props: MenuProps | Readonly<MenuProps>): Menu */
+      const getQualityChildren =  () =>{
+        const arr:MenuProps['items'] = typeof resolutions !== 'undefined' ? resolutions.map((r, ind) =>{
                  return {
                     key: `2-${ind}`,
                     label: (<span onClick={onQualityClick} style={{display:"block"}}>
                         {r}
                     </span>),
                   }
-               })
+               }) : []
         return arr
-
       }
+
 
       const myLoader=({src}:any)=>{
         return `${process.env.NEXT_PUBLIC_REMOTE}/watch/thumb/${src}`;
@@ -867,7 +871,7 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
                                                     </div>
                                                      
                                                     }
-                                                           {downloadstatusState !== DownloadStatus.ONPAUSE && <div className={styles.progressBar}>
+                                                           {downloadstatusState !== DownloadStatus.ONSTART && <div className={styles.progressBar}>
                                                               <Progress percent={progressPercent} status="active"   type="line"
                                                                         strokeColor={{
                                                                         '0%': '#108ee9',
