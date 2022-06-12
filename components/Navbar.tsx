@@ -19,7 +19,7 @@ import {AiOutlineHome} from "react-icons/ai";
 import {ImProfile} from "react-icons/im";
 import {TiUploadOutline} from "react-icons/ti";
 import {VscHistory} from "react-icons/vsc";
-import {IoIosSearch} from "react-icons/Io";
+import {IoIosSearch} from "react-icons/io";
 import {MdOutlineClear} from "react-icons/md";
 import Link from 'next/link'
 import useLayoutEffect from "../utils/IsOrmorphicLayoutEffect";
