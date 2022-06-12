@@ -14,12 +14,11 @@ import Image from 'next/image';
 const History = () => {
 
     const [pageNr, setPageNr] = useState(0);
-    const observer = useRef<HTMLDivElement | IntersectionObserver>(null);
+    const observer = useRef(null);
     const {videos, hasMore, loading, error } = UseVideoHistory(pageNr)
     const lastVideosElementRef = useCallback(node => {
       if(loading) return;
       if(observer && observer.current){
-        if(typeof observer.current ===  IntersectionObserver )
            observer.current.disconnect()
       } 
       observer.current = new IntersectionObserver(entries =>{
