@@ -3,7 +3,7 @@ import useLayoutEffect from "./IsOrmorphicLayoutEffect";
 import costumAxios from "./axios";
 import {VideoPrevData} from "../types/page";
 
-const  useVideoSearch = (s?:string , p:number) => {
+const  useVideoSearch = (s?:string , p?:number) => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false);
   const [videos, setVideos] = useState<VideoPrevData[]>([])
@@ -19,9 +19,10 @@ const  useVideoSearch = (s?:string , p:number) => {
       setError(false);
            let params:{p:number,s?:string};
 
-          if(s && s.length > 0){
+          if(s && s.length > 0 && p ){
             params = {p,s}
           }else {
+            if(p)
             params = {p}
           }
           costumAxios.get(`/watch`, {
