@@ -151,7 +151,7 @@ const  Navbar = () => {
         else{
           setIsScrolled(false)
         }
-        localStorage.setItem("oldScroll", lp)
+        localStorage.setItem("oldScroll", lp.toString())
       }
       
   } 
