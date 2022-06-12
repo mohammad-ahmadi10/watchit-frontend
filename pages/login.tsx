@@ -16,6 +16,7 @@ import {useRouter} from 'next/router'
 import {forceReload} from "../utils/functions";
 import { Button ,  Input, Form} from 'antd';
 import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
+import {InputRef} from "antd";
 
 const Login = () => {
     const userState = useSelector(selectUser)
@@ -25,7 +26,7 @@ const Login = () => {
     const [success , setSuccess] = useState(false);
     const [isLogging , setIslogging] = useState(false);
 
-    const emailuserRef = useRef<HTMLInputElement>(null)!;
+    const emailuserRef = useRef<InputRef>(null)!;
     const errRef = useRef<HTMLParagraphElement>(null)!;
     
     
