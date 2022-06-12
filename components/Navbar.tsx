@@ -120,7 +120,8 @@ const  Navbar = () => {
   
   useLayoutEffect(() =>{
      const q = localStorage.getItem("q");
-     setQuery(q);
+     if(q !== null && typeof q !== "undefined")
+      setQuery(q);
   }, []) 
 
   const onSearch = async (s:string) =>{  
