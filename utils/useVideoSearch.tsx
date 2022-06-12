@@ -23,7 +23,7 @@ const  useVideoSearch = (s?:string , p?:number) => {
             params = {p,s}
           }else {
             if(p)
-            params = {p}#
+            params = {p}
             else 
             params = {0}
           }
