@@ -94,6 +94,7 @@ function Register() {
     }, [])
 
     useLayoutEffect(() =>{
+        if(userRef && userRef.current)
         userRef.current!.focus();
     }, [])
     
@@ -215,13 +216,15 @@ function Register() {
     return (
         <>
         {
-            success?
-            (<section>
-                <h1>Success!</h1>
+             success?
+            (<section className={styles.successContainer}>
+                <h1>Successfully Registerd!</h1>
+                <p>Please first confirm your Email! Then Sign in</p>
                 <p>
                    <Link href={"/login"}><a href='#'>Sign in</a></Link>
                 </p>
             </section>)
+
                 :
                    ( <section className={styles.section_container}>
                         <div className={styles.registerContainer}>
@@ -414,7 +417,7 @@ function Register() {
 
                                                     <div className={styles.term_conditons_container}>
                                                     <Checkbox checked={agreement} onChange={onAgreementChange}>
-                                                    I agree with terms and <Link href={"/conditions"}><a href='#'>conditions</a></Link>
+                                                    I agree with terms and <Link href={"/condition"}><a href='#'>conditions</a></Link>
                                                     </Checkbox>
                                                     </div>
 
@@ -447,6 +450,11 @@ function Register() {
                              </div>
                         </div>
                         {/* End */}
+                        <div className={styles.box}>
+                          <div className={`${styles.wave} ${styles._one}`}></div>
+                          <div className={`${styles.wave} ${styles._two}`}></div>
+                          <div className={`${styles.wave} ${styles._three}`}></div>
+                        </div>
                     </section>)
 
             }                                                  

@@ -44,7 +44,8 @@ const displayImage = (file , ref) =>{
   <a href="#" className={styles.thumbContainer}>
     <div className={styles.img_wrapper}>
        <Image loader={myLoader} 
-            src={`${file.id}`} alt={file.id} layout="fill"
+            src={`${file.id}`} alt={file.id} layout="fill" 
+objectFit={"contain"} objectPosition={"center"}
         />
         <div className={styles.duration_container}>
          <span>{minute}</span>

@@ -63,9 +63,9 @@ const Login = () => {
         if(userData){
             const {user} = JSON.parse(userData).payload;
             if(user) setSuccess(true);
-        }else if( userData === null || userData.length <= 0) {
+        }/* else if( userData === null || userData.length <= 0) {
             if(token && userData === null)setTimeout(()=>{ forceReload(router)}, 3000)
-        }
+        } */
     },[])
 
     useLayoutEffect(() =>{
@@ -266,6 +266,11 @@ const Login = () => {
                                 </div>
                             </div>
                         {/* End */}
+                    </div>
+                    <div className={styles.box}>
+                    <div className={`${styles.wave} ${styles._one}`}></div>
+                    <div className={`${styles.wave} ${styles._two}`}></div>
+                    <div className={`${styles.wave} ${styles._three}`}></div>
                     </div>
                     </section>
                     )

@@ -248,7 +248,7 @@ const displayImage = (file:VideoPrevData , ref?:any) =>{
           <div className={styles.user_wrapper}>
               <div className={styles.profile} >
                 <div className={styles.avatar_container}>
-                  <Avatar className={styles.avatar}  size={"large"} style={{width:"200px", height:"200px"}} src={ <Image  src={avatar.length > 0 ? avatar : userPNG} layout="fill" />}></Avatar> 
+                  <Avatar className={styles.avatar}  size={"large"} src={ <Image  src={avatar.length > 0 ? avatar : userPNG} layout="fill" />}></Avatar> 
                   <div  className={`${isAvatarHover ? styles.avatar_layer_hover : styles.avatar_layer  }`}
                         onMouseEnter={onImageEnter} onMouseLeave={onImageLeave}>
                            <label htmlFor="upload">

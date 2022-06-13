@@ -21,14 +21,14 @@ const  useVideoHistory = (p:number) => {
     useLayoutEffect(()=>{
       setLoading(true)
       setError(false);
-           let params:{p:number};
-           params = {p}
-          costumAxios.get(`/video/myhistory`, {
+           let params:{p:number}={p};
+           costumAxios.get(`/video/myhistory`, {
             params,
             signal: controller.signal
          })
           .then(res => {
-            const data:[HistoryType] = res.data;
+            let data:[HistoryType] = res.data;
+            data = data.filter((v) => Boolean(v))
             if(typeof data !== 'undefined'){
                 data.sort((a,b)=> {
                   return new Date(b.seen).getTime() - new Date(a.seen).getTime()

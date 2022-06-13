@@ -1,0 +1,11 @@
+@use  "styles/breakpoints" as bp;
+@use "styles/utilsMixin" as ux;
+@use "styles/variables" as *;
+@use "sass:color";
+
+
+.videoEditCotainer{
+    @include ux.center(column);
+    height:100vh;
+    
+}

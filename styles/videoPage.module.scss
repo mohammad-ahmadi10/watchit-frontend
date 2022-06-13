@@ -211,7 +211,7 @@
     align-items:flex-start;
     justify-content:flex-start;
     padding-left:10px;
-    
+    color:white;
     letter-spacing:1.2px;
     text-transform:capitalize;
 }
@@ -296,7 +296,10 @@
             justify-content:center;
             
         }
-        
+        @include bp.xs{
+        border-top: 0.1px solid color.scale($primary-color , $lightness:-52%);  
+
+        }
     }
 
     .description{
@@ -328,6 +331,14 @@
                 font-size:1.1rem;
             }
         }
+
+
+ 
+        @include bp.xs{
+            padding-top:25px;
+            border-top: 0.1px solid color.scale($primary-color , $lightness:-52%);
+
+        }
     }
 }
 
@@ -344,6 +355,10 @@
     & > div{
         @include ux.center(column);
         cursor:pointer;
+    }
+
+    @include bp.xs{
+        width: 300px;
     }
 }
 

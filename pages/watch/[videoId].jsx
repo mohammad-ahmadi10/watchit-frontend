@@ -161,6 +161,21 @@ const  Video = ({videoId}) => {
     await addNewPlaylist();
  }
 
+ const playlistRemovConfirm = async (e) => {
+  const t = e.target;
+  const playlistName = t.getAttribute("playlist")
+  const {data} = await costumAxios.post("/video/rmPlaylist", {playlistName})
+  if(data.success){
+    message.success(`playlist ${playlistName} is removed`);
+  setIsPlaylistRemoved(true)
+  }else{
+    message.success(`playlist ${playlistName} doesnt exists!`);
+  setIsPlaylistRemoved(false)
+  }
+  setShouldPlaylistShown(false);
+};
+
+
 /* 
  display all playlists if user has one or many
 */
@@ -458,27 +473,16 @@ const CommentList = ({ comments }) => (
   
   
   const onSavePopover = async (e) =>{
-    if(playlists === null || isNewPlaylistCreated || isPlaylistRemoved){
+    if(playlists.length <= 0 || isNewPlaylistCreated || isPlaylistRemoved){
       const {data} = await costumAxios.get("/video/allPlaylist");
+      
       setPlaylists(data.success ? data.playlists : [])
     }
     
     setShouldPlaylistShown(v =>!v);
   }
   
-  const playlistRemovConfirm = async (e) => {
-    const t = e.target;
-    const playlistName = t.getAttribute("playlist")
-    const {data} = await costumAxios.post("/video/rmPlaylist", {playlistName})
-    if(data.success){
-      message.success(`playlist ${playlistName} is removed`);
-    setIsPlaylistRemoved(true)
-    }else{
-      message.success(`playlist ${playlistName} doesnt exists!`);
-    setIsPlaylistRemoved(false)
-    }
-    setShouldPlaylistShown(false);
-  };
+
 
   /* 
     adds or removes video from playlist => condition whether is chekced or unchecked
@@ -696,7 +700,7 @@ const displayShareIcon = (Node , ICON, name) =>  {
                 <a href="#" className={styles.thumbContainer}>
                   <div className={styles.img_wrapper}>
                      <Image  priority={true} loader={myLoader}
-                          src={`${file.id}`} alt={file.id} layout="fill"
+                          src={`${file.id}`} alt={file.id} layout="fill" objectFit={"cover"}  
                       />
                       <div className={styles.duration_container}>
                        <span>{minute}</span>

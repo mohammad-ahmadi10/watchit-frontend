@@ -20,7 +20,7 @@ import {ImProfile} from "react-icons/im";
 import {TiUploadOutline} from "react-icons/ti";
 import {VscHistory} from "react-icons/vsc";
 import {IoIosSearch} from "react-icons/io";
-import {MdOutlineClear} from "react-icons/md";
+import {MdOutlineClear , MdOutlineListAlt} from "react-icons/md";
 import Link from 'next/link'
 import useLayoutEffect from "../utils/IsOrmorphicLayoutEffect";
 import costumAxios from "../utils/axios";
@@ -36,6 +36,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setAvatar } from '../src/features/avatarSlice';
 import { selectAvatar } from '../src/store';
 import Logo from "../public/Logo.svg"
+import UserLogo from "../public/user.png";
 
 const variants = { 
   open: { opacity: 1, x: 0, transition:{stiffness: 5, staggerChildren: 0.05 } },
@@ -73,13 +74,14 @@ const  Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [oldScrolled, setOldScrolled] = useState(0);
   const [searchVal, setSearchVal] = useState("");
-
+  const [routerPath , setRouterPath] = useState(router.pathname.split("/")[1])
 
   const dispatch = useDispatch();
   const selector = useSelector(selectAvatar);
   const inputContainerRef = useRef<HTMLDivElement>(null);
+  
 
-
+  
 
   useLayoutEffect(()=>{
     if(typeof window !== 'undefined' && window !== null ){
@@ -234,7 +236,7 @@ const  Navbar = () => {
   const getUser = async ( ) =>{
     if(finduserIfExists){
       const {user , objectURL} = await finduserIfExists(router , costumAxios);
-
+      console.log(user)
       if(user){
         setUser(user);
         setUsername(user.username)
@@ -302,7 +304,7 @@ const  Navbar = () => {
     setIsAvatarClicked(false);
   }
 
-  const avatarTooltip = () => (<span>change your avatar</span>)
+  const avatarTooltip = () => (<span>{user !== null && user.profileImage.length > 0 ? "change your avatar" : "set your avatar"}</span>)
 
 
   const onClearClick = (e:React.MouseEvent<HTMLSpanElement>) =>{
@@ -398,12 +400,22 @@ const  Navbar = () => {
                         </span>
                       </a>
                   </Link></motion.li>
+                  <motion.li variants={item} >
+                  <Link href={`/playlist`}>
+                      <a href={"#"}>
+                        <span>
+                          <MdOutlineListAlt size={iconSize}/>
+                        </span>
+                        <span>
+                         Playlist
+                        </span>
+                      </a>
+                  </Link></motion.li>
                 {user ? <motion.li variants={item}  className={styles.logout}> 
                      <Button type="primary" onClick={onLogout} ghost size={"large"} 
                              style={{width:"100%"}}>
                             Logout
                      </Button>
-
                 </motion.li>
                 : 
                 ""
@@ -448,15 +460,37 @@ const  Navbar = () => {
         </div>
 
         <div className={styles.end}>
-         
         {user === null || token === null || token.length <= 0 ? 
-                <Button type="primary" ghost size={"large"}>
-                  <Link href={"/login"}>
+        <>
+        {
+          routerPath.length > 0 ?
+          <Button type="primary" ghost size={"large"}>
+          <Link href={`${routerPath === "login" ? "/register"   : "/login" }`}>
+              <a href={"#"}>
+                 {routerPath === "login" ? "register"   : "login"}
+              </a>
+          </Link>
+          </Button>
+          : 
+
+          <>
+          <Button type="text" size={"large"}>
+                  <Link href={"/register"}>
                       <a href={"#"}>
-                         Login
+                         register
                       </a>
                   </Link>
                 </Button>
+                <Button type="primary" ghost size={"large"}>
+          <Link href={"/login"}>
+              <a href={"#"}>
+                 login
+              </a>
+          </Link>
+          </Button>
+          </>
+        }
+        </>
         :
          
         <Tooltip placement="left" title={avatarTooltip}>
@@ -499,11 +533,8 @@ const  Navbar = () => {
               placement="bottomRight"
               overlayInnerStyle={{display:"flex", justifyContent:"center", alignItems:"center", flexDirection:"column"}}
               >
-             {avatar.length > 0 ? 
-                 <Avatar className={styles.avatar}  size={"large"} src={ <Image  src={avatar} layout="fill" />}></Avatar> 
+                 <Avatar className={styles.avatar}  size={"large"} src={ <Image  src={user !== null && user.profileImage.length > 0 ?  avatar : UserLogo} layout="fill" />}></Avatar> 
                  
-               : ""
-             }
             </Popover>
 
    

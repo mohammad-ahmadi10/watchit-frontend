@@ -9,7 +9,7 @@ import {BiCheckShield } from "react-icons/bi";
 import {modifyUplodedDate , modifyAmountOfView, regularTime} from "../utils/functions";
 import Link from 'next/link'
 import Image from 'next/image';
-
+import costumAxios from "../utils/axios";
 const History = () => {
 
     const [pageNr, setPageNr] = useState(0);
@@ -41,11 +41,13 @@ const myLoader=({src})=>{
   return `${process.env.NEXT_PUBLIC_REMOTE}/watch/thumb/${src}`;
 }
 
-   /*  useLayoutEffect(() =>{
+    /* useLayoutEffect(() =>{
+
         (async () =>{
             const rs = await costumAxios.get("/video/myhistory")
-            console.log(rs)
+
         })();
+
     }, []) */
 
 
@@ -85,7 +87,6 @@ const myLoader=({src})=>{
       </Link>
       </div>
       }
-
 
 
     return (
