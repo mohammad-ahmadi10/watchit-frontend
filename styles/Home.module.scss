@@ -62,6 +62,7 @@
     object-fit: scale-down ;
   }
 
+
   .bookmarkContainer{
     position:absolute;
     bottom:0;
@@ -199,4 +200,24 @@
     width: 100%;
     flex-direction: column;
   }
+}
+
+
+
+
+
+
+
+.skeletonContainer{
+  width:100vw;
+  height:100vh;
+  @include ux.center(row);
+  align-items:flex-start;
+}
+.skeletonWrapper{
+  width:70%;
+  height:70%;
+  @include ux.center(row);
+  align-items:flex-start;
+  flex-wrap:wrap;
 }

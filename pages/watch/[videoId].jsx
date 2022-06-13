@@ -17,6 +17,8 @@ import {RiEdit2Line} from "react-icons/ri";
 import {MdOutlineClass} from "react-icons/md";
 import {VscWorkspaceTrusted} from "react-icons/vsc";
 import { GetServerSideProps } from 'next'
+import VideoSkeleton from "../../components/Skeleton/VideoSkeleton";
+import VideoplayerSkeleton from "../../components/Skeleton/VideoplayerSkeleton";
 
 import {  Avatar, notification , Input,  Popconfirm, message, Checkbox, Comment, Form, Button, List , Popover} from 'antd';
 import "antd/dist/antd.dark.css"
@@ -777,11 +779,15 @@ const displayShareIcon = (Node , ICON, name) =>  {
          <div className={`${theaterMode ? styles.videoplayer__theater_wrapper : styles.videoplayer_wrapper }`}>
               <div ref={standardRef} className={`${theaterMode ? styles.standard_wrapper_theater_mode : styles.standard_wrapper}`}>
                 <div className={styles.innerVideoWrapper}>
-                 {setVideoPlayer(metadata, videoId)}
+                 {!loading ? setVideoPlayer(metadata, videoId) : <VideoplayerSkeleton/>}
                 </div>
 
               </div>      
               <div ref={otherVideosContainerRef} className={`${theaterMode ? styles.other_videos_container_theater_mode : styles.other_videos_container}`}>
+                  
+                  {
+                    !loading ? 
+                  
                   <div className={styles.wrapper}>
                   {
                     videos &&  videos.map((d) => {
@@ -790,6 +796,19 @@ const displayShareIcon = (Node , ICON, name) =>  {
                     }) 
                   }               
                   </div>
+                    : 
+
+                    <div className={styles.skeletonContainer}>
+                <div className={styles.skeletonWrapper}>
+                {
+                Array.from(Array(8), (_, i) => <VideoSkeleton key={i}/>)
+                }
+                </div>
+              </div>
+
+            }
+                  
+
               </div>
               <div className={styles.video_info}>
                 <div className={styles.upper_info}>

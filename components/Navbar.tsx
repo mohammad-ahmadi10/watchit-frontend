@@ -54,6 +54,7 @@ interface searchedTitleType{
   title:string,
   id:string
 }
+interface UserType{id:string,username:string,email:string,profileImage:string}
 
 const  Navbar = () => {
   const [isOpen, setIsOpen] = useState(false)
@@ -62,7 +63,7 @@ const  Navbar = () => {
   const [avatar, setAvatarPath] = useState("");
   const [isAvatarClicked, setIsAvatarClicked] = useState(false);
   const [upStatus,  setUploadStatus] = useState(UploadStatus.ONSTART);
-  const [user,setUser] = useState(null);
+  const [user,setUser] = useState<UserType | null>(null);
   const [query , setQuery] = useState("");
 
   const router = useRouter();
@@ -215,7 +216,10 @@ const  Navbar = () => {
       localStorage.setItem("SSRFSH", "")
       localStorage.setItem("user" , "")
       setUser(null);
-      router.push("/")
+      setTimeout(()=>{
+        router.push("/")
+
+      }, 700)
     }
   }
   
@@ -304,7 +308,7 @@ const  Navbar = () => {
     setIsAvatarClicked(false);
   }
 
-  const avatarTooltip = () => (<span>{user !== null && user.profileImage.length > 0 ? "change your avatar" : "set your avatar"}</span>)
+  const avatarTooltip = () => (<span>{user !== null  && user.profileImage.length > 0 ? "change your avatar" : "set your avatar"}</span>)
 
 
   const onClearClick = (e:React.MouseEvent<HTMLSpanElement>) =>{
@@ -533,7 +537,8 @@ const  Navbar = () => {
               placement="bottomRight"
               overlayInnerStyle={{display:"flex", justifyContent:"center", alignItems:"center", flexDirection:"column"}}
               >
-                 <Avatar className={styles.avatar}  size={"large"} src={ <Image  src={user !== null && user.profileImage.length > 0 ?  avatar : UserLogo} layout="fill" />}></Avatar> 
+                
+                 <Avatar className={styles.avatar}  size={"large"} src={ <Image  src={ user.profileImage.length > 0 ?  avatar : UserLogo} layout="fill" />}></Avatar> 
                  
             </Popover>
 

@@ -17,6 +17,7 @@ import {BiCheckShield } from "react-icons/bi";
 import {modifyUplodedDate , modifyAmountOfView, regularTime} from "../utils/functions";
 import {useState , useRef , useCallback} from "react";
 import UseVideoSearch from "../utils/useVideoSearch";
+import VideoSkeleton from "../components/Skeleton/VideoSkeleton";
 
 
 /* interface HomeProps{
@@ -61,7 +62,7 @@ objectFit={"contain"} objectPosition={"center"}
     </div>
 
    <div className={styles.videoInfoContainer}>
-     <span>{file.title}</span>
+     <span >{file.title}</span>
      <div className={styles.usernameContainer}>
        <span>{file.username}</span>
        <BiCheckShield size={18} style={{color:"green"}}/>
@@ -76,6 +77,7 @@ objectFit={"contain"} objectPosition={"center"}
 </div>
 }
 
+
 /*
  calling the api and getting videos back
 */
@@ -85,11 +87,21 @@ const Home = () => {
   const dispatch = useDispatch();
   const user = useSelector(selectUser).user
   const message = useSelector(selectUser).errorMSG;
+  const [isLoading , setIsLoading] = useState(false);
   
   const [query , setQuery] = useState("");
   const [pageNr, setPageNr] = useState(0);
   const observer = useRef(null);
   const {videos, hasMore, loading, error } = UseVideoSearch("", pageNr)
+  useLayoutEffect(()=>{
+
+    setIsLoading(s => {
+      if(!s && loading)
+      return s = true
+    })
+
+  }, [])
+
   const lastVideosElementRef = useCallback(node => {
     if(loading) return;
     if(observer && observer.current) observer.current.disconnect()
@@ -104,6 +116,8 @@ const Home = () => {
     if(node) observer.current.observe(node)    
   }, [loading, hasMore]);
 
+
+  
   /* useLayoutEffect(() =>{
       if(message.includes("Invalid refresh")){
         Router.push("/login")
@@ -129,18 +143,31 @@ const Home = () => {
       </Head>
 
       <div className={styles.main}>
-            <div className={styles.gridWrapper}>
+      {
+        isLoading ? 
+        <div className={styles.gridWrapper}>
             {
-              videos &&  videos.map((d, index) => {
+             videos &&  videos.map((d, index) => {
                 if(videos.length === index+1)
-                return displayImage(d, lastVideosElementRef);
-                return displayImage(d); 
+                  return displayImage(d, lastVideosElementRef);
+                  return displayImage(d)
               }) 
             }
-            {
-              <span>{loading && 'loading'}</span>
-            }
             </div>
+        :
+              <div className={styles.skeletonContainer}>
+                <div className={styles.skeletonWrapper}>
+                {
+                Array.from(Array(15), (_, i) => <VideoSkeleton key={i}/>)
+                }
+                </div>
+              </div>
+
+
+      }
+            
+           
+            
       </div>
     </div>
   )

@@ -36,7 +36,10 @@ const  useVideoSearch = (s?:string , p?:number) => {
             if(typeof data !== 'undefined')
             setVideos(vs => {return [...new Set([...vs , ...data])]})
               setHasMore(data.length > 0);
-              setLoading(false);
+              setTimeout(()=>{
+                setLoading(false);
+
+              }, 600)
           })
           .catch(e =>{
               setError(true);

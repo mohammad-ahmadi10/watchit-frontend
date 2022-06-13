@@ -14,7 +14,7 @@ import {BiCheckShield } from "react-icons/bi";
 import {ImUpload2} from "react-icons/im";
 import imageCompression from 'browser-image-compression';
 import {  Avatar } from 'antd';
-import userPNG from "../../public/user.png";
+import UserLogo from "../../public/user.png";
 
 import useLayoutEffect from "../../utils/IsOrmorphicLayoutEffect";
 import {finduserIfExists} from "../../utils/functions";
@@ -146,7 +146,6 @@ const displayImage = (file:VideoPrevData , ref?:any) =>{
 
 
   useLayoutEffect(() =>{
- 
     ( async () =>{
        const {data} = await costumAxios.get("/watch/myVideos");
        setVideos(data);
@@ -248,10 +247,12 @@ const displayImage = (file:VideoPrevData , ref?:any) =>{
           <div className={styles.user_wrapper}>
               <div className={styles.profile} >
                 <div className={styles.avatar_container}>
-                  <Avatar className={styles.avatar}  size={"large"} src={ <Image  src={avatar.length > 0 ? avatar : userPNG} layout="fill" />}></Avatar> 
+                  {console.log(avatar)}
+                <Avatar className={styles.avatar}  size={"large"} src={ <Image  src={user !== null && avatar.length > 0 ?  avatar : UserLogo} layout="fill" />}></Avatar> 
                   <div  className={`${isAvatarHover ? styles.avatar_layer_hover : styles.avatar_layer  }`}
                         onMouseEnter={onImageEnter} onMouseLeave={onImageLeave}>
                            <label htmlFor="upload">
+
                            </label>
                            <input  
                                   type="file" name="photo" 

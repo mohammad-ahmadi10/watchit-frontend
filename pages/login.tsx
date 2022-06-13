@@ -31,7 +31,10 @@ const Login = () => {
     
     
     const dispatch = useDispatch();
+    const selector = useSelector(selectUser)
     const router = useRouter();
+   
+
     const memorizedUSER_REGES = useMemo(() =>{
         return  /^[a-zA-Z][a-zA-Z0-9-_]{3,23}$/;
         
@@ -81,6 +84,7 @@ const Login = () => {
         if(errRef && errRef.current){
             if(userState.errorMSG){
                 if(userState.errorMSG.length > 0 ){
+                    
                     setErrMSG(userState.errorMSG.toString());
                     errRef.current!.focus();
                 }
@@ -134,7 +138,9 @@ const Login = () => {
         }else{
             setIslogging(false);
             errRef.current!.focus();
-            setErrMSG("no Response");
+            const {mssg} = selector.errorMSG;
+
+            setErrMSG(mssg);
         }
     }
 
