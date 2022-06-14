@@ -122,7 +122,6 @@ const Login = () => {
         localStorage.setItem("ACTKEN", tokens.ACTKEN)
         localStorage.setItem("SSRFSH", tokens.SSRFSH)
         const {id, username, email, avatar} = response.data!.user; 
-        console.log(response.data)
         setPassword(id);
         const newUser:User = {
         id,
@@ -140,9 +139,9 @@ const Login = () => {
         setPassword("")
         setEmailUsername("") 
         setIslogging(false);
-        /* setTimeout(() =>{
+        setTimeout(() =>{
             forceReload(router)
-        }, 1000) */
+        }, 1000)
         }else{
             setIslogging(false);
             errRef.current!.focus();
