@@ -136,8 +136,8 @@ function Register() {
 
 
     useLayoutEffect(() =>{
-        if(userState.errorMSG){
-            if(userState.errorMSG.length > 0 ){
+        if(userState.errorMSG && typeof userState.errorMSG === 'string' ){
+            if(userState.errorMSG.length > 0  ){
                 setErrMSG(userState.errorMSG.toString());
                 errRef.current!.focus();
             }
