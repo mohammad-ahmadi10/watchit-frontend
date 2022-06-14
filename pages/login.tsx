@@ -17,6 +17,14 @@ import {forceReload} from "../utils/functions";
 import { Button ,  Input, Form} from 'antd';
 import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 import {InputRef} from "antd";
+import {UserData as LoggedUser} from "../types/page";
+
+interface logUser {
+    user:LoggedUser| null,
+    errorMSG:string| {mssg:string},
+    logIn:boolean
+}
+
 
 const Login = () => {
     const userState = useSelector(selectUser)
@@ -32,9 +40,8 @@ const Login = () => {
     
     const dispatch = useDispatch();
     const selector = useSelector(selectUser)
-    const router = useRouter();
-   
 
+    const router = useRouter();
     const memorizedUSER_REGES = useMemo(() =>{
         return  /^[a-zA-Z][a-zA-Z0-9-_]{3,23}$/;
         
@@ -82,7 +89,7 @@ const Login = () => {
 
     useLayoutEffect(() =>{
         if(errRef && errRef.current){
-            if(userState.errorMSG){
+            if(userState.errorMSG && typeof userState.errorMSG === 'string'){
                 if(userState.errorMSG.length > 0 ){
                     
                     setErrMSG(userState.errorMSG.toString());
@@ -138,9 +145,9 @@ const Login = () => {
         }else{
             setIslogging(false);
             errRef.current!.focus();
-            const {mssg} = selector.errorMSG;
-
-            setErrMSG(mssg);
+            if(typeof selector.errorMSG !== 'string'){
+                setErrMSG(selector.errorMSG.mssg);
+            }
         }
     }
 
@@ -215,7 +222,6 @@ const Login = () => {
         wrapperCol={{ offset: 0 , span: 24 }}
       >
          <Input 
-                                                              name="email_username" 
                                                               id="email_username"
                                                               ref={emailuserRef}
                                                               placeholder="Username or Email" 
@@ -236,7 +242,6 @@ const Login = () => {
         wrapperCol={{ offset: 0 , span: 24 }}
       >
          <Input.Password
-                                                                name="password" 
                                                                 id="password"
                                                                 placeholder="password" 
                                                                 onChange={onPassChange}

@@ -17,13 +17,12 @@ export interface User{
     username:string,
     email:string,
     profileImage:string,
-    
 }
 
 
 export type UserState = {
     user: User|null,
-    errorMSG:String,
+    errorMSG:string | {mssg:string},
     logIn:boolean,
 };
 
