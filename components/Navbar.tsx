@@ -240,9 +240,10 @@ const  Navbar = () => {
   const getUser = async ( ) =>{
     if(finduserIfExists){
       const {user , objectURL} = await finduserIfExists(router , costumAxios);
-      console.log(user)
       if(user){
         setUser(user);
+
+
         setUsername(user.username)
         setAvatarPath("")
         setAvatarPath(objectURL)
