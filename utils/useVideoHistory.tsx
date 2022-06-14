@@ -27,7 +27,7 @@ const  useVideoHistory = (p:number) => {
             signal: controller.signal
          })
           .then(res => {
-            let data:[HistoryType] = res.data;
+            let data:HistoryType[] = res.data;
             data = data.filter((v) => Boolean(v))
             if(typeof data !== 'undefined'){
                 data.sort((a,b)=> {
