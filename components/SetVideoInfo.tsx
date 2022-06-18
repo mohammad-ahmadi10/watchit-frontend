@@ -147,6 +147,7 @@ useLayoutEffect(()=>{
 
 
 const onFinish = async (e:React.MouseEvent) => {
+  if(title.length <= 0 || description.length <= 0 )return;
   
   setLoad(true)
 
@@ -163,7 +164,7 @@ const onFinish = async (e:React.MouseEvent) => {
     setUploadStatus(UploadStatus.UPLOADED)
     setTimeout(() =>{
       Router.push("/")
-    }, 500)
+    }, 2000)
     
     
   }else{
@@ -178,9 +179,8 @@ const onFinish = async (e:React.MouseEvent) => {
     setUploadStatus(UploadStatus.UPLOADED)
     setTimeout(() =>{
       Router.push("/")
-    }, 500)
+    }, 1000)
   }
-  openNotificationWithIcon('success')
 };
 
 
