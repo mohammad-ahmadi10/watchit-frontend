@@ -75,8 +75,8 @@ const  Search =() => {
       <div className={styles.videoInfoContainer}>
         <span>{file.title}</span>
         <div className={styles.view_dateContainer}>
-          {/* +file.view */}
-            <span>{modifyAmountOfView( 20)}</span>
+          {/*  */}
+            <span>{modifyAmountOfView( +file.view)}</span>
             <span>{modifyUplodedDate(new Date(file.date))} </span>
         </div> 
          <div className={styles.usernameContainer}>

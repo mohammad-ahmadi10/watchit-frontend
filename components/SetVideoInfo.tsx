@@ -164,9 +164,9 @@ const onFinish = async (e:React.MouseEvent) => {
     setTimeout(() =>{
       Router.push("/")
     }, 500)
-
-
- }else{
+    
+    
+  }else{
     const formData = new FormData();
     formData.append("videoPath", uploadedPath)
     formData.append("title", title);
@@ -176,10 +176,11 @@ const onFinish = async (e:React.MouseEvent) => {
     const res = await clientAxios.post("/upload/thumb" , formData);
     setLoad(false)
     setUploadStatus(UploadStatus.UPLOADED)
-     setTimeout(() =>{
+    setTimeout(() =>{
       Router.push("/")
     }, 500)
- }
+  }
+  openNotificationWithIcon('success')
 };
 
 
