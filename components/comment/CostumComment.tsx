@@ -1,6 +1,6 @@
 import {  Avatar ,  Input , Comment, Form , Button } from 'antd';
 const { TextArea } = Input;
-
+import { UserOutlined } from '@ant-design/icons';
 
 interface EditorProps {
     onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
@@ -41,7 +41,7 @@ interface EditorProps {
 const CostumComment = ({avatar,alt , onChange, handleSubmit , submitting , value , children}:CommentProp) =>{
     return (
         <Comment
-                              avatar={<Avatar src={avatar} alt={alt} />}
+                              avatar={<Avatar icon={<UserOutlined />} src={avatar} alt={alt} />}
                               content={
                                 <Editor
                                     onChange={onChange}

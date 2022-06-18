@@ -287,14 +287,9 @@ const  Navbar = () => {
         }
       });
       if(res.status === 200){
-        let newUser:User = {id:0,username:"", email:"", profileImage:""};
+        let newUser:User = {id:"",username:"", email:"", profileImage:""};
         setUploadStatus(UploadStatus.ONSTART);
-        
-        console.log(user)
-        console.log(user!== null )
-        console.log("id: " + user.id !== "undefined" )
-        console.log("username: " + typeof user.username !== "undefined" )
-        console.log("email: " + typeof user.email !== "undefined" )
+
         if(user!== null && user.id !== "undefined" && typeof user.username !== "undefined" && typeof user.email !== "undefined")
         {
         newUser = {

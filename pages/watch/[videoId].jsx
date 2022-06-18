@@ -19,7 +19,7 @@ import {VscWorkspaceTrusted} from "react-icons/vsc";
 import { GetServerSideProps } from 'next'
 import VideoSkeleton from "../../components/Skeleton/VideoSkeleton";
 import VideoplayerSkeleton from "../../components/Skeleton/VideoplayerSkeleton";
-import UserLogo from "../../public/user.png";
+
 import {  Avatar, notification , Input,  Popconfirm, message, Checkbox, Comment, Form, Button, List , Popover} from 'antd';
 import "antd/dist/antd.dark.css"
 import moment from 'moment';
@@ -360,7 +360,10 @@ const CommentList = ({ comments }) => (
 
   const handleSubmitComment = async () => {
     if (!commentValue) return;
-    
+    if(user === null || typeof user === 'undefined'){
+      openNotification(<div className={styles.center}>{displayIcon(VscWorkspaceTrusted, "red")} <span style={{marginLeft:10}}>You can't comment! sign up for free to be able to comment!</span></div>)
+      return;
+    }
     try{
       setCommentSubmitting(true);
       const res = await costumAxios.put("/video/comment" , {id:videoId, commentBody:commentValue})
@@ -387,6 +390,7 @@ const CommentList = ({ comments }) => (
             likes:comment.likes.length,
           },
         ]);
+        openNotification(<div className={styles.center}>{displayIcon(VscWorkspaceTrusted, "green")} <span style={{marginLeft:10}}>you commented this video!</span></div>)
       }
       else {
         
@@ -903,9 +907,9 @@ const displayShareIcon = (Node , ICON, name) =>  {
                       </div>
                    </div>
 
-
-
-                   <div className={styles.commentContainer}>
+                   {/* {
+                    user !== null && typeof user !== 'undefined' ? */}
+                    <div className={styles.commentContainer}>
                      <CostumComment avatar={userAvatar} alt={typeof user !== "undefined" ? user.username : " "}
                                     onChange={handleCommentChange}
                                     handleSubmit={handleSubmitComment}
@@ -914,6 +918,8 @@ const displayShareIcon = (Node , ICON, name) =>  {
                      />
                      {comments.length > 0 && <CommentList comments={comments} />}
                    </div>
+{/*                    : ""
+                   } */}
 
 
                    
