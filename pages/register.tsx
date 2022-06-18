@@ -219,7 +219,7 @@ function Register() {
              success?
             (<section className={styles.successContainer}>
                 <h1>Successfully Registerd!</h1>
-                <p>Please first confirm your Email! Then Sign in</p>
+                <p>It may take between 5-10 minutes to recieve the Confirm Email! Please first confirm your Email.  Then Sign in</p>
                 <p>
                    <Link href={"/login"}><a href='#'>Sign in</a></Link>
                 </p>
@@ -261,7 +261,6 @@ function Register() {
                                                                     </span>
                                                                     
                                          <Input 
-                                         name="username" 
                                          id="username"
                                          placeholder="Username" 
                                          ref={userRef}
@@ -300,7 +299,6 @@ function Register() {
                                                                 </span> 
                                                               <Input 
                                                                  type="text" 
-                                                                 name="email" 
                                                                  id="email"
                                                                  placeholder="username@email.com" 
                                                                  autoComplete={"false"}
@@ -340,7 +338,6 @@ function Register() {
                                                                 </span>
         <Input.Password 
         type="password" 
-        name="password" 
         id="password"
         placeholder="password" 
         onChange={onPassChange}
@@ -382,7 +379,6 @@ function Register() {
 
         <Input.Password 
         type="password" 
-        name="confirm_password" 
         id="confirm_password"
         placeholder="confirm_password" 
         onChange={onConfirmPassChange}
