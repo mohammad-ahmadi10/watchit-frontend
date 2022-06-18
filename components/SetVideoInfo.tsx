@@ -180,8 +180,6 @@ const onFinish = async (e:React.MouseEvent) => {
       Router.push("/")
     }, 500)
  }
-
- notifiction()
 };
 
 

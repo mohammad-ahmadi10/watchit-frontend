@@ -17,7 +17,7 @@ const Dropzone:React.FC<DropzoneProps> = ({onDrop , dropText, accept  , children
   const {getRootProps , getInputProps , 
         isDragActive
         }
-  = useDropzone({onDrop, accept });
+  = useDropzone({onDrop, accept});
 
 
   return (
