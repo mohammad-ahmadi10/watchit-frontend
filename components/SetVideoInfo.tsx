@@ -41,7 +41,7 @@ const openNotificationWithIcon = (type:IconType) => {
   notification[type]({
     message: 'upload file',
     description:
-      'video is successfully uploaded!',
+      'video is successfully uploaded! it may take some amount of time to be displayed!',
     duration:1,
     placement:'topRight',
     className:"notification"
@@ -180,6 +180,8 @@ const onFinish = async (e:React.MouseEvent) => {
       Router.push("/")
     }, 500)
  }
+
+ notifiction()
 };
 
 
