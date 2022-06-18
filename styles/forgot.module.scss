@@ -54,3 +54,11 @@
     @include ux.center(row);
 
  }
+
+
+ .resetWrapper{
+   display:flex;
+   flex-direction:column;
+   justify-content:center;
+   align-items:center;
+ }

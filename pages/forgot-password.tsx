@@ -39,12 +39,14 @@ const displayIcon = (ICON:any, color?:string, size?:number) =>  {
       setIslogging(false)
     }else{
       if(res.status === 200){
-        openNotification(<div className={styles.center}>{displayIcon(VscWorkspaceTrusted, "red")} <span style={{marginLeft:10}}>{res.data?.mssg}</span></div>)
+        openNotification(<div className={styles.center}>{displayIcon(VscWorkspaceTrusted, "Green")} <span style={{marginLeft:10}}>{res.data?.mssg}</span></div>)
         setMessage(res.data?.mssg)
 
+      }else{
+        openNotification(<div className={styles.center}>{displayIcon(VscWorkspaceTrusted, "red")} <span style={{marginLeft:10}}>Email is not correct!</span></div>)
+        setIslogging(false)
       }
-      openNotification(<div className={styles.center}>{displayIcon(VscWorkspaceTrusted, "red")} <span style={{marginLeft:10}}>Email is not correct!</span></div>)
-      setIslogging(false)
+
     }
 
   } 

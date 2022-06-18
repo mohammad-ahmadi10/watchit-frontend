@@ -9,8 +9,12 @@ interface EditorProps {
     value: string;
   }
 
+  interface UserType{id:string,username:string,email:string,profileImage:string}
+
 
   const Editor = ({ onChange, handleSubmit, submitting, value }: EditorProps) => (
+
+
     <>
       <Form.Item>
         <TextArea rows={4} onChange={onChange} value={value} />

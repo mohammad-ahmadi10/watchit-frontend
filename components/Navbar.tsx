@@ -26,7 +26,7 @@ import useLayoutEffect from "../utils/IsOrmorphicLayoutEffect";
 import costumAxios from "../utils/axios";
 
 import {useRouter} from 'next/router'
-
+import { login , User } from '../src/features/userSlice';
 import Image from 'next/image';
 import {BsFillPersonFill} from "react-icons/bs";
 import {UploadStatus} from "../utils/enums";
@@ -242,8 +242,6 @@ const  Navbar = () => {
       const {user , objectURL} = await finduserIfExists(router , costumAxios);
       if(user){
         setUser(user);
-
-
         setUsername(user.username)
         setAvatarPath("")
         setAvatarPath(objectURL)
@@ -289,8 +287,31 @@ const  Navbar = () => {
         }
       });
       if(res.status === 200){
+        let newUser:User = {id:0,username:"", email:"", profileImage:""};
         setUploadStatus(UploadStatus.ONSTART);
-        await getUser()
+        
+        console.log(user)
+        console.log(user!== null )
+        console.log("id: " + user.id !== "undefined" )
+        console.log("username: " + typeof user.username !== "undefined" )
+        console.log("email: " + typeof user.email !== "undefined" )
+        if(user!== null && user.id !== "undefined" && typeof user.username !== "undefined" && typeof user.email !== "undefined")
+        {
+        newUser = {
+          ...user,
+          profileImage:"avatar",
+          }
+          const ms = dispatch(login({
+              user: newUser,
+              logIn:true,
+              errorMSG:""
+          }))
+          localStorage.setItem("user", JSON.stringify(ms));
+          console.log(ms)
+        }
+        setTimeout(async () =>{
+          await getUser()
+        , 500})
       }
     }catch(e){
       console.log(e)
@@ -538,7 +559,7 @@ const  Navbar = () => {
               placement="bottomRight"
               overlayInnerStyle={{display:"flex", justifyContent:"center", alignItems:"center", flexDirection:"column"}}
               >
-                
+
                  <Avatar className={styles.avatar}  size={"large"} src={ <Image  src={ user.profileImage.length > 0 ?  avatar : UserLogo} layout="fill" />}></Avatar> 
                  
             </Popover>

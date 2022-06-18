@@ -19,7 +19,7 @@ import {VscWorkspaceTrusted} from "react-icons/vsc";
 import { GetServerSideProps } from 'next'
 import VideoSkeleton from "../../components/Skeleton/VideoSkeleton";
 import VideoplayerSkeleton from "../../components/Skeleton/VideoplayerSkeleton";
-
+import UserLogo from "../public/user.png";
 import {  Avatar, notification , Input,  Popconfirm, message, Checkbox, Comment, Form, Button, List , Popover} from 'antd';
 import "antd/dist/antd.dark.css"
 import moment from 'moment';
@@ -370,22 +370,43 @@ const CommentList = ({ comments }) => (
       const date = modifyUplodedDate(new Date(comment.date))
 
       
-      setComments([
-        ...comments,
-        {
-          actions: [<div className={styles.commentActions}>
-                      {displayIcon(AiTwotoneHeart, "white", 15)}
-                      <span key="comment-basic-reply-to">Reply to</span>
-                   </div> 
-          ],
-          author: user.username,
-          avatar: userAvatar,
-          content: <div>{commentValue}</div>,
-          datetime: date,
-          commentid:comment._id,
-          likes:comment.likes.length,
-        },
-      ]);
+      if(user !== null){
+        setComments([
+          ...comments,
+          {
+            actions: [<div className={styles.commentActions}>
+                        {displayIcon(AiTwotoneHeart, "white", 15)}
+                        <span key="comment-basic-reply-to">Reply to</span>
+                     </div> 
+            ],
+            author: user.username,
+            avatar: userAvatar,
+            content: <div>{commentValue}</div>,
+            datetime: date,
+            commentid:comment._id,
+            likes:comment.likes.length,
+          },
+        ]);
+      }
+      else {
+        setComments([
+          ...comments,
+          {
+            actions: [<div className={styles.commentActions}>
+                        {displayIcon(AiTwotoneHeart, "white", 15)}
+                        <span key="comment-basic-reply-to">Reply to</span>
+                     </div> 
+            ],
+            author: "anonym person",
+            avatar: userLogo,
+            content: <div>{commentValue}</div>,
+            datetime: date,
+            commentid:comment._id,
+            likes:comment.likes.length,
+          },
+        ]);
+      }
+      
       setCommentValue('');
 
     }
