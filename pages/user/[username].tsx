@@ -106,7 +106,8 @@ const displayImage = (file:VideoPrevData , ref?:any) =>{
        <BiCheckShield size={18} style={{color:"green"}}/>
      </div>
      <div className={styles.view_dateContainer}>
-          <span>{modifyAmountOfView(/* +file.view */ 20)}</span>
+      {console.log(file)}
+          <span>{modifyAmountOfView(+file.view)}</span>
           <span>{modifyUplodedDate(new Date(file.date))} </span>
      </div>
     </div>
@@ -166,8 +167,6 @@ const displayImage = (file:VideoPrevData , ref?:any) =>{
     e.preventDefault();
     setIsAvatarHover(false)
   };
-
-
 
   const onInputChange = async (e:React.ChangeEvent<HTMLInputElement>) =>{
      const targ = e.target as HTMLInputElement;
@@ -247,7 +246,6 @@ const displayImage = (file:VideoPrevData , ref?:any) =>{
           <div className={styles.user_wrapper}>
               <div className={styles.profile} >
                 <div className={styles.avatar_container}>
-                  {console.log(avatar)}
                 <Avatar className={styles.avatar}  size={"large"} src={ <Image  src={user !== null && avatar.length > 0 ?  avatar : UserLogo} layout="fill" />}></Avatar> 
                   <div  className={`${isAvatarHover ? styles.avatar_layer_hover : styles.avatar_layer  }`}
                         onMouseEnter={onImageEnter} onMouseLeave={onImageLeave}>

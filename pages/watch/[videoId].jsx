@@ -19,7 +19,7 @@ import {VscWorkspaceTrusted} from "react-icons/vsc";
 import { GetServerSideProps } from 'next'
 import VideoSkeleton from "../../components/Skeleton/VideoSkeleton";
 import VideoplayerSkeleton from "../../components/Skeleton/VideoplayerSkeleton";
-import UserLogo from "../public/user.png";
+import UserLogo from "../../public/user.png";
 import {  Avatar, notification , Input,  Popconfirm, message, Checkbox, Comment, Form, Button, List , Popover} from 'antd';
 import "antd/dist/antd.dark.css"
 import moment from 'moment';
@@ -389,22 +389,7 @@ const CommentList = ({ comments }) => (
         ]);
       }
       else {
-        setComments([
-          ...comments,
-          {
-            actions: [<div className={styles.commentActions}>
-                        {displayIcon(AiTwotoneHeart, "white", 15)}
-                        <span key="comment-basic-reply-to">Reply to</span>
-                     </div> 
-            ],
-            author: "anonym person",
-            avatar: userLogo,
-            content: <div>{commentValue}</div>,
-            datetime: date,
-            commentid:comment._id,
-            likes:comment.likes.length,
-          },
-        ]);
+        
       }
       
       setCommentValue('');
@@ -867,14 +852,12 @@ const displayShareIcon = (Node , ICON, name) =>  {
                             </span>
                             <span>
                                   <Popover content={shareContent} title="share" trigger="click">
-                                      <div>
                                       <Button type="text" style={{height:"100%"}} >
                                             <div className={styles.shareButton}>
                                                <UseAnimations animation={share} size={iconSize +5}  strokeColor={"white"} fillColor={"white"}/>
-                                              <span>share</span>
                                             </div>
                                       </Button>
-                                      </div>
+                                              <span>share</span>
                                       
                                     </Popover>
 
@@ -903,7 +886,7 @@ const displayShareIcon = (Node , ICON, name) =>  {
                                          <div><Button type="text" >{displayIcon(MdOutlineClass)}</Button></div>
                                     </Popover>
                                 }
-                              <span>save</span>
+                                         <span>save</span>
                             </span>
                             </div>
                           </div>
