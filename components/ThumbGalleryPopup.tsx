@@ -132,7 +132,7 @@ const imageLoader = (videoID:string, index:number) =>{
       <div ref={thumbsContainerRef} className={`${styles.thumbsContainer} ${styles.snapInline}`} >
 
         {
-          [0,1,2,3].map(index =>{
+          [0,1].map(index =>{
             return imageLoader(videoID , index);
           })
         }   
