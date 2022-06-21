@@ -2,7 +2,7 @@ import { DependencyList, useCallback} from "react";
 import { DropEvent, FileRejection, useDropzone } from "react-dropzone";
 import styles from "../styles/dropzone.module.scss";
 
-/* {onDrop  ,  children , isImg=false , loading , fontSize=100} */
+/* property types for Dropzone */
 interface DropzoneProps {
   onDrop: <T extends File>(acceptedFiles: T[], fileRejections: FileRejection[], event: DropEvent) => void,
   dropText:string,

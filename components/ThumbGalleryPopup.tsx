@@ -5,6 +5,7 @@ import styles from "../styles/thumbGalleryPopup.module.scss";
 import useLayoutEffect from "../utils/IsOrmorphicLayoutEffect";
 
 
+/* property types for Gallery popup window */
 interface ThumbGalleryPopupProps{
   onImageUpload:(files: any, err: any) => void,
   uploadFile:string|StaticImageData,
@@ -23,11 +24,13 @@ const ThumbGalleryPopup:React.FC<ThumbGalleryPopupProps> = ({onImageUpload, uplo
 
 
 
+ /*  used for Image src */
  const myLoader=({src}:any)=>{
   return `${process.env.NEXT_PUBLIC_REMOTE}/watch/thumbs/${src}`;
 }
 
 
+/* selects the clicked thumb and saves its index */
 const onImageClick = (e:React.MouseEvent) =>{
   const img = e.target as HTMLImageElement;
   const allChildren = [...img?.parentElement!.parentElement!.children];
@@ -56,12 +59,14 @@ const onImageClick = (e:React.MouseEvent) =>{
   setImageIndex(+selectedIndex)
 }
 
+/* triggers hover effect by entering the mouse */
 const onImageEnter = (e: React.MouseEvent<HTMLDivElement>) => {
   e.preventDefault();
   // Do something
   const targ = e.currentTarget as HTMLDivElement;
   targ.className = `${targ.className} ${styles.scaleImage}`
 };
+/* triggers hover effect by leaving with the mouse */
 const onImageLeave = (e: React.MouseEvent<HTMLDivElement>) => {
   e.preventDefault();
   // Do something
@@ -72,6 +77,7 @@ const onImageLeave = (e: React.MouseEvent<HTMLDivElement>) => {
 };
 
 
+/* display thumb with some hover effect */
 const imageLoader = (videoID:string, index:number) =>{
   return <div  key={index} onMouseEnter={onImageEnter} onMouseLeave={onImageLeave} onClick={onImageClick} className={`${styles.imageWrapper} ${index === 0 ? styles.imageSelect:""}`}> 
           <Image loader={myLoader} src={`${videoID}&${index}`} alt={`${videoID}&${index}`} height={800} width={800}
@@ -84,11 +90,13 @@ const imageLoader = (videoID:string, index:number) =>{
 
 
 
+/* saves index of thumb if by changes on ImgIndex */
  useLayoutEffect(() =>{
   selectImageIndex(imgIndex)
  },[imgIndex])
 
 
+ /* handles the new uploaded file and selected its index */
   const onImage = (files: any, err: any) =>{
     const file = files[0];
     
@@ -113,6 +121,7 @@ const imageLoader = (videoID:string, index:number) =>{
     onImageUpload(files, err)
   }
 
+  /*  variants for framer : used for animation reference https://framer.com */
   const variants = {
     hover: {
         scale:1.2     

@@ -13,37 +13,20 @@ interface SliderProps{
     value?:number,
     height?:number
 }
-
+/* Slider used in volume and video range */
 function CostumSlider({maxWidth , fillColor ,onChange ,  value , height=5}:SliderProps) {
+   
     const [rangeVal , setRangeVal] = useState(value);
-
-  /*   const barFillRef = useRef<HTMLSpanElement>(null)!; */
     const rangeRef = useRef<HTMLInputElement>(null)!;
     
+    /* sets rangValalue when a new Value is given */
     useLayoutEffect(() =>{
         setRangeVal(value)
-    }, [value])
+    }, [value]) 
 
-    useLayoutEffect(() =>{    
-        const maxWidth = rangeRef.current!.clientWidth;
-        
-        /* if(typeof rangeVal !== 'undefined'){
-            const newVal = mapRange(rangeVal! , 0 , 100 , 0 , maxWidth?maxWidth:100);
-            barFillRef.current!.style.width = `${newVal}px`;
-        } 
-        */
-    },[ rangeRef, rangeVal])
-
-
-    
-
-
-
-    
-
+    /* callbak Function envolked when the slider Range is changed */
     const onRangeChange = (e:number) =>{
         const newVal = e
-
         if(typeof(onChange) === 'function') 
             onChange(newVal);
         setRangeVal(+newVal); 

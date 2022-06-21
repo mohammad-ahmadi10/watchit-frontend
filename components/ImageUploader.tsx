@@ -1,6 +1,7 @@
 import Upload from "./Upload";
 import styles from "../styles/ImageUploader.module.scss";
 
+/* ImageUploader property type */
 interface ImageUploaderProps{
   onImageUpload:(files: any, err: any) => void,
   children:React.ReactNode
@@ -17,7 +18,6 @@ const ImageUploader:React.FC<ImageUploaderProps> = ({onImageUpload, children}) =
     onUpload={onImageUpload}
   >
     {children}
-    
   </Upload>
     </div>
    

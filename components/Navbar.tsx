@@ -38,6 +38,8 @@ import { selectAvatar } from '../src/store';
 import Logo from "../public/Logo.svg"
 import UserLogo from "../public/user.png";
 
+
+/* varaints of motion Varian reference https://framer.com/motion */
 const variants = { 
   open: { opacity: 1, x: 0, transition:{stiffness: 5, staggerChildren: 0.05 } },
   closed: { opacity: 0, x: "-100%" },
@@ -48,6 +50,7 @@ const item = {
 }
 
 
+/* property types for searchedTitle Field */
 interface searchedTitleType{
   sIndex:number,
   eIndex:number,
@@ -83,14 +86,15 @@ const  Navbar = () => {
   
 
   
-
+ /* sets search with the searched value from user if it presents */
   useLayoutEffect(()=>{
     if(typeof window !== 'undefined' && window !== null ){
       const val = localStorage.getItem("q")
         val ? setSearchVal(val) : setSearchVal("")
     }
   }, [])
-  // end search
+  
+  /* envolked a callback whenever user types on the Searchfield */
   const onSearchChange = async (s:React.ChangeEvent) => {
     try{
       setLoad(false)
@@ -120,12 +124,14 @@ const  Navbar = () => {
     }
   }
   
+  /* sets saved searched value back to the query variable */
   useLayoutEffect(() =>{
      const q = localStorage.getItem("q");
      if(q !== null && typeof q !== "undefined")
       setQuery(q);
   }, []) 
 
+  /* saves every searched user on localStorage */
   const onSearch = async (s:string) =>{  
     if(s.length <= 0) return;
     localStorage.setItem("q" , s);
@@ -133,10 +139,12 @@ const  Navbar = () => {
     router.push(`/search/search-query=${s}`)
   }
 
-
+  /* costum Element for KeyDown Function */
   interface costumHTMLElement extends HTMLElement{
      name?:string
   }
+
+  /* invoke this callback when user types */
   const handleKeyDown = (e:any) => {
       const t = e.target as costumHTMLElement;
       if(t.name && t.name.includes("search"))return;
@@ -144,6 +152,7 @@ const  Navbar = () => {
       setShouldShowSearchSuggestion(false)
   }
 
+  /* saves every window scrollY on localStorage */
   const handleScroll = (e:any) =>{
       const lp = window.scrollY;
       const oldScroll = localStorage.getItem("oldScroll")
@@ -160,10 +169,14 @@ const  Navbar = () => {
   } 
 
 
+  /* invoke when the Search Field is clicked  */
   const onSearchClick = (e:any)=>{
     setShouldShowSearchSuggestion(true)
   }
 
+  /* invoke when on the serarch Filed enter is pressed.
+     saves also user searched value on localStorage
+  */
   const onSearchEnter = (e:any)=>{
     const t = e.target as HTMLInputElement;
     const value = t.value;
@@ -174,6 +187,7 @@ const  Navbar = () => {
     
   }
 
+  /* handles the click and scroll Events */
   useLayoutEffect(() => {
     window.addEventListener('click', handleKeyDown);
 
@@ -188,6 +202,7 @@ const  Navbar = () => {
   }, []);
 
 
+  /* get token back if one present => user is once logged in */
   useLayoutEffect(() =>{
       const actoken = localStorage.getItem("ACTKEN");
       const isAvatar = localStorage.getItem("avatar");
@@ -196,10 +211,12 @@ const  Navbar = () => {
   })
 
 
+  /* sets Avatar Path on every Render */
   useLayoutEffect(() =>{      
     if(selector.page.length > 0)
       setAvatarPath(selector.path)
   })
+
   useLayoutEffect(() =>{      
     localStorage.setItem("oldScroll", "0")
   }, [])
@@ -208,7 +225,6 @@ const  Navbar = () => {
 
 
 
-  
   const onLogout = async (e:React.MouseEvent<HTMLParagraphElement>) =>{
     const response = await clientAxios.get("auth/logout");
     if(response.status === 200){
@@ -224,6 +240,7 @@ const  Navbar = () => {
   }
   
 
+  /* by user click on navbar container navbar side will be closed */
   const onNavbarContainerClick = (e:React.MouseEvent<HTMLDivElement>) =>{
     const el = e.target as HTMLDivElement;
 
@@ -236,6 +253,7 @@ const  Navbar = () => {
  
   
 
+  /* searchs and finds user if one presents */
 
   const getUser = async ( ) =>{
     if(finduserIfExists){
@@ -266,6 +284,7 @@ const  Navbar = () => {
  
 
 
+  /* callBack function invokes when user uploads a new Avatar */
   const onFileUpload = useCallback( async (files , err)=>{
     const file = files[0];
     const options = {
@@ -274,6 +293,7 @@ const  Navbar = () => {
       useWebWorker: true
     }
 
+    /* compresses the file before sending to the server */
     try{
       const compressedFile = await imageCompression(file, options);
       const formData = new FormData();
@@ -286,6 +306,7 @@ const  Navbar = () => {
           } 
         }
       });
+      /* if the process was successfull tryes to changes user avatar */
       if(res.status === 200){
         let newUser:User = {id:"",username:"", email:"", profileImage:""};
         setUploadStatus(UploadStatus.ONSTART);
@@ -302,7 +323,6 @@ const  Navbar = () => {
               errorMSG:""
           }))
           localStorage.setItem("user", JSON.stringify(ms));
-          console.log(ms)
         }
         setTimeout(async () =>{
           await getUser()
@@ -315,19 +335,23 @@ const  Navbar = () => {
 
 
 
+  /* opens avatar popup Window if its clicked */
   const onAvatarClick = (e:React.MouseEvent<HTMLDivElement>) =>{
     const el = e.target as HTMLDivElement;
 
     if(el.className  && el.className.includes && el.className.includes("avatar_impluse"))
     setIsAvatarClicked(s=>!s);
   }
+
   const hidePopUp = (e:React.MouseEvent<HTMLDivElement>) =>{
     setIsAvatarClicked(false);
   }
 
+  /* tooltip for avatar => invokes by hovering it */
   const avatarTooltip = () => (<span>{user !== null  && user.profileImage.length > 0 ? "change your avatar" : "set your avatar"}</span>)
 
 
+  /* clears search field value  */
   const onClearClick = (e:React.MouseEvent<HTMLSpanElement>) =>{
        localStorage.setItem("q", "")
        setSearchVal("")

@@ -2,12 +2,13 @@ import Navbar from './Navbar';
 
 
 
-/* ReactElement<any, string | React.JSXElementConstructor<any>> */
+/* used for every single of page
+   currently every Page has the Navbar section
+*/
 const Layout = ({children}) =>{
     return  <>
      <Navbar/> 
      {children}
-     {/* <Footer/> */}
      </>
 }
 

@@ -12,7 +12,8 @@ import UseVideoSearch from "../../utils/useVideoSearch";
 import useLayoutEffect from "../../utils/IsOrmorphicLayoutEffect";
 import notFound from "../../public/not_found.png";
 
-export const myLoader=({src})=>{
+/* used for Image tag for loading it */
+const myLoader=({src})=>{
   return `${process.env.NEXT_PUBLIC_REMOTE}/watch/thumb/${src}`;
 }
 
@@ -29,13 +30,19 @@ const  Search =() => {
   const [pageNr, setPageNr] = useState(0);
   const observer = useRef(null);
 
+  /* saves search value in the query variable */
   useLayoutEffect(()=>{
     if(typeof search !== 'undefined')
     if(typeof router.query.search === "string")
      setQuery(router.query.search.split("=")[1].replace(/[^\p{L}\p{N}\p{P}\p{Z}^$\n]/gu, ''))
   }, [search])
 
+  
+  /* gets searched videos back  */
   const {videos, hasMore, loading, error } = UseVideoSearch(query, pageNr)
+
+
+  /* regualte last video element */
   const lastVideosElementRef = useCallback(node => {
     if(loading) return;
     if(observer && observer.current) observer.current.disconnect()
@@ -51,6 +58,7 @@ const  Search =() => {
     if(node) observer.current.observe(node)    
   }, [loading, hasMore]);
 
+  /* rendes videos in its on componet */
   const displayImage = (file) =>{
     const [minute, second] = regularTime(file.duration);
     

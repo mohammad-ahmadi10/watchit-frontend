@@ -16,6 +16,7 @@ function ResetPassword() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading ,setLoading] = useState(false);
 
+  /* opens a notification */
   const openNotification = (content:React.ReactNode) => {
     notification.open({
       message: content,
@@ -24,11 +25,13 @@ function ResetPassword() {
       },
     });
   }
-    /* render icon from react-icons */
+
+    /* renders icon from react-icons */
     const displayIcon = (ICON:any, color?:string, size?:number) =>  { 
       return  <ICON size={size ? size : iconSize} style={{pointerEvents:"none", color:color}}/>
     }
     
+  /* handles resets password and sends it to the server */
   const onResetPassword = async (values: any) =>{
     if(password.length <=0 || confirmPassword.length <=0)
      return
@@ -57,10 +60,12 @@ function ResetPassword() {
   } 
 
  
+  /* saves new given password */
   const onPassChange = (e:React.ChangeEvent<HTMLInputElement>) =>{
     const inputElement = e.target as HTMLInputElement;
     setPassword(inputElement.value)
 }
+/* saves confirm password */
 const onConfirmPassChange = (e:React.ChangeEvent<HTMLInputElement>) =>{
     const inputElement = e.target as HTMLInputElement;
     setConfirmPassword(inputElement.value)

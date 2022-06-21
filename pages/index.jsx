@@ -39,14 +39,13 @@ export const myLoader=({src})=>{
 */
 const displayImage = (file , ref) =>{
   const [minute, second] = regularTime(file.duration);
-  
   return <div ref={ref ? ref : null}  key={file.id}  id={file.id} className={styles.gridChild} >
     <Link href={`watch/${file.id}`}>
   <a href="#" className={styles.thumbContainer}>
     <div className={styles.img_wrapper}>
        <Image loader={myLoader} 
             src={`${file.id}`} alt={file.id} layout="fill" 
-objectFit={"contain"} objectPosition={"center"}
+            objectFit={"contain"} objectPosition={"center"}
         />
         <div className={styles.duration_container}>
          <span>{minute}</span>
@@ -61,7 +60,7 @@ objectFit={"contain"} objectPosition={"center"}
     </motion.div>
     </div>
 
-   <div className={styles.videoInfoContainer}>
+    <div className={styles.videoInfoContainer}>
      <span >{file.title}</span>
      <div className={styles.usernameContainer}>
        <span>{file.username}</span>
@@ -70,11 +69,11 @@ objectFit={"contain"} objectPosition={"center"}
      <div className={styles.view_dateContainer}>
           <span>{modifyAmountOfView(+file.view)}</span>
           <span>{modifyUplodedDate(new Date(file.date))} </span>
+      </div>
      </div>
-    </div>
   </a>
-</Link>
-</div>
+   </Link>
+   </div>
 }
 
 

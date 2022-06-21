@@ -30,6 +30,8 @@ import {VolumeState , DownloadStatus} from "../utils/enums";
 import {CostumDocument , CostumHTMLDivElement} from "../utils/fullscreen"
 import {useRouter} from 'next/router'
 
+
+/* display icons */
 const displayIcon = (ICON:any , v?:number,  classN?:string) =>  { 
     if (typeof classN !== 'undefined')
         return <ICON  className={styles[classN]} style={{pointerEvents:"none"}}/>
@@ -93,6 +95,7 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
 
     const router = useRouter();
 
+    /* saves token if one is presents */
     useLayoutEffect(() =>{
         const actoken = localStorage.getItem("ACTKEN");
         if(actoken)
@@ -136,6 +139,8 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
         };
       }, []); */
 
+
+      /* set volume initial value by getting it from localStorage */
       useLayoutEffect(() =>{
         const v = localStorage.getItem("volume");
         if(v !== null){
@@ -146,7 +151,7 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
 
 
 
-    // show & hide for volume
+    // show & hide for volume used for animation reference https://framer.com
     const volumeVariants = {
         hidden: {   
             width:0,
@@ -196,6 +201,9 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
  } */
 //// fullscreen end
 
+
+
+      /* handles hover effects on volume section */
       const onImageEnter = (e: React.MouseEvent<HTMLDivElement>) => {
         e.preventDefault();
        setIsVolumeHover(true)
@@ -206,13 +214,14 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
        
       };
 
+      /* set theater mode if user has clicked on it */
       useLayoutEffect(() =>{
           if(onTheatreRequest)
         onTheatreRequest(isTheater)
       }, [isTheater])
 
 
-      
+      /* set logged user if one present and gets metadata of the user from the server */
     useLayoutEffect(() =>{
             const t = localStorage.getItem("theater");
             const acctoken = localStorage.getItem("ACTKEN");
@@ -249,10 +258,12 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
     }, [])
 
 
+    /* handles duration section when the componet is rendered  */
     useLayoutEffect(() =>{
         const [minute , second ] = regularTime(duration)
         setModifiedDuration({minute:+minute , second:+second})
     }, [])
+    /* pushed current video to the hisotry of user*/
     useLayoutEffect(() =>{
         (async () =>{
             if(typeof videoPath !== 'undefined' && videoPath.length > 0)
@@ -261,16 +272,19 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
     }, [])
 
 
+    /* handles currenttime of video  */
     useLayoutEffect(() =>{
         const [minute , second ] = regularTime(0)
         setModifiedCurrentTime({minute:+minute , second:+second})
     },[])
     
+    /* regulate volume value if its changes*/
     useLayoutEffect(() =>{
         videoPlayerRef.current!.volume = (+volumeValue / 100);
     }, [videoPlayerRef, volumeValue])
 
 
+    /* stops | plays if user clicked the video */
     const onControllClick = (e:React.MouseEvent<HTMLDivElement>) =>{
         const t = e.target as HTMLDivElement;
         if(t.className && t.className.includes  &&   t.className.includes("thumbPlay")){
@@ -288,21 +302,21 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
             setShouldPlay(!shouldPlay);
              shouldPlay === true ? videoPlayerRef.current!.pause() : videoPlayerRef.current!.play();
         }
-    
-
     }
 
+    /*  puased video if video ends */
     const onVideoEnded = (e:React.MouseEvent<HTMLVideoElement>) =>{
         setShouldPlay(false);
     }
 
     
-
+    /* callback function: handles seeking of video */
     const onVideoSeeking = (e:React.MouseEvent<HTMLVideoElement>) =>{
         setSeekingVal(v => v+1);
     }
 
 
+    /* callback function : regulate video silder by setting currentTime of seen video */
     const onVideoTimeUpdate =  (e:React.MouseEvent<HTMLVideoElement>) =>{
         const currentTime = videoPlayerRef.current!.currentTime;
         setCurrentTime(currentTime);
@@ -325,6 +339,7 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
       }
 
 
+      /* callback function : shows the popup window of download section */
     const onDowloadListitemClick = async (e:React.MouseEvent<HTMLElement>) =>{
         
         const l = e.target as HTMLElement;
@@ -368,22 +383,26 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
 
 
     
-
+    /* callback function : handles theatre mode */
     const onTheaterClick = (e:React.MouseEvent<HTMLDivElement>) =>{
         setIsTheater(!isTheater);
         localStorage.setItem("theater", (!isTheater).toString());
     }
+
+    /* callback function: shows or hides setting popup window */
     const onSettingClick = (e:React.MouseEvent<HTMLDivElement>) =>{
         setSettingPopup(!settingPopup);
         setDownloadPopup(false);
         
     }
+
+    /* callback function: shows or hides download popup window */
     const onDownload = (e:React.MouseEvent<HTMLDivElement>) =>{
         setDownloadPopup(!downloadPopup);
         setSettingPopup(false)
     }
 
-    
+    /* regulate volume when user changes it */
     const onVolumeIconClick = (e:React.MouseEvent<HTMLDivElement>) =>{
         if(volumeState !== VolumeState.MUTED){
             setVolumeState(VolumeState.MUTED)
@@ -399,7 +418,7 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
         }
 
     }
-     
+     /*  sets volume enum based on value of volume slider  */
     const checkVolume = (v:number) =>{
         if (v <= 0)
         setVolumeState(VolumeState.MUTED)
@@ -410,12 +429,14 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
         }else if(v > 60) 
         setVolumeState(VolumeState.LOAD)
     }
+    /* calls above funtion to regulate volume slider  */
     const onVolumeChange = (v:number) =>{
         checkVolume(v);
         setVolumeValue(v);
         localStorage.setItem("volume" , v.toString());
     }   
 
+    /* handles video range slider  */
     const onVideoRangeChange =  (newValue:number) =>{
         if(VideoControllerRef){
             videoPlayerRef.current!.currentTime = (newValue * +duration / 100);
@@ -425,6 +446,7 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
    
     }   
 
+    /* set default value of video slider if it presents */
     useLayoutEffect(() =>{
         const rg = localStorage.getItem("rg");
         if(rg !== null) {
@@ -436,6 +458,7 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
         }
     }, [])
 
+    /* set video slider value */
     useLayoutEffect(() =>{
         
         const newPos = 100 * videoPlayerRef.current!.currentTime / +duration;
@@ -447,11 +470,13 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
      }, [currentTime, duration, videoPlayerRef])
 
 
+     /* stops or plays video if user clicked on video */
      useLayoutEffect(()=>{
        if(videoPlayerRef && videoPlayerRef.current)
        shouldPlay === true ? videoPlayerRef.current!.play() : videoPlayerRef.current!.pause();
      }, [shouldPlay])
     
+     /* changes shouldPlay variable if user click the video */
       const onPlayClick = (e:React.MouseEvent<HTMLDivElement>)=>{
             setShouldPlay(!shouldPlay);
             setShouldThumbShowing(false);
@@ -464,6 +489,8 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
       const onVideoLoaded = (e:React.MouseEvent<HTMLVideoElement>) =>{
         //console.log(e)
       }
+
+      /* handles new video speed  */
      const onSpeedClick = (e:React.MouseEvent<HTMLSpanElement>) =>{
         const el = e.target as HTMLSpanElement;
         const s = el.innerHTML.toLowerCase() === "standard" ? "1" : el.innerHTML;
@@ -474,6 +501,8 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
         setDownloadPopup(false);
         setSettingPopup(false);
      }
+
+     /* shows quality popup window */
      const onQualityClick = (e:React.MouseEvent<HTMLSpanElement>) =>{
         const el = e.target as HTMLSpanElement;
         if(videoPlayerRef && videoPlayerRef.current){
@@ -492,6 +521,7 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
      }
 
 
+     /* lists all speed values */
       const getSpeedList = () =>{
           const speeds = ["0.25" , "0.5" , "0.75", "1" , "1.25" , "1.5" , "1.75" , "2"]
           const arr = speeds.map((s,ind) =>{
@@ -504,10 +534,6 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
           })
           return arr
       }
-
-
-
-/* (props: MenuProps | Readonly<MenuProps>): Menu */
       const getQualityChildren =  () =>{
         const arr:MenuProps['items'] = typeof resolutions !== 'undefined' ? resolutions.map((r, ind) =>{
                  return {
@@ -521,6 +547,7 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
       }
 
 
+      /* used for Image tag for loading image */
       const myLoader=({src}:any)=>{
         return `${process.env.NEXT_PUBLIC_REMOTE}/watch/thumb/${src}`;
       }
@@ -529,7 +556,7 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
 
 
 
-
+    /* back to the previous page */
     const onBackClick = (e:React.MouseEvent<HTMLDivElement>) =>{
           router.back();
     }

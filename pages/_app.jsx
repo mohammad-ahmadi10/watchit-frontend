@@ -6,7 +6,6 @@ import { SpinnerDotted } from 'spinners-react';
 import { useState } from 'react';
 import { ThemeProvider } from 'next-themes'
 import Layout from '../components/Layout'
-import Footer from '../components/Footer';
 import { IconContext } from "react-icons";
 import useLayoutEffect from "../utils/IsOrmorphicLayoutEffect";
 import costumAxios from "../utils/axios";

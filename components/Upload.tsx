@@ -3,6 +3,7 @@ import styles from "../styles/upload.module.scss";
 import { useCallback } from 'react';
 import { useState } from 'react';
 
+/* property types for upload */
 interface UploadProps{
     dropText:string,
     onUpload:(files: any, err: any) => void,

@@ -17,16 +17,20 @@ import Router from 'next/router'
 import { motion } from "framer-motion"
 import { IconType } from 'antd/lib/notification';
 
+
+/* property type for Setting Video infos */
 interface SetVideoInfoProps{
     uploadedPath:string
 }
+
+/* types for form */
 interface FormType{
   video:{Title:string, Description:string}
 }
 
 
 
-
+/* framer varaints used for animation : reference https://framer.com  */
 const layout = {
   labelCol: {
     span: 8,
@@ -37,6 +41,7 @@ const layout = {
 };
 
 
+/* a template notification used when the user uploaded his video to notify its success! */
 const openNotificationWithIcon = (type:IconType) => {
   notification[type]({
     message: 'upload file',
@@ -81,15 +86,18 @@ const SetVideoInfo = ({uploadedPath}:SetVideoInfoProps) => {
     const [exit, setExit] = useState(false);
 
 
+    /* closes setting info Page by click on it */
     const hide = () =>{
       setExitVisible(false)
     }
     
+    /* shows or hides  exit popup window*/
     const onVisibleChange = (visible:boolean) =>{
       setExitVisible(visible)
     }
 
 
+    /* callback function used to handle the new uploaded thumb  */
     const onImageUpload = useCallback( async (files , err)=>{
         const file = files[0];
         setFile(file);
@@ -105,6 +113,7 @@ const SetVideoInfo = ({uploadedPath}:SetVideoInfoProps) => {
         reader.readAsDataURL(file);
       }, [])
 
+      /* saves thumb index in the imageIndex Variable by clicking the thumb */
       const selectImageIndex = (n:number) =>{
         if(n !== -1 && typeof uploadFile === "string"){
           setUploadFile(uploadPNG)
@@ -114,6 +123,7 @@ const SetVideoInfo = ({uploadedPath}:SetVideoInfoProps) => {
 
 
 
+      /* invokes when user closed setting Info page */
 const onExit = async (e:React.MouseEvent) =>{
     console.log("close")
     /* upload/rmvideo */ 
@@ -137,6 +147,7 @@ const onExit = async (e:React.MouseEvent) =>{
      }
 }
 
+/* shows a notification of succes if everything went well */
 useLayoutEffect(()=>{
   if(upStatus === UploadStatus.UPLOADED){
   {openNotificationWithIcon('success')}
@@ -145,7 +156,7 @@ useLayoutEffect(()=>{
 
 
 
-
+/* sends setted infos to the server */
 const onFinish = async (e:React.MouseEvent) => {
   if(title.length <= 0 || description.length <= 0 )return;
   
@@ -183,7 +194,7 @@ const onFinish = async (e:React.MouseEvent) => {
   }
 };
 
-
+/* gets metada of video before showing the page */
 useLayoutEffect( ()=>{
      (async () =>{
       try {
@@ -203,18 +214,20 @@ useLayoutEffect( ()=>{
 },[])
 
 
-
+/* invokes when user types on the title field */
 const onTitleChange = (e:React.ChangeEvent<HTMLInputElement>) =>{
   const inputElement = e.target as HTMLInputElement;
  
   setTitle(inputElement.value.toLowerCase())
 }
 
+/* invokes when user tpyes on the description field */
 const onDescriptionChange = (e:React.ChangeEvent<HTMLTextAreaElement>) =>{
   const inputElement = e.target as HTMLTextAreaElement;
   setDescription(inputElement.value)
 }
 
+/*  variant of framer. used for animation referecne : https://framer.com */
 const popupVariants = {
   fadeIn:{
     opacity:1,
@@ -318,6 +331,7 @@ const popupVariants = {
                          selectImageIndex={selectImageIndex}            
           />
               <Button type="default" htmlType="submit" loading={load} onClick={onFinish} ghost={true} size={"large"}   style={{width:"100%", marginTop:"20px"}}
+               disabled={title.length <= 0 || description.length <= 0}
               >
                 Upload
               </Button>

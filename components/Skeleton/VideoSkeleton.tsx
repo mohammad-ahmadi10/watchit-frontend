@@ -1,6 +1,6 @@
 import styles from "../../styles/Skeleton.module.scss";
 
-
+/* Skeleton for Loading Video */
 const Skeleton = () =>{
     return (
         <div className={styles.skeletonWrapper}>

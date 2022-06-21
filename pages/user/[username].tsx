@@ -31,10 +31,12 @@ import {VscWorkspaceTrusted} from "react-icons/vsc";
 import {RiEdit2Line} from "react-icons/ri";
 import {VideoPrevData} from "../../types/page"
 
+
 interface UserProps{
     username:string
 }
 
+/* opens a notification */
 const openNotification = (content:React.ReactNode) => {
   notification.open({
     message: content,
@@ -45,7 +47,6 @@ const openNotification = (content:React.ReactNode) => {
 }
 
 
-  
 
 
 const  User =({username}:UserProps) => {
@@ -58,6 +59,7 @@ const  User =({username}:UserProps) => {
   const dispatch = useDispatch();
   const selector = useSelector(selectAvatar);
 
+  /* sets new avatar path if user is presents */
   useLayoutEffect(() =>{    
     if(selector.page.length > 0)
       setAvatarPath(selector.path)
@@ -73,6 +75,7 @@ const onBookmarkClicked = (_:any) =>{
         
 }
 
+/* used for Image tag for loading the image */
 const myLoader=({src}:any)=>{
   return `${process.env.NEXT_PUBLIC_REMOTE}/watch/thumb/${src}`;
 }
