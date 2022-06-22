@@ -148,9 +148,9 @@ const  Navbar = () => {
   const handleKeyDown = (e:any) => {
       const t = e.target as costumHTMLElement;
       if(t.name && t.name.includes("search"))return;
-
       setShouldShowSearchSuggestion(false)
   }
+
 
   /* saves every window scrollY on localStorage */
   const handleScroll = (e:any) =>{
@@ -292,7 +292,6 @@ const  Navbar = () => {
       maxWidthOrHeight: 1920,
       useWebWorker: true
     }
-
     /* compresses the file before sending to the server */
     try{
       const compressedFile = await imageCompression(file, options);
@@ -310,13 +309,9 @@ const  Navbar = () => {
       if(res.status === 200){
         let newUser:User = {id:"",username:"", email:"", profileImage:""};
         setUploadStatus(UploadStatus.ONSTART);
-
         if(user!== null && user.id !== "undefined" && typeof user.username !== "undefined" && typeof user.email !== "undefined")
         {
-        newUser = {
-          ...user,
-          profileImage:"avatar",
-          }
+        newUser = {...user, profileImage:"avatar" }
           const ms = dispatch(login({
               user: newUser,
               logIn:true,
@@ -475,7 +470,6 @@ const  Navbar = () => {
             </span>}
                                                         
             <Search placeholder="search..." loading={load} size={"large"} 
-                                       
                                          onSearch={onSearch}
                                          value={searchVal ? searchVal : ""} 
                                          onChange={onSearchChange}
@@ -484,6 +478,7 @@ const  Navbar = () => {
                                          onPressEnter={onSearchEnter}
                                          name={"search"}
                                          />
+
            {shouldShowSearchSuggestion && <div className={styles.search_items}> 
                   {titles !== null && typeof titles !== "undefined" && titles.map((s,k) =>  
                                       {
@@ -579,7 +574,12 @@ const  Navbar = () => {
               overlayInnerStyle={{display:"flex", justifyContent:"center", alignItems:"center", flexDirection:"column"}}
               >
 
-                 <Avatar className={styles.avatar}  size={"large"} src={ <Image  src={ user.profileImage.length > 0 ?  avatar : UserLogo} layout="fill" />}></Avatar> 
+                 <Avatar className={styles.avatar}  
+                         size={"large"} 
+                         src={ 
+                              <Image  src={ user.profileImage.length > 0 ?  avatar : UserLogo} 
+                                      layout="fill" />}>
+                 </Avatar> 
                  
             </Popover>
 

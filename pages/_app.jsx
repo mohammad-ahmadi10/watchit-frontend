@@ -3,7 +3,7 @@ import {Provider} from "react-redux";
 import { store , wrapper } from './../src/store';
 import Router from "next/router";
 import { SpinnerDotted } from 'spinners-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ThemeProvider } from 'next-themes'
 import Layout from '../components/Layout'
 import { IconContext } from "react-icons";
@@ -42,6 +42,7 @@ function MyApp({ Component, pageProps }) {
 
     const router = useRouter();
     
+
     useLayoutEffect(() =>{
       ( async () =>{
         try{

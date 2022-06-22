@@ -89,6 +89,10 @@ if (typeof window !== 'undefined') {
             logIn:false,
             errorMSG:""
           }))
+          localStorage.setItem("user", "");
+          localStorage.setItem("ACTKEN", "");
+          localStorage.setItem("SSRFSH" , "");
+          
           /* localStorage.setItem("user", JSON.stringify(ms)); */
           return error.response?.data;
         }

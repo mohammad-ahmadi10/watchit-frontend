@@ -354,7 +354,7 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
             setDownloadPopup(false);
             setSettingPopup(false);
             const rs =  await costumAxios.get(url, {responseType: 'blob',
-            onDownloadProgress:(data)=>{
+                        onDownloadProgress:(data)=>{
                 const loadingData =  Math.round(data.loaded / data.total * 100);
                 setProgressPercent(loadingData);
                 if(loadingData === 100){
@@ -366,7 +366,7 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
                 } 
             }
             });
-
+            console.log(rs)
             const end = rs.headers["content-type"].split("/")[1]
             const filename = title + "_" + resu + "." + end;
             fileDownload(rs.data, filename)
@@ -408,13 +408,14 @@ const VideoPlayer = ({ videoPath , duration , title, onTheatreRequest , resoluti
             setVolumeState(VolumeState.MUTED)
             localStorage.setItem("volume" , volumeValue.toString());
             setVolumeValue(0);
-        }else{
+        }
+        else{
             const v = localStorage.getItem("volume");
+            console.log(v)
             if(v !== null){
                 checkVolume(+v)
                 setVolumeValue(+v);
             }
-
         }
 
     }
